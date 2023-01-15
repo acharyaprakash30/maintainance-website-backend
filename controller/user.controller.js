@@ -1,6 +1,6 @@
 const model = require("../models");
 const dotenv = require("dotenv");
-const CryptoJS = require("crypto-js");
+const bcrypt = require("bcryptjs")
 const { body, validationResult } = require("express-validator");
 
 dotenv.config();
@@ -9,48 +9,56 @@ const create = (req, res) => {
   const newUser = {
     name: req.body.name,
     contact: req.body.contact,
-    password: CryptoJS.AES.encrypt(
-      req.body.password,
-      process.env.PASS_SEC
-    ).toString(),
+    password:req.body.password,
     gender: req.body.gender,
   };
-  model.User.create(newUser)
-    .then((result) => {
-      res.status(200).json({
-        result: newUser,
-        messege: "User created successful!",
-      });
-    })
-    .catch((err) => {
-      res.status(500).json({ messege: "Something went wrong", err: err });
-    });
-};
+  if(req.body.password === req.body.confirmPassword){
+    bcrypt.hash(newUser.password, 10, function(err, hash) {
+      newUser.password=hash;
+      model.User.create(newUser)
+        .then((result) => {
+          res.status(200).json({
+             newUser,
+            messege: "User created successful!",
+          });
+        })
+        .catch((err) => {
+          res.status(500).json({ messege: "Something went wrong", err: err });
+        });
+  });
+  }else{
+    res.status(401).json({
+          messege: "Password doesn't match",
+        });
+  }
+  }
 
 //user login
 const login = (req, res) => {
   model.User.findOne({ where: { name: req.body.name } })
-    .then((user) => {
-        if(user){
-            const decrypted = CryptoJS.AES.decrypt(user.password,process.env.PASS_SEC).toString(CryptoJS.enc.Utf8);
-            if(req.body.password === decrypted){
-                res.status(200).json({
-                    messege:"Login Successful"
-                })
-            }else{
-                res.status(401).json({
-                    messege:"Password doesn't match"
-                })
-            }
+  .then((user) => {
+    if(user){
+      bcrypt.compare(req.body.password,user.password,(err,result)=>{
+        if(result){
+          res.status(200).json({
+            messege:"Login succcessful!"
+          })
         }else{
-            res.status(401).json({
-                messege:"User not found"
-            })
+          res.status(401).json({
+            messege:"Invalid password!"
+          })
         }
+      })
+    }else{
+      res.status(401).json({
+        messege:"User not found!"
+      })
+    }
     })
     .catch((error) => {
       res.status(500).json({
         messege: "Something went wrong",
+        error
       });
     });
 };
