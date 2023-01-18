@@ -16,6 +16,7 @@ const create = (req, res) => {
     password:req.body.password,
     gender: req.body.gender,
   };
+
   if(newUser.password === req.body.confirmPassword){
     bcrypt.hash(newUser.password, 10, function(err, hash) {
       newUser.password=hash;
@@ -67,22 +68,6 @@ const login = (req, res) => {
             });
           }
           )
-
-          // const verify = jwt.sign(
-          //   {
-          //     user:user.name,
-          //     id:user.id
-          //   },process.env.VERIFY_SEC,
-          //   {expiresIn:864000}
-
-          // )
-          // if(verify){
-          //   return res.status(200).json({
-          //     messege:"Login succcessful!",
-          //     token:verify
-          //   })
-          // }
-
         }else{
           res.status(401).json({
             messege:"Invalid password!"
@@ -110,8 +95,10 @@ const editUser = (req,res)=>{
       const editedUser ={
         name: req.body.name,
         contact: req.body.contact,
-        // password:req.body.password,
+        password:req.body.password,
       }
+      bcrypt.hash(editedUser.password, 10, function(err, hash) {
+        editedUser.password=hash;
       model.User.update(editedUser,{where:{email:req.body.email}}).then((update)=>{
         res.status(200).json({
           messege:"user updated succcessfully!",
@@ -122,7 +109,7 @@ const editUser = (req,res)=>{
           messege:"something went wrong!"
         })
       })
-    }else{
+    })}else{
       res.status(401).json({
         messege:"user email not found"
       })
