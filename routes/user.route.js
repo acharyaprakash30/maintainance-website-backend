@@ -9,5 +9,6 @@ router.put("/update",verifyMiddleware.verification,userController.editUser)
 router.delete("/delete",userController.deleteUser)
 router.get("/alluser",userController.index)
 router.get("/userById/:id",userController.show)
+router.get("/userservice",verifyMiddleware.verification,userController.getUserSerivceById)
 
 module.exports=router;

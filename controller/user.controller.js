@@ -1,6 +1,8 @@
 const model = require("../models");
 const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs")
+const {Service} = model
+
 const { body, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken")
 
@@ -52,17 +54,35 @@ const login = (req, res) => {
     if(user){
       bcrypt.compare(req.body.password,user.password,(err,result)=>{
         if(result){
+          
           const verify = jwt.sign(
             {
-            user :user.name
+            user:user.name,
+            id:user.id
           },process.env.VERIFY_SEC,
           (err, token) => {
             res.status(200).json({
               messege:"Login succcessful!",
               token: token,
             });
-          },{expiresIn:"1m "}
+          }
           )
+
+          // const verify = jwt.sign(
+          //   {
+          //     user:user.name,
+          //     id:user.id
+          //   },process.env.VERIFY_SEC,
+          //   {expiresIn:864000}
+
+          // )
+          // if(verify){
+          //   return res.status(200).json({
+          //     messege:"Login succcessful!",
+          //     token:verify
+          //   })
+          // }
+
         }else{
           res.status(401).json({
             messege:"Invalid password!"
@@ -88,12 +108,10 @@ const editUser = (req,res)=>{
   model.User.findOne({ where: { email: req.body.email } }).then((exist)=>{
     if(exist){
       const editedUser ={
-        // email:req.body.email,
         name: req.body.name,
         contact: req.body.contact,
         // password:req.body.password,
       }
-      console.log(editUser)
       model.User.update(editedUser,{where:{email:req.body.email}}).then((update)=>{
         res.status(200).json({
           messege:"user updated succcessfully!",
@@ -170,12 +188,51 @@ const show = (req, res) => {
       });
     });
 };
+
+
+//get userServices by id
+const getUserSerivceById =async (req, res) => {
+  const findUser =await model.User.findOne({
+    attributes:{
+      exclude:[
+        "contact",
+        "password",
+        "gender",
+      "createdAt",
+      "IsAdmin",
+      "updatedAt"]
+    },
+    include: {
+      model: Service,
+      as: "Service",
+      attributes:{
+        exclude:["userId",
+        "createdAt",
+        "updatedAt"]
+      },
+    },where:{id:req.userData.id}
+  });
+  if (findUser) {
+    res.status(200).json({
+      message: "Successfully found!!",
+      result:findUser
+    });
+  } else {
+    res.status(500).json({
+      message: "Something went wrong!!",
+    });
+  }
+};
+
+
+
 module.exports = {
   create,
   login,
   editUser,
   deleteUser,
   index,
-  show
+  show,
+  getUserSerivceById
 
 };
