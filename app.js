@@ -4,6 +4,8 @@ const cors = require("cors");
 const cookieParser = require('cookie-parser');
 const user = require('./routes/user.route');
 const userService = require('./routes/userService.route');
+const location = require('./routes/location.route');
+const payment = require('./routes/payment.route');
 const service = require('./routes/service.route');
 const {sequelize} = require("./models")
 
@@ -19,6 +21,8 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use('/user',user);
 app.use('/service',service)
 app.use('/',userService)
+app.use('/location',location)
+app.use('/payment',payment)
 
 
 sequelize.sync({}).then((result)=>{
