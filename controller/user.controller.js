@@ -1,7 +1,6 @@
 const model = require("../models");
 const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs")
-const {Service} = model
 
 const { body, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken")
@@ -106,7 +105,7 @@ const editUser = (req,res)=>{
         })
       }).catch(err=>{
         res.status(500).json({
-          messege:"something went wrong!"
+          messege:"something went wrong!",err
         })
       })
     })}else{
@@ -116,7 +115,7 @@ const editUser = (req,res)=>{
     }
   }).catch(err=>{
     res.status(500).json({
-      messege:"something went wrong!"
+      messege:"something went wrong!",err
     })
   })
 }
@@ -150,7 +149,7 @@ const index = (req, res) => {
     })
     .catch((error) => {
       res.status(500).json({
-        messege: "Something went wrong!!",
+        messege: "Something went wrong!!",error
       });
     });
 };
@@ -171,45 +170,11 @@ const show = (req, res) => {
     })
     .catch((error) => {
       res.status(500).json({
-        messege: "Something went wrong!!",
+        messege: "Something went wrong!!",error
       });
     });
 };
 
-
-//get userServices by id
-const getUserSerivceById =async (req, res) => {
-  const findUser =await model.User.findOne({
-    attributes:{
-      exclude:[
-        "contact",
-        "password",
-        "gender",
-      "createdAt",
-      "IsAdmin",
-      "updatedAt"]
-    },
-    include: {
-      model: Service,
-      as: "Service",
-      attributes:{
-        exclude:["userId",
-        "createdAt",
-        "updatedAt"]
-      },
-    },where:{id:req.userData.id}
-  });
-  if (findUser) {
-    res.status(200).json({
-      message: "Successfully found!!",
-      result:findUser
-    });
-  } else {
-    res.status(500).json({
-      message: "Something went wrong!!",
-    });
-  }
-};
 
 
 
@@ -220,6 +185,5 @@ module.exports = {
   deleteUser,
   index,
   show,
-  getUserSerivceById
 
 };

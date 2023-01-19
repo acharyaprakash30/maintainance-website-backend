@@ -19,7 +19,7 @@ const addService = (req, res) => {
       })
       .catch((error) => {
         res.status(500).json({
-          messege: "Something went wrong",
+          messege: "Something went wrong",error
         });
       });
   };
@@ -36,7 +36,7 @@ const index = (req, res) => {
       })
       .catch((error) => {
         res.status(500).json({
-          messege: "Something went wrong!!",
+          messege: "Something went wrong!!",error
         });
       });
   };
@@ -62,7 +62,7 @@ const index = (req, res) => {
       })
       .catch((error) => {
         res.status(500).json({
-          messege: "Something went wrong!!",
+          messege: "Something went wrong!!",error
         });
       });
   };
@@ -83,7 +83,8 @@ const updateService = (req,res)=>{
           })
         }).catch(err=>{
           res.status(500).json({
-            messege:"something went wrong!"
+            messege:"something went wrong!",
+            err
           })
         })
       }else{
@@ -93,7 +94,7 @@ const updateService = (req,res)=>{
       }
     }).catch(err=>{
       res.status(500).json({
-        messege:"something went wrong!"
+        messege:"something went wrong!",err
       })
     })
   }
@@ -115,7 +116,7 @@ const deleteService = (req, res) => {
       })
       .catch((err) => {
         res.status(500).json({
-          messege: "Something went wrong",
+          messege: "Something went wrong",err
         });
       });
   };
