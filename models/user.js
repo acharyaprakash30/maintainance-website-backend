@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       this.hasMany(models.Service,{foreignKey:"userId",as:"Service"})
     }
-  }
+  } 
   User.init({
     email: DataTypes.STRING,
     name: DataTypes.STRING,

@@ -89,16 +89,55 @@ const login = (req, res) => {
 
 //update user
 const editUser = (req,res)=>{
-  model.User.findOne({ where: { email: req.body.email } }).then((exist)=>{
+  model.User.findOne({ where: { id: req.params.id } }).then((exist)=>{
     if(exist){
       const editedUser ={
         name: req.body.name,
         contact: req.body.contact,
         password:req.body.password,
+        gender:req.body.gender,
+        email:req.body.email,
       }
       bcrypt.hash(editedUser.password, 10, function(err, hash) {
         editedUser.password=hash;
-      model.User.update(editedUser,{where:{email:req.body.email}}).then((update)=>{
+      model.User.update(editedUser,{where:{id:req.params.id}}).then((update)=>{
+        res.status(200).json({
+          messege:"user updated succcessfully!",
+          updated:editedUser,
+        })
+      }).catch(err=>{
+        res.status(500).json({
+          messege:"something went wrong!",err
+        })
+      })
+    })}else{
+      res.status(401).json({
+        messege:"user email not found"
+      })
+    }
+  }).catch(err=>{
+    res.status(500).json({
+      messege:"something went wrong!",err
+    })
+  })
+}
+
+//update user
+const editProfile = (req,res)=>{
+  let userId = req.userData.id;
+
+
+  model.User.findOne({ where: { id: userId } }).then((exist)=>{
+    if(exist){
+      const editedUser ={
+        name: req.body.name,
+        contact: req.body.contact,
+        password:req.body.password,
+        gender:req.body.gender,
+      }
+      bcrypt.hash(editedUser.password, 10, function(err, hash) {
+        editedUser.password=hash;
+      model.User.update(editedUser,{where:{id:userId}}).then((update)=>{
         res.status(200).json({
           messege:"user updated succcessfully!",
           updated:editedUser,
@@ -185,5 +224,6 @@ module.exports = {
   deleteUser,
   index,
   show,
+  editProfile
 
 };
