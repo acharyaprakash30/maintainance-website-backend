@@ -1,6 +1,7 @@
 const model = require("../models");
 const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs")
+
 const { body, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken")
 
@@ -14,6 +15,7 @@ const create = (req, res) => {
     password:req.body.password,
     gender: req.body.gender,
   };
+
   if(newUser.password === req.body.confirmPassword){
     bcrypt.hash(newUser.password, 10, function(err, hash) {
       newUser.password=hash;
@@ -52,16 +54,18 @@ const login = (req, res) => {
     if(user){
       bcrypt.compare(req.body.password,user.password,(err,result)=>{
         if(result){
+          
           const verify = jwt.sign(
             {
-            user :user.name
+            user:user.name,
+            id:user.id
           },process.env.VERIFY_SEC,
           (err, token) => {
             res.status(200).json({
               messege:"Login succcessful!",
               token: token,
             });
-          },{expiresIn:"1m "}
+          }
           )
         }else{
           res.status(401).json({
@@ -88,12 +92,12 @@ const editUser = (req,res)=>{
   model.User.findOne({ where: { email: req.body.email } }).then((exist)=>{
     if(exist){
       const editedUser ={
-        // email:req.body.email,
         name: req.body.name,
         contact: req.body.contact,
-        // password:req.body.password,
+        password:req.body.password,
       }
-      console.log(editUser)
+      bcrypt.hash(editedUser.password, 10, function(err, hash) {
+        editedUser.password=hash;
       model.User.update(editedUser,{where:{email:req.body.email}}).then((update)=>{
         res.status(200).json({
           messege:"user updated succcessfully!",
@@ -101,17 +105,17 @@ const editUser = (req,res)=>{
         })
       }).catch(err=>{
         res.status(500).json({
-          messege:"something went wrong!"
+          messege:"something went wrong!",err
         })
       })
-    }else{
+    })}else{
       res.status(401).json({
         messege:"user email not found"
       })
     }
   }).catch(err=>{
     res.status(500).json({
-      messege:"something went wrong!"
+      messege:"something went wrong!",err
     })
   })
 }
@@ -145,7 +149,7 @@ const index = (req, res) => {
     })
     .catch((error) => {
       res.status(500).json({
-        messege: "Something went wrong!!",
+        messege: "Something went wrong!!",error
       });
     });
 };
@@ -166,16 +170,20 @@ const show = (req, res) => {
     })
     .catch((error) => {
       res.status(500).json({
-        messege: "Something went wrong!!",
+        messege: "Something went wrong!!",error
       });
     });
 };
+
+
+
+
 module.exports = {
   create,
   login,
   editUser,
   deleteUser,
   index,
-  show
+  show,
 
 };
