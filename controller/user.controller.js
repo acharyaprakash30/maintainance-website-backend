@@ -58,7 +58,7 @@ const login = (req, res) => {
             {
             user:user.name,
             id:user.id
-          },process.env.VERIFY_SEC,{expiresIn:"3600"},
+          },process.env.VERIFY_SEC,
           (err, token) => {
             res.status(200).json({
               messege:"Login succcessful!",
