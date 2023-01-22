@@ -59,7 +59,9 @@ const login = (req, res) => {
             {
             user:user.name,
             id:user.id
-          },process.env.VERIFY_SEC,
+          },"thisismysecret",
+          {expiresIn:'365d'},
+          
           (err, token) => {
             res.status(200).json({
               messege:"Login succcessful!",
@@ -125,31 +127,14 @@ const editUser = (req,res)=>{
 //update user
 const editProfile = (req,res)=>{
   let userId = req.userData.id;
-
-
-  model.User.findOne({ where: { id: userId } }).then((exist)=>{
-    if(exist){
-      const editedUser ={
-        name: req.body.name,
-        contact: req.body.contact,
-        password:req.body.password,
-        gender:req.body.gender,
-      }
-      bcrypt.hash(editedUser.password, 10, function(err, hash) {
-        editedUser.password=hash;
-      model.User.update(editedUser,{where:{id:userId}}).then((update)=>{
-        res.status(200).json({
-          messege:"user updated succcessfully!",
-          updated:editedUser,
-        })
-      }).catch(err=>{
-        res.status(500).json({
-          messege:"something went wrong!",err
-        })
+  model.User.findOne({ where: { id: userId } }).then((res)=>{
+    if(res){
+      res.status(200).json({
+        updated:res.data,
       })
-    })}else{
+    }else{
       res.status(401).json({
-        messege:"user email not found"
+        messege:"user token has been expired"
       })
     }
   }).catch(err=>{
