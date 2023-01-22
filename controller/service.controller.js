@@ -19,7 +19,7 @@ const addService = (req, res) => {
       })
       .catch((error) => {
         res.status(500).json({
-          messege: "Something went wrong",error
+          messege: "Something went wrong",err
         });
       });
   };

@@ -2,7 +2,6 @@ const model = require("../models");
 const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs")
 
-const { body, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken")
 
 dotenv.config();
@@ -122,25 +121,25 @@ const editUser = (req,res)=>{
   })
 }
 
-//update user
-const editProfile = (req,res)=>{
+//update profile
+const   editProfile = (req,res)=>{
   let userId = req.userData.id;
 
 
   model.User.findOne({ where: { id: userId } }).then((exist)=>{
     if(exist){
-      const editedUser ={
+      const editedProfile ={
         name: req.body.name,
         contact: req.body.contact,
         password:req.body.password,
         gender:req.body.gender,
       }
-      bcrypt.hash(editedUser.password, 10, function(err, hash) {
-        editedUser.password=hash;
-      model.User.update(editedUser,{where:{id:userId}}).then((update)=>{
+      bcrypt.hash(editedProfile.password, 10, function(err, hash) {
+        editedProfile.password=hash;
+      model.User.update(editedProfile,{where:{id:userId}}).then((update)=>{
         res.status(200).json({
           messege:"user updated succcessfully!",
-          updated:editedUser,
+          updated:editedProfile,
         })
       }).catch(err=>{
         res.status(500).json({
