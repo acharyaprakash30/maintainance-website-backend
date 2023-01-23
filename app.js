@@ -21,17 +21,17 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use('/uploads',express.static('uploads'))
 app.use('/user',user);
 app.use('/service',service)
-app.use('/',userService)
+app.use('/userservice',userService)
 app.use('/location',location)
 app.use('/payment',payment)
 app.use('/image',image)
 
 
-sequelize.sync({}).then((result)=>{
-  console.log("migration successful")
-}).catch(err=>{
-  console.log(err );
-})
+// sequelize.sync({}).then((result)=>{
+//   console.log("migration successful")
+// }).catch(err=>{
+//   console.log(err );
+// })
 
 
 

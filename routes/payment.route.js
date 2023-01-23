@@ -4,7 +4,7 @@ const paymentController = require("../controller/payment.controller")
 const verifyMiddleware = require("../middleware/verify")
 
 
-router.post("/create",paymentController.PaymentInput)
+router.post("/create",verifyMiddleware.verification,paymentController.PaymentInput)
 router.get("/",paymentController.index)
 router.get("/:id",paymentController.show)
 router.put("/update/:id",paymentController.editPayment)
