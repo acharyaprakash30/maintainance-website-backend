@@ -2,8 +2,10 @@ const experss = require("express")
 const router = experss.Router();
 const userController =require("../controller/user.controller")
 const verifyMiddleware = require("../middleware/verify")
+const imageUploader = require("../helpers/image-uploader")
 
-router.post("/create",userController.create)
+
+router.post("/create",imageUploader.upload.single('image'),userController.create)
 router.post("/login",userController.login)
 router.get("/me",verifyMiddleware.verification,userController.editProfile)
 router.put("/:id",verifyMiddleware.verification,userController.editUser)

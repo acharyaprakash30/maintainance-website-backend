@@ -5,7 +5,7 @@ const model = require("../models")
 const addService = (req, res) => {
     const service = {
         name:req.body.name,
-        image:req.body.image,
+        image:req.file.filename,
         slug:req.body.slug,
         userId:req.userData.id
     };

@@ -22,8 +22,10 @@ module.exports = {
         type: Sequelize.STRING
       },
       gender: {
-        type: Sequelize.ENUM("Male", "Female", "Others"),
-        
+        type: Sequelize.ENUM("Male", "Female", "Others"), 
+      },
+      image: {
+        type: Sequelize.BLOB
       },
       IsAdmin:{
         type: Sequelize.BOOLEAN,

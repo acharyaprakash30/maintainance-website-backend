@@ -23,9 +23,10 @@ const createUserService = (req, res) => {
   })
     .then((user) => {
       if (user) {
+        const serviceIds = user.Service.map((service) => service.id);
         const userService = {
           user_id,
-          service_id: user.Service[0].id,
+          service_id: serviceIds  ,
           payment_id: user.Payment.id,
         };
         model.userService

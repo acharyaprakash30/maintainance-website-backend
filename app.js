@@ -7,7 +7,7 @@ const userService = require('./routes/user-service.route');
 const location = require('./routes/location.route');
 const payment = require('./routes/payment.route');
 const service = require('./routes/service.route');
-  const image = require('./routes/image.route');
+  // const image = require('./routes/image.route');
 const {sequelize} = require("./models")
 
 const app = express();
@@ -24,10 +24,10 @@ app.use('/service',service)
 app.use('/userservice',userService)
 app.use('/location',location)
 app.use('/payment',payment)
-app.use('/image',image)
+// app.use('/image',image)
 
 
-// sequelize.sync({}).then((result)=>{
+// sequelize.sync({force:true}).then((result)=>{
 //   console.log("migration successful")
 // }).catch(err=>{
 //   console.log(err );

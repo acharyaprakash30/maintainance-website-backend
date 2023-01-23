@@ -7,44 +7,45 @@ const jwt = require("jsonwebtoken")
 dotenv.config();
 //creating user
 const create = (req, res) => {
-  const newUser = {
-    email:req.body.email,
-    name: req.body.name,
-    contact: req.body.contact,
-    password:req.body.password,
-    gender: req.body.gender,
-  };
-
-  if(newUser.password === req.body.confirmPassword){
-    bcrypt.hash(newUser.password, 10, function(err, hash) {
-      newUser.password=hash;
-      model.User.findOne({where:{email:newUser.email}}).then((exist)=>{
-        if(exist){
-          res.status(200).json({
-           messege: "Email already taken ",
-         });
-        }else{
-          model.User.create(newUser)
-            .then((result) => {
+      const newUser = {
+        email:req.body.email,
+        name: req.body.name,
+        contact: req.body.contact,
+        password:req.body.password,
+        gender: req.body.gender,
+        image:req.file ? req.file:null
+      };
+    
+      if(newUser.password === req.body.confirmPassword){
+        bcrypt.hash(newUser.password, 10, function(err, hash) {
+          newUser.password=hash;
+          model.User.findOne({where:{email:newUser.email}}).then((exist)=>{
+            if(exist){
               res.status(200).json({
-                 newUser,
-                messege: "User created successful!",
-              });
-            })
-            .catch((err) => {
-              res.status(500).json({ messege: "Something went wrong", err: err });
+               messege: "Email already taken ",
+             });
+            }else{
+              model.User.create(newUser)
+                .then((result) => {
+                  res.status(200).json({
+                     newUser,
+                    messege: "User created successful!",
+                  });
+                })
+                .catch((err) => {
+                  res.status(500).json({ messege: "Something went wrong", err: err });
+                });
+            }
+          }).catch(err=>{
+            res.status(500).json({ messege: "Something went wrong", err: err });
+          })
+      });
+      }else{
+        res.status(401).json({
+              messege: "Password doesn't match",
             });
-        }
-      }).catch(err=>{
-        res.status(500).json({ messege: "Something went wrong", err: err });
-      })
-  });
-  }else{
-    res.status(401).json({
-          messege: "Password doesn't match",
-        });
-  }
-  }
+      }
+}
 
 //user login
 const login = (req, res) => {
