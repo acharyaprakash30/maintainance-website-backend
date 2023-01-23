@@ -37,13 +37,13 @@ const createUserService = (req, res) => {
               payment_id: payment_id,
             })
             .then((result) => {
-              res.status(200).json({
-                message: "Successfully created!!",
-                 result:{user_id,
-                serviceIds,
-                payment_id}
-              });
               userServicesCreated++;
+              if (userServicesCreated === serviceIds.length) {
+                res.status(200).json({
+                  message: "Successfully created!!",
+                  result: { user_id, serviceIds, payment_id },
+                });
+              }
             })
             .catch((err) => {
               res.status(500).json({
