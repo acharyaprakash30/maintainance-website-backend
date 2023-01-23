@@ -4,6 +4,7 @@ const model = require("../models");
 
 const PaymentInput = (req, res) => {
   const Payment = {
+    userId:req.userData.id,
     payment_type: req.body.payment_type,
     payment_method: req.body.payment_method,
   };
