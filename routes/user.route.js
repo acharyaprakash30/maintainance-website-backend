@@ -5,7 +5,7 @@ const verifyMiddleware = require("../middleware/verify")
 
 router.post("/create",userController.create)
 router.post("/login",userController.login)
-router.post("/me",verifyMiddleware.verification,userController.editProfile)
+router.get("/me",verifyMiddleware.verification,userController.editProfile)
 router.put("/:id",verifyMiddleware.verification,userController.editUser)
 router.delete("/delete",userController.deleteUser)
 router.get("/",userController.index)

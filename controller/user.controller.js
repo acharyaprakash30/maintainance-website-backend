@@ -2,7 +2,6 @@ const model = require("../models");
 const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs")
 
-const { body, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken")
 
 dotenv.config();
@@ -59,8 +58,8 @@ const login = (req, res) => {
             {
             user:user.name,
             id:user.id
-          },"thisismysecret",
-          {expiresIn:'365d'},
+          },process.env.VERIFY_SEC,
+          {expiresIn:'7d'},
           
           (err, token) => {
             res.status(200).json({
@@ -70,14 +69,15 @@ const login = (req, res) => {
           }
           )
         }else{
-          res.status(401).json({
-            messege:"Invalid password!"
+
+          res.status(500).json({
+            messege:"Something were went wrong!"
           })
         }
       })
     }else{
       res.status(401).json({
-        messege:"User not found!"
+        messege:"Invalid Credintals!"
       })
     }
     })
@@ -124,18 +124,21 @@ const editUser = (req,res)=>{
   })
 }
 
-//update user
-const editProfile = (req,res)=>{
+//update profile
+const   editProfile = (req,res)=>{
   let userId = req.userData.id;
-  model.User.findOne({ where: { id: userId } }).then((res)=>{
-    if(res){
-      res.status(200).json({
-        updated:res.data,
+
+  model.User.findOne({ where: { id: userId } })
+  .then((result) => {
+    if (result) {
+      return res.status(200).json({
+        data:result
       })
-    }else{
+    
+    } else {
       res.status(401).json({
-        messege:"user token has been expired"
-      })
+        messege: "No user found",
+      });
     }
   }).catch(err=>{
     res.status(500).json({
