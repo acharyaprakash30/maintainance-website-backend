@@ -23,25 +23,38 @@ const createUserService = (req, res) => {
   })
     .then((user) => {
       if (user) {
+        let userServicesCreated = 0;
         const serviceIds = user.Service.map((service) => service.id);
-        const userService = {
-          user_id,
-          service_id: serviceIds  ,
-          payment_id: user.Payment.id,
-        };
-        model.userService
-          .create(userService)
-          .then((result) => {
-            res.status(200).json({
-              message: "Successfully created!!",
-              result: userService,
+        serviceIds.forEach((service_id) => {
+          user_id;
+          const serviceId = service_id;
+          const payment_id = user.Payment.id;
+
+          model.userService
+            .create({
+              user_id,
+              service_id: service_id,
+              payment_id: payment_id,
+            })
+            .then((result) => {
+              res.status(200).json({
+                message: "Successfully created!!",
+                 result:{user_id,
+                serviceIds,
+                payment_id}
+              });
+              userServicesCreated++;
+            })
+            .catch((err) => {
+              res.status(500).json({
+                message: "Something went wrong!!",
+              });
             });
-          })
-          .catch((err) => {
-            res.status(500).json({
-              message: "Something went wrong!!",
-            });
-          });
+        });
+      } else {
+        res.status(404).json({
+          message: "User not found",
+        });
       }
     })
     .catch((error) => {
@@ -52,30 +65,30 @@ const createUserService = (req, res) => {
 };
 
 //find all
-const findAll = (req,res)=>{
+const findAll = (req, res) => {
   // const user_id = req.body.id;
-  model.userService.findAll({
-    // where: { user_id: user_id },
-    attributes: ["user_id", "service_id", "payment_id"],
-  }).then((userServices) => {
-    if (userServices) {
-      res.status(200).json({
-        message: "User Services fetched successfully",
-        result: userServices,
-      });
-    } else {
-      res.status(404).json({
-        message: "No user services found",
-      });
-    }
-  });
-
-}
+  model.userService
+    .findAll({
+      // where: { user_id: user_id },
+      attributes: ["user_id", "service_id", "payment_id"],
+    })
+    .then((userServices) => {
+      if (userServices) {
+        res.status(200).json({
+          message: "User Services fetched successfully",
+          result: userServices,
+        });
+      } else {
+        res.status(404).json({
+          message: "No user services found",
+        });
+      }
+    });
+};
 
 //delete
-const delet = (req,res)=>{
-
-  const user_id = req.userData. id;
+const delet = (req, res) => {
+  const user_id = req.userData.id;
   model.userService
     .destroy({
       where: { user_id: user_id },
@@ -96,11 +109,10 @@ const delet = (req,res)=>{
         message: "Error while deleting userService",
       });
     });
-}
+};
 
-//update 
-const update = (req,res)=>{
-
+//update
+const update = (req, res) => {
   const user_id = req.userData.id;
   const new_service_id = req.body.service_id;
   const new_payment_id = req.body.payment_id;
@@ -137,9 +149,7 @@ const update = (req,res)=>{
         message: "Error while updating userService",
       });
     });
-}
-
-
+};
 
 //get userServices by id
 const getUserSerivceById = async (req, res) => {
@@ -184,4 +194,10 @@ const getUserSerivceById = async (req, res) => {
   }
 };
 
-module.exports = { createUserService, getUserSerivceById ,findAll,delet,update};
+module.exports = {
+  createUserService,
+  getUserSerivceById,
+  findAll,
+  delet,
+  update,
+};
