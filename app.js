@@ -7,6 +7,7 @@ const userService = require('./routes/user-service.route');
 const location = require('./routes/location.route');
 const payment = require('./routes/payment.route');
 const service = require('./routes/service.route');
+const categoryRoute = require('./routes/category.route');
 const {sequelize} = require("./models")
 
 const app = express();
@@ -23,6 +24,7 @@ app.use('/service',service)
 app.use('/userservice',userService)
 app.use('/location',location)
 app.use('/payment',payment)
+app.use('/category', categoryRoute);
 
 
 // sequelize.sync({force:true}).then((result)=>{
