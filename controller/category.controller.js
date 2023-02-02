@@ -1,10 +1,13 @@
 const models = require('../models');
 
 function save(req,res){
+    if (req.file) {
+        var img = req.file.path;
+      }
 
     const category = {
         CategoryName : req.body.CategoryName,
-        CategoryImage : req.body.CategoryImage,
+        CategoryImage : img,
         parentId : req.body.parentId
     }
 
@@ -47,7 +50,6 @@ const showAll = async (req,res)=>{
         })
     }
 }
-
 
 const AllCategories = async (data,parentId = null) => {
     
