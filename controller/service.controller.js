@@ -29,7 +29,9 @@ const index = (req, res) => {
         exclude:[
             "createdAt",
             "updatedAt"
-        ]
+        ],
+       
+
     }})
       .then((result) => {
         res.status(200).json(result);
