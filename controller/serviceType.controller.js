@@ -3,7 +3,8 @@ const models = require('../models');
 function userInput(req, res){
     const serviceType = {
         name: req.body.name,
-        serviceId : req.body.serviceId  
+        serviceId : req.body.serviceId,
+        price : req.body.price  
     }
 
     models.ServiceType.create(serviceType).then(result =>{
@@ -42,7 +43,8 @@ function editServiceType(req, res){
         if(serviceType){
             const updatedServiceType = {
                 name : req.body.name,
-                serviceId : req.body.serviceId       
+                serviceId : req.body.serviceId,
+                price : req.body.price       
             }
 
             serviceType.update(updatedServiceType).then(result => { 
