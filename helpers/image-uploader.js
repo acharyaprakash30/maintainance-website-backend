@@ -1,32 +1,37 @@
-const multer = require("multer")
-const path = require("path");
-
+const multer = require("multer");
+const fs = require("fs");
 
 const storage = multer.diskStorage({
-    destination: (req,file,cb)=>{
-        cb(null,"./uploads");
-    },
-    filename:(req,file,cb)=>{
-        cb(null,new Date().getTime()+path.extname(file.originalname))
-    }
+  destination: function (req, file, cb) {
+
+    if (
+      file.fieldname === "image"
+    ) {
+      const imagepath = 'uploads'
+      fs.mkdirSync(imagepath, { recursive: true })
+      cb(null, imagepath);
+    } 
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "--" + file.originalname);
+  },
 });
 
-const filerFilter=(req,file,cb)=>{ 
-    if(file.mimetype=== 'image/png' || file.mimetype=== 'image/jpeg'){
-        cb(null,true)
-    }else{
-        cb(new Error("Unsupported file type"),false)
+const fileFilter = (req, file, cb) => {
+  if (file.fieldname === "image") {
+    if (!file.originalname.match(/\.(jpg|jpeg|png|svg)$/)) {
+      return cb(new Error("You can upload only image files!!"));
+    } else {
+      cb(null, true);
     }
-}
+  }
+};
 
 const upload = multer({
-    storage:storage,
-    limits:{
-        fileSize:1024*1024*10   
-    },
-    fileFilter:filerFilter
-})
+  storage: storage,
+  fileFilter: fileFilter,
+});
 
-module.exports={
-    upload:upload
-}
+module.exports = {
+  upload: upload,
+};
