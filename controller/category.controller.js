@@ -2,19 +2,19 @@ const models = require('../models');
 
 function save(req,res){
     if (req.file) {
-        var img = req.file.path;
+        var img = req.file.filename;
       }
-
     const category = {
         CategoryName : req.body.CategoryName,
         CategoryImage : img,
         parentId : req.body.parentId
     }
+    console.log(category);
 
     models.Category.create(category).then(result => {
         res.status(201).json({
             message : "Product created succesfully",
-            result: category
+            result: result
         });        
     }).catch(error => {
         res.status(500).json({
@@ -28,7 +28,6 @@ function save(req,res){
 const showAll = async (req,res)=>{
     try{
         const AllCategory = await models.Category.findAll({
-            
         });
         if(AllCategory){
 

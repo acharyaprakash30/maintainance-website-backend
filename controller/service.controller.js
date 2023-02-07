@@ -3,13 +3,15 @@ const model = require("../models")
 
 // create service
 const addService = (req, res) => {
+  if (req.file) {
+    var img = req.file.filename;
+  }
     const service = {
         name:req.body.name,
-        image:req.file.filename,
+        image:img,
         slug:req.body.slug,
         userId:req.userData.id
     };
-    console.log(req.userData);
     const createService = model.Service.create(service)
       .then((result) => {
         res.status(201).json({

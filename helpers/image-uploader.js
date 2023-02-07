@@ -7,7 +7,7 @@ const storage = multer.diskStorage({
     if (
       file.fieldname === "image"
     ) {
-      const imagepath = 'uploads'
+      const imagepath = '../uploads/'
       fs.mkdirSync(imagepath, { recursive: true })
       cb(null, imagepath);
     } 
