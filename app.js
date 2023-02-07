@@ -9,6 +9,7 @@ const payment = require('./routes/payment.route');
 const service = require('./routes/service.route');
 const categoryRoute = require('./routes/category.route');
 const serviceTypeRoute =  require('./routes/serviceType.route'); //pp
+const storeRoute = require('./routes/store.route');
 const {sequelize} = require("./models")
 
 const app = express();
@@ -27,6 +28,7 @@ app.use('/location',location)
 app.use('/payment',payment)
 app.use('/category', categoryRoute);
 app.use('/servicetype', serviceTypeRoute);
+app.use('/store', storeRoute);
 
 
 // sequelize.sync({force:true}).then((result)=>{
