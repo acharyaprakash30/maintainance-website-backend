@@ -10,7 +10,8 @@ const addService = (req, res) => {
         name:req.body.name,
         image:img,
         slug:req.body.slug,
-        userId:req.userData.id
+        userId:req.userData.id,
+        storeId:req.body.storeId
     };
     const createService = model.Service.create(service)
       .then((result) => {
@@ -26,13 +27,37 @@ const addService = (req, res) => {
       });
   };
 //get all sercvices
-const index = (req, res) => {
-    model.Service.findAll({attributes:{
-        exclude:[
-            "createdAt",
-            "updatedAt"
+// const index = (req, res) => {
+//     model.Service.findAll({attributes:{
+       
+//         include : [
+//           {
+//             as: "SubServicelist",
+//             model : model.ServiceType,
+//           }
+//         ]
+
+//     }})
+//       .then((result) => {
+//         res.status(200).json(result);
+//       })
+//       .catch((error) => {
+//         res.status(500).json({
+//           messege: "Something went wrong!!",error
+//         });
+//       });
+//   };
+  const index = (req, res) => {
+
+    model.Service.findAll({
+        include : [
+          {
+            as: "SubServicelist",
+            model : model.ServiceType,
+          }
         ]
-    }})
+
+    })
       .then((result) => {
         res.status(200).json(result);
       })
