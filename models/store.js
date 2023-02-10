@@ -16,8 +16,8 @@ module.exports = (sequelize, DataTypes) => {
   Store.init({
     name: DataTypes.STRING,
     image: DataTypes.BLOB,
-    latitude: DataTypes.INTEGER,
-    longitude: DataTypes.INTEGER,
+    latitude: DataTypes.FLOAT,
+    longitude: DataTypes.FLOAT,
     address: DataTypes.STRING,
     userId: DataTypes.INTEGER
   }, {

@@ -21,5 +21,11 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Category',
   });
+  Category.associate = function (models){
+    Category.belongsTo(models.Service, {
+      as : "CategoryServices",
+      foreignKey : "id"
+    })
+  }
   return Category;
 };
