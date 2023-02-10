@@ -10,5 +10,6 @@ router.post("/", imageUploader.upload.single('image'),StoreController.userInput)
 router.get("/", StoreController.showdata);
 router.patch("/:id",imageUploader.upload.single('image'), StoreController.editStoreData);
 router.delete("/:id", StoreController.destroyStoreData);
+router.get("/:latitude/:longitude", StoreController.getPlaceByCoordinates);
 
 module.exports = router;

@@ -75,10 +75,32 @@ let categoryList = [];
 
      return categoryList;
     }
+ 
+    // function showServices(req, res) {
+    //     const id  = req.params.id;
 
+    //     models.Category.findByPk(id, {
+    //         include : [
+    //             {
+    //                 model : models.Service,
+    //                 as : "CategoryServices",
+    //                 attributes : [ "name",]
+    //             }
+    //         ]
+    //     }).then(result => {
+    //      res.send(200).json(result)
+    //     }).catch(error => {
+    //         res.status(500).json({
+    //             message : "Something went wrong",
+    //             error : error
+    //         });
+    //     });
+
+    // }
 
 
 module.exports = {
     save: save,
-    showAll: showAll
+    showAll: showAll,
+    //showServices : showServices
 }
