@@ -1,6 +1,5 @@
 const model = require("../models")
 
-
 // create service
 const addService = (req, res) => {
   if (req.file) {
