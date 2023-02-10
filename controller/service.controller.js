@@ -10,7 +10,8 @@ const addService = (req, res) => {
         image:img,
         slug:req.body.slug,
         userId:req.userData.id,
-        storeId:req.body.storeId
+        storeId:req.body.storeId,
+        categoryId:req.body.categoryId
     };
     const createService = model.Service.create(service)
       .then((result) => {
@@ -50,10 +51,14 @@ const addService = (req, res) => {
 
     model.Service.findAll({
         include : [
+          // {
+          //   as: "SubServicelist",
+          //   model : model.ServiceType,
+          // },
           {
-            as: "SubServicelist",
-            model : model.ServiceType,
-          }
+            as: "selectedcategory",
+            model : model.Category,
+          },
         ]
 
     })

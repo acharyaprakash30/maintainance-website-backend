@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.post("/", imageUpload.upload.single('image'),categoryController.save);
 router.get("/", categoryController.showAll);
+//router.get("/services", categoryController.showServices);
 
 
 module.exports = router;

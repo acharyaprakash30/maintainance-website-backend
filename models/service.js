@@ -20,7 +20,9 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.BLOB,
     slug: DataTypes.STRING,
     userId: DataTypes.INTEGER,
-    storeId : DataTypes.INTEGER
+    storeId : DataTypes.INTEGER,
+    categoryId : DataTypes.INTEGER
+
   }, {
     sequelize,
     modelName: 'Service',
@@ -29,6 +31,12 @@ module.exports = (sequelize, DataTypes) => {
     Service.hasMany(models.ServiceType, {
       as : "SubServicelist",
       foreignKey : "serviceId"
+    })
+  }
+  Service.associate = function (models){
+    Service.hasMany(models.Category, {
+      as : "selectedcategory",
+      foreignKey : "categoryId"
     })
   }
   return Service;
