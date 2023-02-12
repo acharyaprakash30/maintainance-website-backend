@@ -33,11 +33,11 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey : "serviceId"
     })
   }
-  Service.associate = function (models){
-    Service.hasMany(models.Category, {
-      as : "selectedcategory",
-      foreignKey : "categoryId"
-    })
-  }
+  // Service.associate = function (models){
+  //   Service.hasMany(models.Category, {
+  //     as : "selectedcategory",
+  //     foreignKey : "categoryId"
+  //   })
+  // }
   return Service;
 };
