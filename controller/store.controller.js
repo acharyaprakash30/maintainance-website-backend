@@ -12,6 +12,7 @@ function userInput(req, res){
         longitude: req.body.longitude,
         address : req.body.address,
         userId : req.body.userId,
+        contactNumber:req.body.contactNumber
          
     }
 
@@ -64,7 +65,9 @@ function editStoreData(req, res){
                 latitude : req.body.latitude,
                 longitude: req.body.longitude,
                 address : req.body.address,
-                userId : req.body.userId,      
+                userId : req.body.userId,    
+                contactNumber:req.body.contactNumber
+
             }
 
             storeData.update(updatedStoreData).then(result => { 

@@ -15,6 +15,9 @@ module.exports = {
       serviceId: {
         type: Sequelize.INTEGER
       },
+      price:{
+        type: Sequelize.INTEGER
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

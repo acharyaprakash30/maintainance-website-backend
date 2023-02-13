@@ -24,6 +24,9 @@ module.exports = {
       address: {
         type: Sequelize.STRING
       },
+      contactNumber: {
+        type: Sequelize.STRING
+      },
       userId: {
         type: Sequelize.INTEGER
       },

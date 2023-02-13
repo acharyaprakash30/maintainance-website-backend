@@ -8,7 +8,7 @@ function save(req,res){
     const category = {
         CategoryName : req.body.CategoryName,
         CategoryImage : img,
-        parentId : req.body.parentId
+        parentId : req.body.parentId == 'null' ? null : req.body.parentId
     }
     console.log(category);
 

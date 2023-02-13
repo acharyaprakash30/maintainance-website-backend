@@ -1,4 +1,6 @@
 const express = require('express');
+const path = require("path");
+const http = require("http");
 const bodyParser = require('body-parser');
 const cors = require("cors");
 const cookieParser = require('cookie-parser');
@@ -15,12 +17,12 @@ const {sequelize} = require("./models")
 const app = express();
 app.use(cors());
 
-// parse application/json
-app.use(bodyParser.json())
-app.use(cookieParser())
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(express.json({ limit: "50mb" }));
+app.use(cors());
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+app.use('/uploads', express.static(__dirname + '/uploads'));
 
-app.use('/uploads',express.static('uploads'))
 app.use('/user',user);
 app.use('/service',service)
 app.use('/userservice',userService)

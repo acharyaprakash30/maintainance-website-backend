@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Service.init({
     name: DataTypes.STRING,
-    image: DataTypes.BLOB,
+    image: DataTypes.STRING,
     slug: DataTypes.STRING,
     userId: DataTypes.INTEGER,
     storeId : DataTypes.INTEGER,
@@ -28,16 +28,20 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Service',
   });
   Service.associate = function (models){
+
     Service.hasMany(models.ServiceType, {
       as : "SubServicelist",
       foreignKey : "serviceId"
-    })
-  }
-  Service.associate = function (models){
-    Service.hasMany(models.Category, {
+    });
+    Service.belongsTo(models.Store, {
+      as : "serviceStore",
+      foreignKey : "storeId"
+    });
+    Service.belongsTo(models.Category, {
       as : "selectedcategory",
       foreignKey : "categoryId"
     })
   }
+
   return Service;
 };
