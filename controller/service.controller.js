@@ -1,7 +1,7 @@
 const model = require("../models")
 
 // create service
-const addService = (req, res) => {
+const addService = async(req, res) => {
   if (req.file) {
     var img = req.file.filename;
   }
@@ -13,11 +13,11 @@ const addService = (req, res) => {
         storeId:req.body.storeId,
         categoryId:req.body.categoryId
     };
-    const createService = model.Service.create(service)
+    await model.Service.create(service)
       .then((result) => {
         res.status(201).json({
           messege: "Service created successfully",
-          result:service,
+          result:result,
         });
       })
       .catch((error) => {
@@ -51,14 +51,14 @@ const addService = (req, res) => {
 
     model.Service.findAll({
         include : [
-          // {
-          //   as: "SubServicelist",
-          //   model : model.ServiceType,
-          // },
           {
             as: "selectedcategory",
             model : model.Category,
           },
+          {
+            as:"SubServicelist",
+            model:model.ServiceType
+          }
         ]
 
     })
@@ -152,4 +152,26 @@ const deleteService = (req, res) => {
       });
   };
   
-  module.exports={addService,index,show,updateService,deleteService}
+
+  //get service by categoryname/categoryId
+  const getserviceByCategory = async(req,res)=>{
+    try{
+      await model.Service.findAll({where:{categoryId:req.params.categoryId}}).then(data =>{
+        return res.status(200).json({
+          data
+        })
+      }).catch((err)=>{
+        return res.status(500).json({
+          error:err.message,
+          message:"Internal server error"
+        })
+      })
+    }
+    catch(err){
+      return res.status(500).json({
+        error:err.message
+      })
+    }
+
+  }
+  module.exports={addService,index,show,updateService,deleteService,getserviceByCategory}

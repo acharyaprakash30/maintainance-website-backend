@@ -19,7 +19,8 @@ module.exports = (sequelize, DataTypes) => {
     latitude: DataTypes.FLOAT,
     longitude: DataTypes.FLOAT,
     address: DataTypes.STRING,
-    userId: DataTypes.INTEGER
+    userId: DataTypes.INTEGER,
+    contactNumber:DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Store',
@@ -27,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
   Store.associate = function(models){
     Store.belongsTo(models.User, {
       as : "StoreData",
+      foreignKey: "userId"
+    });
+    Store.hasMany(models.Service, {
+      as : "StoreService",
       foreignKey: "userId"
     });
   }

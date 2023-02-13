@@ -13,7 +13,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       image: {
-        type: Sequelize.BLOB
+        type: Sequelize.STRING
       },
       slug: {
         type: Sequelize.STRING
@@ -25,7 +25,7 @@ module.exports = {
         type : Sequelize.INTEGER
       },
       categoryId : {
-        type : Sequelize.INTEGER
+        type : Sequelize.STRING
       },
 
 

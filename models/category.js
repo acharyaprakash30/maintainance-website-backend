@@ -5,7 +5,7 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Category extends Model {
     /**
-     * Helper method for defining associations.
+     * Helper method for defining assoiations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
@@ -16,13 +16,13 @@ module.exports = (sequelize, DataTypes) => {
   Category.init({
     CategoryName: DataTypes.STRING,
     CategoryImage: DataTypes.STRING,
-    parentId: DataTypes.INTEGER
+    parentId: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Category',
   });
   Category.associate = function (models){
-    Category.belongsTo(models.Service, {
+    Category.hasMany(models.Service, {
       as : "CategoryServices",
       foreignKey : "id"
     })
