@@ -76,7 +76,6 @@ const userInput = async (req, res) => {
     });
   }
 };
-
 function showdata(req, res) {
   models.Store.findAll({
     include : [
@@ -192,7 +191,32 @@ async function getPlaceByCoordinates(req, res) {
     });
   }
 
-  let allresult = await models.Store.findAll();
+  let allresult = await models.Store.findAll({
+    include : [
+      {
+          model : models.User,
+          as : "storeUser",
+          attributes : ["id", "name", "email", "contact", "gender"]
+
+      },
+      {
+        model : models.ServiceStore,
+        as : "Servicestore",
+        include:[
+        {
+          model : models.ServiceType,
+          as : "StoreServiceTypes",
+      },
+      {
+        model : models.Service,
+        as : "service",
+    },
+        ]
+
+    }
+  ]
+  });
+
 
   // check if there are any stores in the database
   if (!Array.isArray(allresult) || allresult.length === 0) {
@@ -217,6 +241,8 @@ async function getPlaceByCoordinates(req, res) {
       latitude: allresult[i].latitude,
       longitude: allresult[i].longitude,
       distance: parseFloat(distance.toFixed(2)) + " km",
+      Servicestore:allresult[i].Servicestore
+
     });
     async function getPlaceByCoordinates(req, res) {
       const givenLatitude = req.params.latitude;
@@ -287,133 +313,11 @@ async function getPlaceByCoordinates(req, res) {
   }
 }
 
-// async function getPlaceByCoordinates(req, res) {
-//     const givenLatitude = req.params.latitude;
-//     const givenLongitude = req.params.longitude;
-
-//     let allresult = await models.Store.findAll();
-
-//     if (!Array.isArray(allresult)) {
-//         return res.status(400).json({
-//             message: "No results found",
-//         });
-//     }
-
-//     let nearbyplaces = [];
-
-//     for (let i = 0; i < allresult.length; i++) {
-//         let itemdistance = geolib.getDistance({ latitude: allresult[i].latitude, longitude: allresult[i].longitude }, { latitude: givenLatitude, longitude: givenLongitude });
-//         let distance = geolib.convertDistance(itemdistance, "km");
-
-//         nearbyplaces.push({
-//             id: allresult[i].id,
-//             placeName: allresult[i].placeName,
-//             distance: parseFloat(distance.toFixed(2)) + " km"
-//         });
-//     }
-
-//     return res.status(200).json({
-//         result: nearbyplaces,
-//     });
-// }
-
-// async function getPlaceByCoordinates(req, res) {
-//     const givenLatitude = req.params.latitude;
-//     const givenLongitude = req.params.longitude;
-
-//     // console.log("========================================================")
-//     // console.log(givenLatitude)
-//     // console.log(givenLongitude)
-
-//     let allresult = await models.Store.findAll();
-//         if (!Array.isArray(allresult)) {
-//          return res.status(400).json({
-//              message: "No results found",
-//          });
-//      }
-//     let nearbyplaces = [];
-
-//     for (let i = 0; i < allresult.length; i++) {
-//         itemdistance = geolib.getDistance(
-//             { latitude: allresult[i].latitude, longitude: allresult[i].longitude },
-//             { latitude: givenLatitude, longitude: givenLongitude }
-//         );
-
-//         nearbyplaces.push({
-//             id: allresult[i].id,
-//             placeName: allresult[i].placeName,
-//             distance: itemdistance
-//         });
-//     }
-
-//     if (!nearbyplaces) {
-//         return res.status(400).json({
-//             message: "Nothing Nearby!!",
-//         });
-//     } else {
-//         return res.status(200).json({
-//             result: nearbyplaces,
-//         });
-//     }
-// }
-
-// async function getPlaceByCoordinates(req, res) {
-//     const givenLatitude = req.params.latitude;
-
-//     const givenLongitude = req.params.longitude;
-
-//     if (!givenLatitude || !givenLongitude) {
-//         return res.status(400).json({
-//             message: "Latitude and longitude are required",
-//         });
-//     }
-
-//     console.log("========================================================================================");
-//     console.log(givenLatitude);
-//     console.log(givenLongitude);
-
-//     // fetch all stores from the database
-//     let allStores = await models.Store.findAll();
-
-//     // check if there are any stores in the database
-//     if (!Array.isArray(allStores) || allStores.length === 0) {
-//         return res.status(400).json({
-//             message: "No stores found in the database",
-//         });
-//     }
-
-//     // array to store nearby places
-//     let nearbyplaces = [];
-
-//     // loop through all stores and calculate the distance from the given coordinates
-//     for (let i = 0; i < allStores.length; i++) {
-
-//         var distance = geolib.getDistance(
-//             { latitude: allStores[i].latitude, longitude: allStores[i].longitude },
-//             { latitude: givenLatitude, longitude: givenLongitude }
-//         );
-
-//         nearbyplaces.push({
-//             id: allStores[i].id,
-//             name: allStores[i].name,
-//             distance: parseFloat(distance.toFixed(2)) + " km"
-//         });
-
-//     }
-
-//     // sort the nearby places based on the distance
-//     nearbyplaces.sort((a, b) => a.distance - b.distance);
-
-//     // return the nearest place
-//     return res.status(200).json({
-//         result: nearbyplaces[0],
-//     });
-// }
 
 module.exports = {
   userInput: userInput,
   showdata: showdata,
   editStoreData: editStoreData,
   destroyStoreData: destroyStoreData,
-  getPlaceByCoordinates: getPlaceByCoordinates,
+  getPlaceByCoordinates: getPlaceByCoordinates
 };
