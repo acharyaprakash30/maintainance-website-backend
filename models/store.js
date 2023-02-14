@@ -27,13 +27,21 @@ module.exports = (sequelize, DataTypes) => {
   });
   Store.associate = function(models){
     Store.belongsTo(models.User, {
-      as : "StoreData",
+      as : "storeUser",
       foreignKey: "userId"
     });
-    Store.hasMany(models.Service, {
-      as : "StoreService",
-      foreignKey: "userId"
-    });
+    Store.hasMany(models.ServiceStore, {
+      as : "Servicestore",
+      foreignKey : "storeId"
+    })
+    // Store.belongsTo(models.ServiceStore, {
+    //   as : "storeservices",
+    //   foreignKey: "storeId"
+    // });
+    // Store.hasMany(models.Service, {
+    //   as : "StoreService",
+    //   foreignKey: "userId"
+    // });
   }
   return Store;
 };
