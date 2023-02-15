@@ -6,101 +6,158 @@ const userInput = async (req, res) => {
   try {
     let t;
     await sequelize.transaction(async (t) => {
-        if (req.file) {
-          var img = req.file.path;
-        }
-        const storeData = {
-          name: req.body.name,
-          image: img,
-          latitude: req.body.latitude,
-          longitude: req.body.longitude,
-          address: req.body.address,
-          userId: req.body.userId,
-          contactNumber: req.body.contactNumber,
-        };
-        const storeService = JSON.parse(req.body.storeService);
-        const savedStore = await models.Store.create(storeData,{ transaction: t });
+      if (req.file) {
+        var img = req.file.path;
+      }
+      const storeData = {
+        name: req.body.name,
+        image: img,
+        latitude: req.body.latitude,
+        longitude: req.body.longitude,
+        address: req.body.address,
+        userId: req.body.userId,
+        contactNumber: req.body.contactNumber,
+      };
+      const storeService = JSON.parse(req.body.storeService);
+      const savedStore = await models.Store.create(storeData, {
+        transaction: t,
+      });
+      let savedOrderItemArray = [];
+      await Promise.all(
+        storeService.map(async (item) => {
+          const service = await models.Service.findByPk(item.serviceId);
+          if (!service) {
+            return res.status(400).json({
+              message: "service item doesnot exist",
+            });
+          }
+          let serviceDatas = {
+            storeId: savedStore.id,
+            serviceId: item.serviceId,
+          };
+          let savedOrderItem = await models.ServiceStore.create(serviceDatas, {
+            transaction: t,
+          });
+          let itemObject = {
+            itemId: savedOrderItem.id,
+          };
+          savedOrderItemArray.push(itemObject);
+        })
+      );
 
-        await Promise.all(
-                storeService.map(async (item) => {
-                  const service = await models.Service.findByPk(item.serviceId);
-                  if (!service) {
-                    return res.status(400).json({
-                      message: "service item doesnot exist",
-                    });
-                  }
-                  let serviceDatas = {
-                    storeId: savedStore.id,
-                    serviceId:item.serviceId,
-                    serviceTypeId: item.serviceType,
-                    price: item.price,
-                  };
-                  let savedOrderItem = await models.ServiceStore.create(serviceDatas,{ transaction: t });
-                })
-              );
-              return res.status(200).json({
-                message: "store created sucessfully",
-              });
+      const servicesArrayTemp = serviceOrderToFindArray(savedOrderItemArray,storeService);
 
-    
-        // const savedStore = await models.Store.create(storeData).then(async(data)=>{
-        //     await Promise.all(
-        //         storeService.map(async (item) => {
-        //           const service = await models.Service.findByPk(item.serviceId);
-        //           if (!service) {
-        //             return res.status(400).json({
-        //               message: "service item doesnot exist",
-        //             });
-        //           }
-        //           let serviceDatas = {
-        //             storeId: data.id,
-        //             serviceId:item.serviceId,
-        //             serviceTypeId: item.serviceType,
-        //             price: item.price,
-        //           };
-        //           let savedOrderItem = await models.ServiceStore.create(serviceDatas);
-        //         })
-        //       );
-            //   return res.status(200).json({
-            //     message: "happy",
-            //   });
-        // }).catch((err)=>{
-        //     return res.status(500).json({
-        //         mesasge: err.message,
-        //       });
-        // })
-    });    
+      await Promise.all(
+        servicesArrayTemp.map(async (item) => {
+          const serviceFeatures = await models.ServiceType.findByPk(item.serviceFeatureId);
+          if (!serviceFeatures) {
+            return res.status(400).json({
+              message: "service feature item doesnot exist",
+            });
+          } 
+          let serviceDatas = {
+            serviceFeatureId:item.serviceFeatureId,
+            price:item.price,
+            storeServiceId:item.storeServiceId
+          };
+          let savedOrderItemFeature = await models.StoreServiceFeature.create(serviceDatas, {
+            transaction: t,
+          });
+        })
+      );
+      return res.status(200).json({
+        message: "store created sucessfully",
+      });
+    });
   } catch (err) {
     return res.status(500).json({
       mesasge: err.message,
     });
   }
 };
+
+function serviceOrderToFindArray(savedOrderItemArray,storeService){
+
+      var servicesArrayTemp = [];
+  
+      for(let i=0; i<storeService.length;i++){
+        let storeFeatureTest = storeService[i].serviceTypeFeature;
+          for(let j = 0;j<storeFeatureTest.length;j++){
+            let services = {
+              serviceFeatureId: storeFeatureTest[j].serviceFeatureId,
+              price: storeFeatureTest[j].price,
+              storeServiceId: savedOrderItemArray[i].itemId,
+            };
+            servicesArrayTemp.push(services)
+          }
+      }
+      return servicesArrayTemp;
+        // storeService.map((item, i) => {
+
+        //   item.serviceTypeFeature.map(async (serviceType) => {
+        //     let serviceFeatures = await models.ServiceType.findByPk(
+        //       serviceType.serviceFeatureId
+        //     );
+        //     if (!serviceFeatures) {
+        //       return res.status(400).json({
+        //         message: "service item doesnot exist",
+        //       });
+        //     }
+            // let services = {
+            //   serviceFeatureId: serviceType.serviceFeatureId,
+            //   price: serviceType.price,
+            //   storeServiceId: savedOrderItemArray[i].itemId,
+            // };
+        //     console.log("fuck",services);
+        //     // servicesArrayTemp.push(services);
+        //     // const savedStoreItems = await models.StoreServiceFeature.create(services, {
+        //     //   transaction: t,
+        //     // });
+        //   });
+        // })
+        // console.log("noo",servicesArrayTemp);
+
+}
+
+
+
+
+
+
 function showdata(req, res) {
   models.Store.findAll({
-    include : [
-            {
-                model : models.User,
-                as : "storeUser",
-                attributes : ["id", "name", "email", "contact", "gender"]
-
-            },
-            {
-              model : models.ServiceStore,
-              as : "Servicestore",
-              include:[
-              {
-                model : models.ServiceType,
-                as : "StoreServiceTypes",
-            },
-            {
-              model : models.Service,
-              as : "service",
+    include: [
+      {
+        model: models.User,
+        as: "user",
+        attributes: ["id", "name", "email", "contact", "gender"],
+      },
+      {
+        model: models.ServiceStore,
+        as: "Servicestore",
+        include: [
+          {
+            model: models.Service,
+            as: "service",
           },
-              ]
+        ],
+      },
+      //   {
+      //     model : models.ServiceStore,
+      //     as : "Servicestore",
+      //     include:[
+      //     {
+      //       model : models.ServiceType,
+      //       as : "StoreServiceTypes",
+      //   },
+      //   {
+      //     model : models.Service,
+      //     as : "service",
+      // },
+      //     ]
 
-          }
-        ]
+      // }
+    ],
   })
     .then((result) => {
       res.status(201).json(result);
@@ -156,7 +213,6 @@ function editStoreData(req, res) {
       });
     });
 }
-
 function destroyStoreData(req, res) {
   const id = req.params.id;
 
@@ -179,7 +235,6 @@ function destroyStoreData(req, res) {
       });
     });
 }
-
 async function getPlaceByCoordinates(req, res) {
   const givenLatitude = req.params.latitude;
 
@@ -192,41 +247,35 @@ async function getPlaceByCoordinates(req, res) {
   }
 
   let allresult = await models.Store.findAll({
-    include : [
+    include: [
       {
-          model : models.User,
-          as : "storeUser",
-          attributes : ["id", "name", "email", "contact", "gender"]
-
+        model: models.User,
+        as: "storeUser",
+        attributes: ["id", "name", "email", "contact", "gender"],
       },
       {
-        model : models.ServiceStore,
-        as : "Servicestore",
-        include:[
-        {
-          model : models.ServiceType,
-          as : "StoreServiceTypes",
+        model: models.ServiceStore,
+        as: "Servicestore",
+        include: [
+          {
+            model: models.ServiceType,
+            as: "StoreServiceTypes",
+          },
+          {
+            model: models.Service,
+            as: "service",
+          },
+        ],
       },
-      {
-        model : models.Service,
-        as : "service",
-    },
-        ]
-
-    }
-  ]
+    ],
   });
-
-
   // check if there are any stores in the database
   if (!Array.isArray(allresult) || allresult.length === 0) {
     return res.status(400).json({
       message: "No stores found in the database",
     });
   }
-
   let nearbyplaces = [];
-
   for (let i = 0; i < allresult.length; i++) {
     itemdistance = geolib.getDistance(
       { latitude: allresult[i].latitude, longitude: allresult[i].longitude },
@@ -241,8 +290,7 @@ async function getPlaceByCoordinates(req, res) {
       latitude: allresult[i].latitude,
       longitude: allresult[i].longitude,
       distance: parseFloat(distance.toFixed(2)) + " km",
-      Servicestore:allresult[i].Servicestore
-
+      Servicestore: allresult[i].Servicestore,
     });
     async function getPlaceByCoordinates(req, res) {
       const givenLatitude = req.params.latitude;
@@ -313,11 +361,27 @@ async function getPlaceByCoordinates(req, res) {
   }
 }
 
-
 module.exports = {
   userInput: userInput,
   showdata: showdata,
   editStoreData: editStoreData,
   destroyStoreData: destroyStoreData,
-  getPlaceByCoordinates: getPlaceByCoordinates
+  getPlaceByCoordinates: getPlaceByCoordinates,
 };
+
+// [
+//   {
+//     "serviceId":1,
+//     "serviceTypeFeature":[
+//       {"serviceFeatureId":1,"price":10},
+//       {"serviceFeatureId":2,"price":20}
+//     ]
+//   },
+//   {
+//     "serviceId":2,
+//     "serviceTypeFeature":[
+//       {"serviceFeatureId":3,"price":10},
+//       {"serviceFeatureId":4,"price":20}
+//     ]
+//   }
+// ]

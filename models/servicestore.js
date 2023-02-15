@@ -15,9 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   ServiceStore.init({
     serviceId: DataTypes.INTEGER,
-    storeId: DataTypes.INTEGER,
-    serviceTypeId: DataTypes.INTEGER,
-    price:DataTypes.INTEGER
+    storeId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'ServiceStore',
@@ -28,16 +26,20 @@ module.exports = (sequelize, DataTypes) => {
       as : "service",
       foreignKey : "serviceId"
     });
-
-    ServiceStore.belongsTo(models.Store, {
-      as : "StoreData",
-      foreignKey : "storeId"
+    ServiceStore.hasMany(models.StoreServiceFeature, {
+      as : "serviceStoreFeatures",
+      foreignKey : "storeServiceId"
     });
 
-    ServiceStore.belongsTo(models.ServiceType, {
-      as : "StoreServiceTypes",
-      foreignKey : "serviceTypeId"
-    });
+    // ServiceStore.belongsTo(models.Store, {
+    //   as : "StoreData",
+    //   foreignKey : "storeId"
+    // });
+
+    // ServiceStore.belongsTo(models.ServiceType, {
+    //   as : "StoreServiceTypes",
+    //   foreignKey : "serviceTypeId"
+    // });
     
   }
 
