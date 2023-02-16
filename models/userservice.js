@@ -19,7 +19,8 @@ module.exports = (sequelize, DataTypes) => {
   userService.init({
     user_id: DataTypes.INTEGER,
     service_id: DataTypes.INTEGER,
-    payment_id: DataTypes.INTEGER
+    payment_id: DataTypes.INTEGER,
+    fiscal_year_id : DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'userService',

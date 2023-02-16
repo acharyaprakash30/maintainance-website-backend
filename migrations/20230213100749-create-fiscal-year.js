@@ -2,26 +2,20 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('userServices', {
+    await queryInterface.createTable('Fiscal_years', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      user_id: {
-        type: Sequelize.INTEGER
+      year: {
+        type: Sequelize.STRING
       },
-      service_id: {
-        type: Sequelize.INTEGER
+      status: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       },
-      payment_id: {
-        type: Sequelize.INTEGER
-      },
-      fiscal_year_id: {
-        type: Sequelize.INTEGER
-      },
-
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -33,6 +27,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('userServices');
+    await queryInterface.dropTable('Fiscal_years');
   }
 };
