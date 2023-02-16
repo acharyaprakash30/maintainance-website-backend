@@ -30,17 +30,6 @@ module.exports = (sequelize, DataTypes) => {
       as : "serviceStoreFeatures",
       foreignKey : "storeServiceId"
     });
-
-    // ServiceStore.belongsTo(models.Store, {
-    //   as : "StoreData",
-    //   foreignKey : "storeId"
-    // });
-
-    // ServiceStore.belongsTo(models.ServiceType, {
-    //   as : "StoreServiceTypes",
-    //   foreignKey : "serviceTypeId"
-    // });
-    
   }
 
   return ServiceStore;

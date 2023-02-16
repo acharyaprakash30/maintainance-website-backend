@@ -2,6 +2,26 @@ const models = require("../models");
 const geolib = require("geolib");
 const { sequelize } = require("../models");
 
+//this user input store the data in three databases 1.Store 2.ServiceStore 3.StoreServiceFeature
+//in first promise function we save the data of store and service store data in database
+//in second promise function we first extract the array in which we have a required array which need to store in database
+//data are stored in this format:
+// [
+//   {
+//     "serviceId":1,
+//     "serviceTypeFeature":[
+//       {"serviceFeatureId":1,"price":10},
+//       {"serviceFeatureId":2,"price":20}
+//     ]
+//   },
+//   {
+//     "serviceId":2,
+//     "serviceTypeFeature":[
+//       {"serviceFeatureId":3,"price":10},
+//       {"serviceFeatureId":4,"price":20}
+//     ]
+//   }
+// ]
 const userInput = async (req, res) => {
   try {
     let t;
@@ -44,9 +64,7 @@ const userInput = async (req, res) => {
           savedOrderItemArray.push(itemObject);
         })
       );
-
       const servicesArrayTemp = serviceOrderToFindArray(savedOrderItemArray,storeService);
-
       await Promise.all(
         servicesArrayTemp.map(async (item) => {
           const serviceFeatures = await models.ServiceType.findByPk(item.serviceFeatureId);
@@ -76,6 +94,7 @@ const userInput = async (req, res) => {
   }
 };
 
+//this function was called from userinput which return a array for storeservicefeature model
 function serviceOrderToFindArray(savedOrderItemArray,storeService){
 
       var servicesArrayTemp = [];
@@ -119,11 +138,6 @@ function serviceOrderToFindArray(savedOrderItemArray,storeService){
 
 }
 
-
-
-
-
-
 function showdata(req, res) {
   models.Store.findAll({
     include: [
@@ -140,23 +154,18 @@ function showdata(req, res) {
             model: models.Service,
             as: "service",
           },
+          {
+            model: models.StoreServiceFeature,
+            as: "serviceStoreFeatures",
+            include:[
+              {
+                model: models.ServiceType,
+                as: "serviceType",
+              },
+            ]
+          },
         ],
       },
-      //   {
-      //     model : models.ServiceStore,
-      //     as : "Servicestore",
-      //     include:[
-      //     {
-      //       model : models.ServiceType,
-      //       as : "StoreServiceTypes",
-      //   },
-      //   {
-      //     model : models.Service,
-      //     as : "service",
-      // },
-      //     ]
-
-      // }
     ],
   })
     .then((result) => {
@@ -237,7 +246,6 @@ function destroyStoreData(req, res) {
 }
 async function getPlaceByCoordinates(req, res) {
   const givenLatitude = req.params.latitude;
-
   const givenLongitude = req.params.longitude;
 
   if (!givenLatitude || !givenLongitude) {
@@ -245,12 +253,11 @@ async function getPlaceByCoordinates(req, res) {
       message: "Latitude and longitude are required",
     });
   }
-
   let allresult = await models.Store.findAll({
     include: [
       {
         model: models.User,
-        as: "storeUser",
+        as: "user",
         attributes: ["id", "name", "email", "contact", "gender"],
       },
       {
@@ -258,12 +265,18 @@ async function getPlaceByCoordinates(req, res) {
         as: "Servicestore",
         include: [
           {
-            model: models.ServiceType,
-            as: "StoreServiceTypes",
-          },
-          {
             model: models.Service,
             as: "service",
+          },
+          {
+            model: models.StoreServiceFeature,
+            as: "serviceStoreFeatures",
+            include:[
+              {
+                model: models.ServiceType,
+                as: "serviceType",
+              },
+            ]
           },
         ],
       },
@@ -281,9 +294,7 @@ async function getPlaceByCoordinates(req, res) {
       { latitude: allresult[i].latitude, longitude: allresult[i].longitude },
       { latitude: givenLatitude, longitude: givenLongitude }
     );
-
     let distance = geolib.convertDistance(itemdistance, "km");
-
     nearbyplaces.push({
       id: allresult[i].id,
       Storename: allresult[i].name,
@@ -368,20 +379,3 @@ module.exports = {
   destroyStoreData: destroyStoreData,
   getPlaceByCoordinates: getPlaceByCoordinates,
 };
-
-// [
-//   {
-//     "serviceId":1,
-//     "serviceTypeFeature":[
-//       {"serviceFeatureId":1,"price":10},
-//       {"serviceFeatureId":2,"price":20}
-//     ]
-//   },
-//   {
-//     "serviceId":2,
-//     "serviceTypeFeature":[
-//       {"serviceFeatureId":3,"price":10},
-//       {"serviceFeatureId":4,"price":20}
-//     ]
-//   }
-// ]
