@@ -9,14 +9,14 @@ const { sequelize } = require("../models");
 // [
 //   {
 //     "serviceId":1,
-//     "serviceTypeFeature":[
+//     "serviceTypeFeature"🙁
 //       {"serviceFeatureId":1,"price":10},
 //       {"serviceFeatureId":2,"price":20}
 //     ]
 //   },
 //   {
 //     "serviceId":2,
-//     "serviceTypeFeature":[
+//     "serviceTypeFeature"🙁
 //       {"serviceFeatureId":3,"price":10},
 //       {"serviceFeatureId":4,"price":20}
 //     ]
@@ -247,12 +247,14 @@ function destroyStoreData(req, res) {
 async function getPlaceByCoordinates(req, res) {
   const givenLatitude = req.params.latitude;
   const givenLongitude = req.params.longitude;
+  const serviceId = req.params.serviceId;
 
-  if (!givenLatitude || !givenLongitude) {
+  if (!givenLatitude || !givenLongitude || !serviceId) {
     return res.status(400).json({
-      message: "Latitude and longitude are required",
+      message: "Latitude ,longitude and service are required",
     });
   }
+
   let allresult = await models.Store.findAll({
     include: [
       {
@@ -279,6 +281,10 @@ async function getPlaceByCoordinates(req, res) {
             ]
           },
         ],
+        where:{
+          serviceId:serviceId
+        }
+        
       },
     ],
   });
@@ -300,7 +306,9 @@ async function getPlaceByCoordinates(req, res) {
       Storename: allresult[i].name,
       latitude: allresult[i].latitude,
       longitude: allresult[i].longitude,
+      image: allresult[i].image,
       distance: parseFloat(distance.toFixed(2)) + " km",
+      address:allresult[i].address,
       Servicestore: allresult[i].Servicestore,
     });
     async function getPlaceByCoordinates(req, res) {
@@ -371,29 +379,6 @@ async function getPlaceByCoordinates(req, res) {
     });
   }
 }
-<<<<<<< HEAD
- 
-
-    }
-         // sort the nearby places based on the distance
-        nearbyplaces.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
-
-
-
-    if (!nearbyplaces) {
-        return res.status(400).json({
-            message: "Nothing Nearby!!",
-        });
-    } else {
-        return res.status(200).json({
-            message : " Success",
-            result: nearbyplaces,
-        });
-    }
-}
-
-=======
->>>>>>> dca51b5845f15f354ac48bb485bdd3694f4deec9
 
 module.exports = {
   userInput: userInput,
@@ -402,3 +387,12 @@ module.exports = {
   destroyStoreData: destroyStoreData,
   getPlaceByCoordinates: getPlaceByCoordinates,
 };
+
+
+
+
+
+
+
+
+
