@@ -247,12 +247,14 @@ function destroyStoreData(req, res) {
 async function getPlaceByCoordinates(req, res) {
   const givenLatitude = req.params.latitude;
   const givenLongitude = req.params.longitude;
+  const serviceId = req.params.serviceId;
 
-  if (!givenLatitude || !givenLongitude) {
+  if (!givenLatitude || !givenLongitude || !serviceId) {
     return res.status(400).json({
-      message: "Latitude and longitude are required",
+      message: "Latitude ,longitude and service are required",
     });
   }
+
   let allresult = await models.Store.findAll({
     include: [
       {
@@ -279,6 +281,10 @@ async function getPlaceByCoordinates(req, res) {
             ]
           },
         ],
+        where:{
+          serviceId:serviceId
+        }
+        
       },
     ],
   });
@@ -300,7 +306,9 @@ async function getPlaceByCoordinates(req, res) {
       Storename: allresult[i].name,
       latitude: allresult[i].latitude,
       longitude: allresult[i].longitude,
+      image: allresult[i].image,
       distance: parseFloat(distance.toFixed(2)) + " km",
+      address:allresult[i].address,
       Servicestore: allresult[i].Servicestore,
     });
     async function getPlaceByCoordinates(req, res) {
