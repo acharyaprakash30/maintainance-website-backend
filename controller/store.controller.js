@@ -9,14 +9,14 @@ const { sequelize } = require("../models");
 // [
 //   {
 //     "serviceId":1,
-//     "serviceTypeFeature":[
+//     "serviceTypeFeature"🙁
 //       {"serviceFeatureId":1,"price":10},
 //       {"serviceFeatureId":2,"price":20}
 //     ]
 //   },
 //   {
 //     "serviceId":2,
-//     "serviceTypeFeature":[
+//     "serviceTypeFeature"🙁
 //       {"serviceFeatureId":3,"price":10},
 //       {"serviceFeatureId":4,"price":20}
 //     ]
@@ -387,3 +387,12 @@ module.exports = {
   destroyStoreData: destroyStoreData,
   getPlaceByCoordinates: getPlaceByCoordinates,
 };
+
+
+
+
+
+
+
+
+
