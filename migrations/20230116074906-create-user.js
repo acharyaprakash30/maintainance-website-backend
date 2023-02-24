@@ -27,9 +27,10 @@ module.exports = {
       image: {
         type: Sequelize.BLOB
       },
-      IsAdmin:{
-        type: Sequelize.BOOLEAN,
-        defaultValue:false
+      role:{
+        type: Sequelize.INTEGER,
+        defaultValue:1 //1 is normal user 2. super admin 3.admin  4. vendor 5.deliveryAgent
+
       },
       createdAt: {
         allowNull: false,

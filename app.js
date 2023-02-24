@@ -13,6 +13,7 @@ const categoryRoute = require('./routes/category.route');
 const serviceTypeRoute =  require('./routes/serviceType.route'); //pp
 const storeRoute = require('./routes/store.route');
 const fiscal_yearRoute = require('./routes/fiscal_year.route');
+const roleRoute = require('./routes/role.route');
 const {sequelize} = require("./models")
 
 const app = express();
@@ -33,6 +34,7 @@ app.use('/category', categoryRoute);
 app.use('/servicetype', serviceTypeRoute);
 app.use('/store', storeRoute);
 app.use('/fiscalyear', fiscal_yearRoute);
+app.use('/role', roleRoute);
 
 
 // sequelize.sync({force:true}).then((result)=>{
