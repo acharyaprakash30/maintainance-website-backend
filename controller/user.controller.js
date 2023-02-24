@@ -204,6 +204,40 @@ const show = (req, res) => {
     });
 };
 
+const updateRole = (req,res) => {
+  const id = req.params.id;
+
+  model.User.findByPk(id).then(result => {
+    if(result){
+      updatedRole ={
+        role: req.body.role
+      }
+      model.User.update(updatedRole, {where: {id:id}} ).then(result =>{
+        res.status(201).json({
+          message : "User Role updated!!",
+          result : updatedRole
+        });
+      }).catch(error => {
+        res.status(501).json({
+          message : "User cant be updated",
+          error: error
+        });
+      });
+
+    }else{
+      res.status(501).json({
+        message: "User with id " + id +"is not valid"
+      });
+    }
+  }).catch(error => {
+    res.status(501).json({
+      message: "Something went wrong!!",
+      error: error
+    });
+  });
+
+}
+
 
 
 
@@ -214,6 +248,7 @@ module.exports = {
   deleteUser,
   index,
   show,
-  editProfile
+  editProfile,
+  updateRole
 
 };
