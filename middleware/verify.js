@@ -6,6 +6,8 @@ dotenv.config();
 
 const verification = (req,res,next)=>{
     try{
+      console.log("=========================================================",req.headers.authorization);
+
         const token = req.headers.authorization.split(" ")[1];
         const decoded = jwt.verify(token, process.env.VERIFY_SEC);
         req.userData = decoded

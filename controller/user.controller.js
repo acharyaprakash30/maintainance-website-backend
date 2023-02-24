@@ -57,8 +57,9 @@ const login = (req, res) => {
           
           const verify = jwt.sign(
             {
-            user:user.name,
-            id:user.id
+            name:user.name,
+            id:user.id,
+            email:user.email,
           },process.env.VERIFY_SEC,
           {expiresIn:'7d'},
           
