@@ -28,9 +28,8 @@ module.exports = {
         type: Sequelize.BLOB
       },
       role:{
-        type: Sequelize.INTEGER,
-        defaultValue:1 //1 is normal user 2. super admin 3.admin  4. vendor 5.deliveryAgent
-
+        type: Sequelize.ENUM("SuperAdmin", "Admin", "UserOnly"), 
+        defaultValue: "UserOnly"
       },
       createdAt: {
         allowNull: false,

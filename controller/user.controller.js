@@ -7,13 +7,16 @@ const jwt = require("jsonwebtoken")
 dotenv.config();
 //creating user
 const create = (req, res) => {
+  if (req.file) {
+    var img = req.file.filename;
+  }
       const newUser = {
         email:req.body.email,
         name: req.body.name,
         contact: req.body.contact,
         password:req.body.password,
         gender: req.body.gender,
-        image:req.file ? req.file:null
+        image:req.file ? img:null
       };
     
       if(newUser.password === req.body.confirmPassword){
@@ -60,6 +63,7 @@ const login = (req, res) => {
             name:user.name,
             id:user.id,
             email:user.email,
+            role:user.role
           },process.env.VERIFY_SEC,
           {expiresIn:'7d'},
           
@@ -238,9 +242,6 @@ const updateRole = (req,res) => {
 
 }
 
-
-
-
 module.exports = {
   create,
   login,
@@ -250,5 +251,4 @@ module.exports = {
   show,
   editProfile,
   updateRole
-
 };
