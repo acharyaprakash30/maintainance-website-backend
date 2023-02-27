@@ -53,6 +53,7 @@ const create = (req, res) => {
 //user login
 const login = (req, res) => {
   model.User.findOne({ where: { email: req.body.email } })
+  // console.log("................")
   .then((user) => {
     if(user){
       bcrypt.compare(req.body.password,user.password,(err,result)=>{
@@ -63,7 +64,7 @@ const login = (req, res) => {
             name:user.name,
             id:user.id,
             email:user.email,
-            role:user.role
+            // role:user.role
           },process.env.VERIFY_SEC,
           {expiresIn:'7d'},
           
@@ -90,7 +91,7 @@ const login = (req, res) => {
     .catch((error) => {
       res.status(500).json({
         messege: "Something went wrong",
-        error
+        error:error
       });
     });
 };

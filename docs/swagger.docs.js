@@ -9,16 +9,16 @@ module.exports=
           },
           servers:[{
             url: 'http://localhost:5000',
-          }]
-          // components: {
-          //   securitySchemes: {
-          //     jwt: {  
-          //       type: 'http',
-          //       scheme: 'bearer',
-          //       bearerFormat: 'JWT',
-          //     },
-          //   },
-          // },
+          }],
+          components: {
+            securitySchemes: {
+              jwt: {  
+                type: 'http',
+                scheme: 'bearer',
+                bearerFormat: 'JWT',
+              },
+            },
+          }
         },
         apis: ['routes/*.js'],
       };
