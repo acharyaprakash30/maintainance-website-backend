@@ -25,7 +25,7 @@ module.exports = {
         type: Sequelize.ENUM("Male", "Female", "Others"), 
       },
       image: {
-        type: Sequelize.BLOB
+        type: Sequelize.STRING
       },
       role:{
         type: Sequelize.ENUM("SuperAdmin", "Admin", "UserOnly"), 

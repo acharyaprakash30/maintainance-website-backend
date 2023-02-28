@@ -3,7 +3,7 @@ const model = require("../models")
 // create service
 const addService = async(req, res) => {
   if (req.file) {
-    var img = req.file.filename;
+    var img = req.file.path;
   }
     const service = {
         name:req.body.name,

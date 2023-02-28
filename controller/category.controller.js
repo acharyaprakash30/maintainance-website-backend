@@ -3,7 +3,7 @@ const models = require('../models');
 function save(req,res){
     
     if (req.file) {
-        var img = req.file.filename;
+        var img = req.file.path;
       }
     const category = {
         CategoryName : req.body.CategoryName,
@@ -25,7 +25,6 @@ function save(req,res){
     });
 }
 
-//Showing all the category 
 const showAll = async (req,res)=>{
     try{
         const AllCategory = await models.Category.findAll({
@@ -50,6 +49,7 @@ const showAll = async (req,res)=>{
         })
     }
 }
+
 
 const AllCategories = async (data,parentId = null) => {
     
@@ -76,31 +76,47 @@ let categoryList = [];
      return categoryList;
     }
  
-    // function showServices(req, res) {
-    //     const id  = req.params.id;
+const  showCategoryById = async(req, res) => {
+    try{
+        const id = req.params.id;
+        const AllCategory = await models.Category.findByPk(id);
+        if(AllCategory){
+            res.status(200).json({
+                data:AllCategory
+            })
+        }
+        else{
+            res.status(404).json({
+                message:"Category not found"
+            })
+        }
 
-    //     models.Category.findByPk(id, {
-    //         include : [
-    //             {
-    //                 model : models.Service,
-    //                 as : "CategoryServices",
-    //                 attributes : [ "name",]
-    //             }
-    //         ]
-    //     }).then(result => {
-    //      res.send(200).json(result)
-    //     }).catch(error => {
-    //         res.status(500).json({
-    //             message : "Something went wrong",
-    //             error : error
-    //         });
-    //     });
+    }
+    catch(err){
+        res.status(500).json({
+            error:err.message
+        })
+    }
 
-    // }
+    }
+
+    const showCategories = (req, res) => {
+        models.Category.findAll().then(result => {
+            res.status(201).json(result);
+        }).catch(error => {
+            res.status(501).json({
+                message:"Something went wrong!!",
+                error : error
+            });
+            
+        });
+    }
+
 
 
 module.exports = {
     save: save,
     showAll: showAll,
-    //showServices : showServices
+    showCategoryById : showCategoryById,
+    showCategories : showCategories
 }
