@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.post("/", imageUpload.upload.single('image'),categoryController.save);
 router.get("/", categoryController.showAll);
+router.patch("/:id",imageUpload.upload.single('image'), categoryController.updateCategoryById);
+router.delete("/:id",categoryController.deleteCategory);
 router.get("/all", categoryController.showCategories);
 router.get("/:id", categoryController.showCategoryById);
 

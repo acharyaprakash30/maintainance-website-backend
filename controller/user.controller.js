@@ -103,8 +103,6 @@ const editUser = (req, res) => {
   model.User.findOne({ where: { id: req.params.id } })
     .then(async (exist) => {
       if (exist) {
-
-        console.log("req.body.items===============",req.body);
         if (req.file) {
           let oldFileName = "";
           oldFileName = exist.image;

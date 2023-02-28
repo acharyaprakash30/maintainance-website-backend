@@ -112,11 +112,83 @@ const  showCategoryById = async(req, res) => {
         });
     }
 
+//update user
+const updateCategoryById = (req, res) => {
+    models.Category.findOne({ where: { id: req.params.id } })
+      .then(async (exist) => {
+
+        if (exist) {
+          if (req.file) {
+            let oldFileName = "";
+            oldFileName = exist.image;
+            if (oldFileName) {
+              fs.unlinkSync(oldFileName);
+            }
+            var img = req.file.path;
+          }
+
+          const editCategory = {
+            CategoryName:req.body.CategoryName,
+            parentId:req.body.parentId,
+            CategoryImage: img,
+          };
+
+          models.Category.update(editCategory, { where: { id: req.params.id } })
+            .then((update) => {
+              res.status(200).json({
+                messege: "category updated succcessfully!",
+                updated: update,
+              });
+            })
+            .catch((err) => {
+              res.status(500).json({
+                messege: "something went wrong!",
+                err,
+              });
+            });
+        } else {
+          res.status(401).json({
+            messege: "user not found",
+          });
+        }
+      })
+      .catch((err) => {
+        res.status(500).json({
+          messege: "something went wrong!",
+          err,
+        });
+      });
+  };
+
+  //delete user
+const deleteCategory = (req, res) => {
+    models.Category.destroy({ where: { id: req.params.id } })
+      .then((result) => {
+        if (result) {
+          res.status(200).json({
+            messege: `category deleted`,
+            id:req.params.id
+          });
+        } else {
+          res.status(404).json({
+            messege: `category not found`,
+          });
+        }
+      })
+      .catch((err) => {
+        res.status(500).json({
+          messege: "Something went wrong",
+        });
+      });
+  };
+
 
 
 module.exports = {
     save: save,
     showAll: showAll,
     showCategoryById : showCategoryById,
-    showCategories : showCategories
+    showCategories : showCategories,
+    updateCategoryById:updateCategoryById,
+    deleteCategory:deleteCategory
 }
