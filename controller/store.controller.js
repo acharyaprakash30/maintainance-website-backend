@@ -111,30 +111,6 @@ function serviceOrderToFindArray(savedOrderItemArray,storeService){
           }
       }
       return servicesArrayTemp;
-        // storeService.map((item, i) => {
-
-        //   item.serviceTypeFeature.map(async (serviceType) => {
-        //     let serviceFeatures = await models.ServiceType.findByPk(
-        //       serviceType.serviceFeatureId
-        //     );
-        //     if (!serviceFeatures) {
-        //       return res.status(400).json({
-        //         message: "service item doesnot exist",
-        //       });
-        //     }
-            // let services = {
-            //   serviceFeatureId: serviceType.serviceFeatureId,
-            //   price: serviceType.price,
-            //   storeServiceId: savedOrderItemArray[i].itemId,
-            // };
-        //     console.log("fuck",services);
-        //     // servicesArrayTemp.push(services);
-        //     // const savedStoreItems = await models.StoreServiceFeature.create(services, {
-        //     //   transaction: t,
-        //     // });
-        //   });
-        // })
-        // console.log("noo",servicesArrayTemp);
 
 }
 

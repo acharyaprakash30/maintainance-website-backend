@@ -1,4 +1,5 @@
 const models = require('../models');
+const fs = require("fs");
 
 function save(req,res){
     
@@ -32,8 +33,12 @@ const showAll = async (req,res)=>{
         if(AllCategory){
 
             let categories = await AllCategories(AllCategory);
+            const objectsWithEmptyChild = getObjectsWithEmptyChild(categories);
+            console.log(objectsWithEmptyChild);
+
             res.status(200).json({
-                data:categories
+                data:categories,
+                objectsWithEmptyChild:objectsWithEmptyChild
             })
         }
         else{
@@ -50,9 +55,23 @@ const showAll = async (req,res)=>{
     }
 }
 
+function getObjectsWithEmptyChild(categories) {
+  const result = [];
+  
+  categories.forEach(category => {
+    if (category.child.length === 0) {
+      result.push(category);
+    } else {
+      const objectsWithEmptyChild = getObjectsWithEmptyChild(category.child);
+      result.push(...objectsWithEmptyChild);
+    }
+  });
+  
+  return result;
+}
+
 
 const AllCategories = async (data,parentId = null) => {
-    
 let categoryList = [];
      let parentCat;
 
@@ -100,9 +119,12 @@ const  showCategoryById = async(req, res) => {
 
     }
 
-    const showCategories = (req, res) => {
-        models.Category.findAll().then(result => {
-            res.status(201).json(result);
+    const showCategories = async(req, res) => {
+      await models.Category.findAll().then(async (result) => {
+          let categoryWithParentName= await getCategoriesWithParent(result);
+            res.status(201).json(
+              categoryWithParentName
+            );
         }).catch(error => {
             res.status(501).json({
                 message:"Something went wrong!!",
@@ -111,6 +133,40 @@ const  showCategoryById = async(req, res) => {
             
         });
     }
+
+    const getCategoriesWithParent = (data) =>{
+
+      let categoryWithParentName = [];
+
+      data.forEach((item)=>{
+        if(item.parentId == null){
+          let itemcategoryWithParentName ={
+            id:item.id,
+            CategoryName:item.CategoryName,
+            CategoryImage:item.CategoryImage,
+            parentId:item.parentId,
+            parentName:null,
+          }
+          categoryWithParentName.push(itemcategoryWithParentName);
+        }
+        else{
+          data.forEach((dataloop)=>{
+            if(item.parentId == dataloop.id){
+              let itemcategoryWithParentName ={
+                  id:item.id,
+                CategoryName:item.CategoryName,
+                CategoryImage:item.CategoryImage,
+                parentId:item.parentId,
+                parentName:dataloop.CategoryName,
+              }
+              categoryWithParentName.push(itemcategoryWithParentName);
+            }
+          })
+        }
+      });
+      return categoryWithParentName;
+    }
+
 
 //update user
 const updateCategoryById = (req, res) => {
