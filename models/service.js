@@ -20,7 +20,6 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.STRING,
     slug: DataTypes.STRING,
     userId: DataTypes.INTEGER,
-    storeId : DataTypes.INTEGER,
     categoryId : DataTypes.INTEGER
 
   }, {

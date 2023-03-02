@@ -1,16 +1,16 @@
 const model = require("../models")
+const fs = require("fs");
 
 // create service
 const addService = async(req, res) => {
   if (req.file) {
-    var img = req.file.filename;
+    var img = req.file.path;
   }
     const service = {
         name:req.body.name,
         image:img,
         slug:req.body.slug,
         userId:req.userData.id,
-        storeId:req.body.storeId,
         categoryId:req.body.categoryId
     };
     await model.Service.create(service)
@@ -26,6 +26,7 @@ const addService = async(req, res) => {
         });
       });
   };
+
 //get all sercvices
 // const index = (req, res) => {
 //     model.Service.findAll({attributes:{
@@ -76,12 +77,18 @@ const addService = async(req, res) => {
   const show = (req, res) => {
     const id = req.params.id;
   
-    model.Service.findByPk(id,{attributes:{
-        exclude:[
-            "createdAt",
-            "updatedAt"
-        ]
-    }})
+    model.Service.findByPk(id,{
+      include : [
+        {
+          as: "selectedcategory",
+          model : model.Category,
+        },
+        {
+          as:"SubServicelist",
+          model:model.ServiceType
+        }
+      ]
+    })
       .then((result) => {
         if (result) {
           res.status(200).json(result);
@@ -102,10 +109,23 @@ const addService = async(req, res) => {
 const updateService = (req,res)=>{
     model.Service.findOne({ where: { id:req.params.id } }).then((exist)=>{
       if(exist){
+        if (req.file) {
+          let oldFileName = "";
+          oldFileName = exist.image;
+          if (oldFileName) {
+            fs.unlinkSync(oldFileName);
+          }
+          var img = req.file.path;
+        }
+      
+
+
         const updated ={
-            name:req.body.name,
-            image:req.body.image,
-            slug:req.body.slug,
+        name:req.body.name,
+        image:img,
+        slug:req.body.slug,
+        userId:req.userData.id,
+        categoryId:req.body.categoryId
         }
         model.Service.update(updated,{where:{id:req.params.id}}).then((update)=>{
           res.status(200).json({
@@ -131,13 +151,12 @@ const updateService = (req,res)=>{
   }
   
 //delete service
-//delete user
 const deleteService = (req, res) => {
     model.Service.destroy({ where: { id:req.params.id } })
       .then((result) => {
         if (result) {
           res.status(200).json({
-            messege: `Service ${req.params.id} deleted`,
+            messege: `Service  deleted`,
           });
         } else {
           res.status(404).json({
@@ -151,7 +170,6 @@ const deleteService = (req, res) => {
         });
       });
   };
-  
 
   //get service by categoryname/categoryId
   const getserviceByCategory = async(req,res)=>{

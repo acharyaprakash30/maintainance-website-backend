@@ -2,7 +2,7 @@ const experss = require("express")
 const router = experss.Router();
 const userController =require("../controller/user.controller")
 const verifyMiddleware = require("../middleware/verify")
-const imageUploader = require("../helpers/image-uploader")
+const imageUpload = require("../helpers/image-uploader")
 
 
     /**
@@ -104,6 +104,7 @@ router.post("/",imageUploader.upload.single('image'),userController.create)
  *      500:
  *          description: Some Server Error
  */
+
 router.post("/login",userController.login)
 
 
@@ -122,7 +123,6 @@ router.post("/login",userController.login)
  *          description: Some Server Error
  */
 router.get("/me",verifyMiddleware.verification,userController.editProfile)
-
 
 
 /**

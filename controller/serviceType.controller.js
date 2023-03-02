@@ -33,6 +33,17 @@ function showdata(req, res){
         
     });
 }
+function showdataById(req, res){
+    models.ServiceType.findByPk(req.params.id).then(result => {
+        res.status(201).json(result);
+    }).catch(error => {
+        res.status(501).json({
+            message:"Something went wrong!!",
+            error : error
+        });
+        
+    });
+}
 
 function editServiceType(req, res){
 
@@ -101,5 +112,6 @@ module.exports = {
     userInput : userInput,
     showdata : showdata,
     editServiceType : editServiceType,
-    destroyServiceType : destroyServiceType
+    destroyServiceType : destroyServiceType,
+    showdataById:showdataById
 }

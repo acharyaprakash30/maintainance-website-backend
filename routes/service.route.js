@@ -81,6 +81,7 @@ router.post("/",verifyMiddleware.verification,imageUpload.upload.single('image')
  *      500:
  *          description: Some Server Error
  */
+
 router.get("/",serviceController.index)
 
 /**
@@ -185,6 +186,7 @@ router.put("/update/:id",serviceController.updateService)
  */
 
 router.delete("/delete/:id",serviceController.deleteService)
+
 
 
 
