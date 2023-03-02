@@ -64,23 +64,31 @@ const userInput = async (req, res) => {
           savedOrderItemArray.push(itemObject);
         })
       );
-      const servicesArrayTemp = serviceOrderToFindArray(savedOrderItemArray,storeService);
+      const servicesArrayTemp = serviceOrderToFindArray(
+        savedOrderItemArray,
+        storeService
+      );
       await Promise.all(
         servicesArrayTemp.map(async (item) => {
-          const serviceFeatures = await models.ServiceType.findByPk(item.serviceFeatureId);
+          const serviceFeatures = await models.ServiceType.findByPk(
+            item.serviceFeatureId
+          );
           if (!serviceFeatures) {
             return res.status(400).json({
               message: "service feature item doesnot exist",
             });
-          } 
+          }
           let serviceDatas = {
-            serviceFeatureId:item.serviceFeatureId,
-            price:item.price,
-            storeServiceId:item.storeServiceId
+            serviceFeatureId: item.serviceFeatureId,
+            price: item.price,
+            storeServiceId: item.storeServiceId,
           };
-          let savedOrderItemFeature = await models.StoreServiceFeature.create(serviceDatas, {
-            transaction: t,
-          });
+          let savedOrderItemFeature = await models.StoreServiceFeature.create(
+            serviceDatas,
+            {
+              transaction: t,
+            }
+          );
         })
       );
       return res.status(200).json({
@@ -95,57 +103,81 @@ const userInput = async (req, res) => {
 };
 
 //this function was called from userinput which return a array for storeservicefeature model
-function serviceOrderToFindArray(savedOrderItemArray,storeService){
+function serviceOrderToFindArray(savedOrderItemArray, storeService) {
+  var servicesArrayTemp = [];
 
-      var servicesArrayTemp = [];
-  
-      for(let i=0; i<storeService.length;i++){
-        let storeFeatureTest = storeService[i].serviceTypeFeature;
-          for(let j = 0;j<storeFeatureTest.length;j++){
-            let services = {
-              serviceFeatureId: storeFeatureTest[j].serviceFeatureId,
-              price: storeFeatureTest[j].price,
-              storeServiceId: savedOrderItemArray[i].itemId,
-            };
-            servicesArrayTemp.push(services)
-          }
-      }
-      return servicesArrayTemp;
-
+  for (let i = 0; i < storeService.length; i++) {
+    let storeFeatureTest = storeService[i].serviceTypeFeature;
+    for (let j = 0; j < storeFeatureTest.length; j++) {
+      let services = {
+        serviceFeatureId: storeFeatureTest[j].serviceFeatureId,
+        price: storeFeatureTest[j].price,
+        storeServiceId: savedOrderItemArray[i].itemId,
+      };
+      servicesArrayTemp.push(services);
+    }
+  }
+  return servicesArrayTemp;
 }
 
 function showdata(req, res) {
-  models.Store.findAll({
-    include: [
-      {
-        model: models.User,
-        as: "user",
-        attributes: ["id", "name", "email", "contact", "gender"],
-      },
-      {
-        model: models.ServiceStore,
-        as: "Servicestore",
-        include: [
-          {
-            model: models.Service,
-            as: "service",
-          },
-          {
-            model: models.StoreServiceFeature,
-            as: "serviceStoreFeatures",
-            include:[
-              {
-                model: models.ServiceType,
-                as: "serviceType",
-              },
-            ]
-          },
-        ],
-      },
-    ],
-  })
+  const pageAsNumber = Number.parseInt(req.query.page);
+  const sizeAsNumber = Number.parseInt(req.query.size);
+
+  let page = 0;
+  if (!Number.isNaN(pageAsNumber) && pageAsNumber > 0) {
+    page = pageAsNumber;
+  }
+
+  let size = 10;
+  if (
+    !Number.isNaN(sizeAsNumber) &&
+    !(sizeAsNumber > 10) &&
+    !(sizeAsNumber < 1)
+  ) {
+    size = sizeAsNumber;
+  }
+  models.Store.findAndCountAll(
+    {
+      limit: size,
+      offset: page * size,
+    },
+
+    {
+      include: [
+        {
+          model: models.User,
+          as: "user",
+          attributes: ["id", "name", "email", "contact", "gender"],
+        },
+        {
+          model: models.ServiceStore,
+          as: "Servicestore",
+          include: [
+            {
+              model: models.Service,
+              as: "service",
+            },
+            {
+              model: models.StoreServiceFeature,
+              as: "serviceStoreFeatures",
+              include: [
+                {
+                  model: models.ServiceType,
+                  as: "serviceType",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    }
+  )
     .then((result) => {
-      res.status(201).json(result);
+      res.status(200).json({
+        content: result.rows,
+        totalPages: Math.ceil(result.count / Number.parseInt(size)),
+      });
     })
     .catch((error) => {
       res.status(501).json({
@@ -249,18 +281,17 @@ async function getPlaceByCoordinates(req, res) {
           {
             model: models.StoreServiceFeature,
             as: "serviceStoreFeatures",
-            include:[
+            include: [
               {
                 model: models.ServiceType,
                 as: "serviceType",
               },
-            ]
+            ],
           },
         ],
-        where:{
-          serviceId:serviceId
-        }
-        
+        where: {
+          serviceId: serviceId,
+        },
       },
     ],
   });
@@ -284,7 +315,7 @@ async function getPlaceByCoordinates(req, res) {
       longitude: allresult[i].longitude,
       image: allresult[i].image,
       distance: parseFloat(distance.toFixed(2)) + " km",
-      address:allresult[i].address,
+      address: allresult[i].address,
       Servicestore: allresult[i].Servicestore,
     });
     async function getPlaceByCoordinates(req, res) {
@@ -363,12 +394,3 @@ module.exports = {
   destroyStoreData: destroyStoreData,
   getPlaceByCoordinates: getPlaceByCoordinates,
 };
-
-
-
-
-
-
-
-
-

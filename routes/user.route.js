@@ -62,14 +62,23 @@ const imageUpload = require("../helpers/image-uploader")
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/user'    
+ *             $ref: '#/components/schemas/user'  
+ *     consumes:
+ *        - multipart/form-data
+ *     parameters:
+ *        - name: image
+ *          in: formData
+ *          description: The image file to upload
+ *          required: true
+ *          type: file
+ *          
  *     responses:
  *       200:
  *         description: Created User successfully
  *       500:
  *         description: Some Server Error
  */
-router.post("/",imageUploader.upload.single('image'),userController.create)
+router.post("/",imageUpload.upload.single('image'),userController.create)
 
 /**
  * @swagger

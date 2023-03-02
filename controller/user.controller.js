@@ -93,7 +93,7 @@ const login = (req, res) => {
     .catch((error) => {
       res.status(500).json({
         messege: "Something went wrong",
-        error:error
+        error: error,
       });
     });
 };
@@ -194,9 +194,33 @@ const deleteUser = (req, res) => {
 
 //get all user
 const index = (req, res) => {
-  model.User.findAll()
+  const pageAsNumber = Number.parseInt(req.query.page);
+  const sizeAsNumber = Number.parseInt(req.query.size);
+
+  let page = 0;
+  if (!Number.isNaN(pageAsNumber) && pageAsNumber > 0) {
+    page = pageAsNumber;
+  }
+
+  let size = 10;
+  if (
+    !Number.isNaN(sizeAsNumber) &&
+    !(sizeAsNumber > 10) &&
+    !(sizeAsNumber < 1)
+  ) {
+    size = sizeAsNumber;
+  }
+  model.User.findAndCountAll({    
+    limit: size,
+    offset: page * size
+  })
     .then((result) => {
-      res.status(200).json(result);
+      res
+        .status(200)
+        .json({
+          content: result.rows,
+          totalPages: Math.ceil(result.count / Number.parseInt(size)),
+        });
     })
     .catch((error) => {
       res.status(500).json({
