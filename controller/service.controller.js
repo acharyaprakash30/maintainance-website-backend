@@ -72,6 +72,34 @@ const addService = async(req, res) => {
         });
       });
   };
+
+
+  //get only those services which have a relation with service features
+  const servicesByFeatues = (req, res) => {
+
+    model.Service.findAll({
+        include : [
+          {
+            as: "selectedcategory",
+            model : model.Category,
+          },
+          {
+            as:"SubServicelist",
+            model:model.ServiceType,
+            required:true
+          }
+        ]
+
+    })
+      .then((result) => {
+        res.status(200).json(result);
+      })
+      .catch((error) => {
+        res.status(500).json({
+          messege: "Something went wrong!!",error
+        });
+      });
+  };
   
   //get service by id
   const show = (req, res) => {
@@ -192,4 +220,4 @@ const deleteService = (req, res) => {
     }
 
   }
-  module.exports={addService,index,show,updateService,deleteService,getserviceByCategory}
+  module.exports={addService,index,show,updateService,deleteService,getserviceByCategory,servicesByFeatues}

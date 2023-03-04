@@ -119,7 +119,7 @@ const  showCategoryById = async(req, res) => {
 
     }
 
-    const showCategories = async(req, res) => {
+  const showCategories = async(req, res) => {
       await models.Category.findAll().then(async (result) => {
           let categoryWithParentName= await getCategoriesWithParent(result);
             res.status(201).json(
@@ -170,25 +170,25 @@ const  showCategoryById = async(req, res) => {
 
 //update user
 const updateCategoryById = (req, res) => {
+
+  // console.log("=========================update it accordingly",req.body,"isfile",req.file)
     models.Category.findOne({ where: { id: req.params.id } })
       .then(async (exist) => {
+        const editCategory = {
+          CategoryName:req.body.CategoryName,
+          parentId:req.body.parentId,
+          
+        };
 
         if (exist) {
           if (req.file) {
             let oldFileName = "";
             oldFileName = exist.image;
             if (oldFileName) {
-              fs.unlinkSync(oldFileName);
+            fs.unlinkSync(oldFileName);
             }
-            var img = req.file.path;
+            editCategory.CategoryImage = req.file.path;
           }
-
-          const editCategory = {
-            CategoryName:req.body.CategoryName,
-            parentId:req.body.parentId,
-            CategoryImage: img,
-          };
-
           models.Category.update(editCategory, { where: { id: req.params.id } })
             .then((update) => {
               res.status(200).json({
