@@ -4,7 +4,7 @@ const model = require("../models");
 
 const PaymentInput = (req, res) => {
   const Payment = {
-    userId:req.userData.id,
+    userId: req.userData.id,
     payment_type: req.body.payment_type,
     payment_method: req.body.payment_method,
   };
@@ -60,10 +60,10 @@ const editPayment = (req, res) => {
       });
     });
 };
-//delete 
+//delete
 
 const deletePayment = (req, res) => {
-  model.Payment.destroy({ where: { id:req.params.id} })
+  model.Payment.destroy({ where: { id: req.params.id } })
     .then((result) => {
       if (result) {
         res.status(200).json({
@@ -77,25 +77,46 @@ const deletePayment = (req, res) => {
     })
     .catch((err) => {
       res.status(500).json({
-        messege: "Something went wrong",err
+        messege: "Something went wrong",
+        err,
       });
     });
 };
 
 //get all lcoation
 const index = (req, res) => {
-  model.Payment.findAll({attributes:{
-      exclude:[
-          "createdAt",
-          "updatedAt"
-      ]
-  }})
+  const pageAsNumber = Number.parseInt(req.query.page);
+  const sizeAsNumber = Number.parseInt(req.query.size);
+
+  let page = 0;
+  if (!Number.isNaN(pageAsNumber) && pageAsNumber > 0) {
+    page = pageAsNumber;
+  }
+
+  let size = 10;
+  if (
+    !Number.isNaN(sizeAsNumber) &&
+    !(sizeAsNumber > 10) &&
+    !(sizeAsNumber < 1)
+  ) {
+    size = sizeAsNumber;
+  }
+  model.Payment.model.Payment.findAndCountAll(
+    { limit: size, offset: page * size },{
+    attributes: {
+      exclude: ["createdAt", "updatedAt"],
+    },
+  })
     .then((result) => {
-      res.status(200).json(result);
+      res.status(200).json({
+        content: result.rows,
+        totalPages: Math.ceil(result.count / Number.parseInt(size)),
+      });
     })
     .catch((error) => {
       res.status(500).json({
-        messege: "Something went wrong!!",error
+        messege: "Something went wrong!!",
+        error,
       });
     });
 };
@@ -104,12 +125,11 @@ const index = (req, res) => {
 const show = (req, res) => {
   const id = req.params.id;
 
-  model.Payment.findByPk(id,{attributes:{
-      exclude:[
-          "createdAt",
-          "updatedAt"
-      ]
-  }})
+  model.Payment.findByPk(id, {
+    attributes: {
+      exclude: ["createdAt", "updatedAt"],
+    },
+  })
     .then((result) => {
       if (result) {
         res.status(200).json(result);
@@ -121,11 +141,16 @@ const show = (req, res) => {
     })
     .catch((error) => {
       res.status(500).json({
-        messege: "Something went wrong!!",error
+        messege: "Something went wrong!!",
+        error,
       });
     });
 };
 
-module.exports={
-  PaymentInput,editPayment,deletePayment,index,show
-}
+module.exports = {
+  PaymentInput,
+  editPayment,
+  deletePayment,
+  index,
+  show,
+};

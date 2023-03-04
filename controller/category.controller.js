@@ -27,8 +27,26 @@ function save(req,res){
 }
 
 const showAll = async (req,res)=>{
-    try{
-        const AllCategory = await models.Category.findAll({
+    try{  
+      const pageAsNumber = Number.parseInt(req.query.page);
+      const sizeAsNumber = Number.parseInt(req.query.size);
+    
+      let page = 0;
+      if (!Number.isNaN(pageAsNumber) && pageAsNumber > 0) {
+        page = pageAsNumber;
+      }
+    
+      let size = 10;
+      if (
+        !Number.isNaN(sizeAsNumber) &&
+        !(sizeAsNumber > 10) &&
+        !(sizeAsNumber < 1)
+      ) {
+        size = sizeAsNumber;
+      }
+        const AllCategory = await models.Category.findAndCountAll({
+          limit: size,
+          offset: page * size
         });
         if(AllCategory){
 
@@ -37,7 +55,8 @@ const showAll = async (req,res)=>{
             console.log(objectsWithEmptyChild);
 
             res.status(200).json({
-                data:categories,
+                data:categories.rows,
+                totalPages: Math.ceil(categories.count / Number.parseInt(size)),
                 objectsWithEmptyChild:objectsWithEmptyChild
             })
         }
