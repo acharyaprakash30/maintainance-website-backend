@@ -23,9 +23,34 @@ function userInput(req, res){
 }
 
 function showdata(req, res){
-    models.ServiceType.findAll().then(result => {
-        res.status(201).json(result);
-    }).catch(error => {
+    const pageAsNumber = Number.parseInt(req.query.page);
+    const sizeAsNumber = Number.parseInt(req.query.size);
+  
+    let page = 0;
+    if (!Number.isNaN(pageAsNumber) && pageAsNumber > 0) {
+      page = pageAsNumber;
+    }
+  
+    let size = 10;
+    if (
+      !Number.isNaN(sizeAsNumber) &&
+      !(sizeAsNumber > 10) &&
+      !(sizeAsNumber < 1)
+    ) {
+      size = sizeAsNumber;
+    }
+    models.ServiceType.findAndCountAll({    
+      limit: size,
+      offset: page * size
+    })
+      .then((result) => {
+        res
+          .status(200)
+          .json({
+            content: result.rows,
+            totalPages: Math.ceil(result.count / Number.parseInt(size)),
+          });
+      }).catch(error => {
         res.status(501).json({
             message:"Something went wrong!!",
             error : error

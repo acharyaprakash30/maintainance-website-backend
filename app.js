@@ -15,6 +15,10 @@ const storeRoute = require('./routes/store.route');
 const fiscal_yearRoute = require('./routes/fiscal_year.route');
 const roleRoute = require('./routes/role.route');
 const {sequelize} = require("./models")
+const swaggeruiexpress=require('swagger-ui-express');
+const swaggerjsdoc=require('swagger-jsdoc');
+const swaggerDocs=require('./docs/swagger.docs')
+
 
 const app = express();
 app.use(cors());
@@ -24,6 +28,8 @@ app.use(cors());
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use('/uploads', express.static(__dirname + '/uploads'));
+app.use('/api-docs/',swaggeruiexpress.serve,swaggeruiexpress.setup(swaggerjsdoc(swaggerDocs)))
+
 
 app.use('/user',user);
 app.use('/service',service)

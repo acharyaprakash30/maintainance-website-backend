@@ -372,12 +372,3 @@ module.exports = {
   destroyStoreData: destroyStoreData,
   getPlaceByCoordinates: getPlaceByCoordinates,
 };
-
-
-
-
-
-
-
-
-
