@@ -3,6 +3,8 @@ const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
+const PaginationData = require("../utils/pagination");
+const { Op } = require("sequelize");
 
 dotenv.config();
 //creating user
@@ -194,9 +196,38 @@ const deleteUser = (req, res) => {
 
 //get all user
 const index = (req, res) => {
-  model.User.findAll()
+
+  const { page = 0, size = 10 } = req.query;
+  const { limit, offset } = PaginationData.getPagination(page, size);
+  const { filter = "" } = req.query;
+
+  model.User.findAndCountAll({
+    limit,
+    offset,
+    where: {
+      [Op.or]: [
+        {
+          name: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          email: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          contact: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+      ],
+    },
+  })
     .then((result) => {
-      res.status(200).json(result);
+      res.status(200).json({
+        data:PaginationData.getPagingData(result,page,limit)
+      });
     })
     .catch((error) => {
       res.status(500).json({
@@ -205,6 +236,12 @@ const index = (req, res) => {
       });
     });
 };
+
+
+
+
+
+
 
 //get user by id
 const show = (req, res) => {
