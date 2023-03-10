@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.post("/", ServiceTypeController.userInput);
 router.get("/", ServiceTypeController.showdata);
+router.get("/:id", ServiceTypeController.showdataById);
 router.patch("/:id", ServiceTypeController.editServiceType);
 router.delete("/:id", ServiceTypeController.destroyServiceType);
 

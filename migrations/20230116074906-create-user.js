@@ -25,12 +25,11 @@ module.exports = {
         type: Sequelize.ENUM("Male", "Female", "Others"), 
       },
       image: {
-        type: Sequelize.BLOB
+        type: Sequelize.STRING
       },
       role:{
-        type: Sequelize.INTEGER,
-        defaultValue:1 //1 is normal user 2. super admin 3.admin  4. vendor 5.deliveryAgent
-
+        type: Sequelize.ENUM("SuperAdmin", "Admin", "Vendor","User"), 
+        defaultValue: "User"
       },
       createdAt: {
         allowNull: false,

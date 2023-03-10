@@ -10,10 +10,9 @@ module.exports = {
         gender:"Male",
         password:bcrypt.hashSync("Superadmin@123",8),
         email:"superadmin@gmail.com",
-        IsAdmin:true,
+        role:"SuperAdmin",
         createdAt:new Date(),
         updatedAt:new Date()
- 
       }
     ],{});
     /**

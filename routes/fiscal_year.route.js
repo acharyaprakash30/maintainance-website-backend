@@ -8,7 +8,4 @@ router.get("/", fiscal_yearController.showData);
 router.patch("/:id", fiscal_yearController.editfiscalyear);
 router.delete("/:id", fiscal_yearController.deletefiscalyear);
 
-
-
-
 module.exports = router;

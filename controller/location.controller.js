@@ -58,10 +58,10 @@ const editlocation = (req, res) => {
       });
     });
 };
-//delete 
+//delete
 
 const deleteLocation = (req, res) => {
-  model.Location.destroy({ where: { id:req.params.id} })
+  model.Location.destroy({ where: { id: req.params.id } })
     .then((result) => {
       if (result) {
         res.status(200).json({
@@ -75,25 +75,48 @@ const deleteLocation = (req, res) => {
     })
     .catch((err) => {
       res.status(500).json({
-        messege: "Something went wrong",err
+        messege: "Something went wrong",
+        err,
       });
     });
 };
 
 //get all lcoation
 const index = (req, res) => {
-  model.Location.findAll({attributes:{
-      exclude:[
-          "createdAt",
-          "updatedAt"
-      ]
-  }})
+  const pageAsNumber = Number.parseInt(req.query.page);
+  const sizeAsNumber = Number.parseInt(req.query.size);
+
+  let page = 0;
+  if (!Number.isNaN(pageAsNumber) && pageAsNumber > 0) {
+    page = pageAsNumber;
+  }
+
+  let size = 10;
+  if (
+    !Number.isNaN(sizeAsNumber) &&
+    !(sizeAsNumber > 10) &&
+    !(sizeAsNumber < 1)
+  ) {
+    size = sizeAsNumber;
+  }
+  model.Location.findAndCountAll(
+    { limit: size, offset: page * size },
+    {
+      attributes: {
+        exclude: ["createdAt", "updatedAt"],
+      },
+    }
+  )
     .then((result) => {
-      res.status(200).json(result);
+      res.status(200).json({
+        content: result.rows,
+        totalPages: Math.ceil(result.count / Number.parseInt(size)),
+      });
     })
     .catch((error) => {
       res.status(500).json({
-        messege: "Something went wrong!!",error
+        messege: "Something went wrong!!",
+        error,
       });
     });
 };
@@ -102,12 +125,11 @@ const index = (req, res) => {
 const show = (req, res) => {
   const id = req.params.id;
 
-  model.Location.findByPk(id,{attributes:{
-      exclude:[
-          "createdAt",
-          "updatedAt"
-      ]
-  }})
+  model.Location.findByPk(id, {
+    attributes: {
+      exclude: ["createdAt", "updatedAt"],
+    },
+  })
     .then((result) => {
       if (result) {
         res.status(200).json(result);
@@ -119,11 +141,16 @@ const show = (req, res) => {
     })
     .catch((error) => {
       res.status(500).json({
-        messege: "Something went wrong!!",error
+        messege: "Something went wrong!!",
+        error,
       });
     });
 };
 
-module.exports={
-  locationInput,editlocation,deleteLocation,index,show
-}
+module.exports = {
+  locationInput,
+  editlocation,
+  deleteLocation,
+  index,
+  show,
+};

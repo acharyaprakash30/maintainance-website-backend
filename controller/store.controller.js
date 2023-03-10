@@ -6,10 +6,17 @@ const { sequelize } = require("../models");
 //in first promise function we save the data of store and service store data in database
 //in second promise function we first extract the array in which we have a required array which need to store in database
 //data are stored in this format:
+// "name":"abc",
+// "image":"tea",
+// "latitude":"sd",
+// "longitude":"d",
+// "address":"d",
+// "Contactno":"000",
+// storeService:
 // [
 //   {
 //     "serviceId":1,
-//     "serviceTypeFeature"🙁
+//     "serviceTypeFeature":[
 //       {"serviceFeatureId":1,"price":10},
 //       {"serviceFeatureId":2,"price":20}
 //     ]
@@ -35,7 +42,7 @@ const userInput = async (req, res) => {
         latitude: req.body.latitude,
         longitude: req.body.longitude,
         address: req.body.address,
-        userId: req.body.userId,
+        userId: req.userData.id,
         contactNumber: req.body.contactNumber,
       };
       const storeService = JSON.parse(req.body.storeService);
@@ -43,9 +50,11 @@ const userInput = async (req, res) => {
         transaction: t,
       });
       let savedOrderItemArray = [];
+      console.log("========================================aa")
       await Promise.all(
         storeService.map(async (item) => {
           const service = await models.Service.findByPk(item.serviceId);
+          console.log("here===================================================")
           if (!service) {
             return res.status(400).json({
               message: "service item doesnot exist",
@@ -89,6 +98,7 @@ const userInput = async (req, res) => {
     });
   } catch (err) {
     return res.status(500).json({
+      data:err,
       mesasge: err.message,
     });
   }
@@ -96,7 +106,6 @@ const userInput = async (req, res) => {
 
 //this function was called from userinput which return a array for storeservicefeature model
 function serviceOrderToFindArray(savedOrderItemArray,storeService){
-
       var servicesArrayTemp = [];
   
       for(let i=0; i<storeService.length;i++){
@@ -111,30 +120,6 @@ function serviceOrderToFindArray(savedOrderItemArray,storeService){
           }
       }
       return servicesArrayTemp;
-        // storeService.map((item, i) => {
-
-        //   item.serviceTypeFeature.map(async (serviceType) => {
-        //     let serviceFeatures = await models.ServiceType.findByPk(
-        //       serviceType.serviceFeatureId
-        //     );
-        //     if (!serviceFeatures) {
-        //       return res.status(400).json({
-        //         message: "service item doesnot exist",
-        //       });
-        //     }
-            // let services = {
-            //   serviceFeatureId: serviceType.serviceFeatureId,
-            //   price: serviceType.price,
-            //   storeServiceId: savedOrderItemArray[i].itemId,
-            // };
-        //     console.log("fuck",services);
-        //     // servicesArrayTemp.push(services);
-        //     // const savedStoreItems = await models.StoreServiceFeature.create(services, {
-        //     //   transaction: t,
-        //     // });
-        //   });
-        // })
-        // console.log("noo",servicesArrayTemp);
 
 }
 
@@ -387,12 +372,3 @@ module.exports = {
   destroyStoreData: destroyStoreData,
   getPlaceByCoordinates: getPlaceByCoordinates,
 };
-
-
-
-
-
-
-
-
-
