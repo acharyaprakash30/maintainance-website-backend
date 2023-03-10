@@ -12,5 +12,6 @@ router.put("/:id",verifyMiddleware.verification,userController.editUser)
 router.delete("/delete",userController.deleteUser)
 router.get("/",userController.index)
 router.get("/userById/:id",userController.show)
+router.put("/updaterole/:id", userController.updateRole)
 
 module.exports=router;
