@@ -28,30 +28,30 @@ const create = (req, res) => {
         .then((exist) => {
           if (exist) {
             res.status(200).json({
-              messege: "Email already taken ",
+              message: "Email already taken ",
             });
           } else {
             model.User.create(newUser)
               .then((result) => {
                 res.status(200).json({
                   newUser,
-                  messege: "User created successful!",
+                  message: "User created successful!",
                 });
               })
               .catch((err) => {
                 res
                   .status(500)
-                  .json({ messege: "Something went wrong", err: err });
+                  .json({ message: "Something went wrong", err: err });
               });
           }
         })
         .catch((err) => {
-          res.status(500).json({ messege: "Something went wrong", err: err });
+          res.status(500).json({ message: "Something went wrong", err: err });
         });
     });
   } else {
     res.status(401).json({
-      messege: "Password doesn't match",
+      message: "Password doesn't match",
     });
   }
 };
@@ -75,26 +75,26 @@ const login = (req, res) => {
 
               (err, token) => {
                 res.status(200).json({
-                  messege: "Login succcessful!",
+                  message: "Login succcessful!",
                   token: token,
                 });
               }
             );
           } else {
             res.status(500).json({
-              messege: "Something were went wrong!",
+              message: "Something were went wrong!",
             });
           }
         });
       } else {
         res.status(401).json({
-          messege: "Invalid Credintals!",
+          message: "Invalid Credintals!",
         });
       }
     })
     .catch((error) => {
       res.status(500).json({
-        messege: "Something went wrong",
+        message: "Something went wrong",
         error,
       });
     });
@@ -125,25 +125,25 @@ const editUser = (req, res) => {
         model.User.update(editedUser, { where: { id: req.params.id } })
           .then((update) => {
             res.status(200).json({
-              messege: "user updated succcessfully!",
+              message: "user updated succcessfully!",
               updated: editedUser,
             });
           })
           .catch((err) => {
             res.status(500).json({
-              messege: "something went wrong!",
+              message: "something went wrong!",
               err,
             });
           });
       } else {
         res.status(401).json({
-          messege: "user not found",
+          message: "user not found",
         });
       }
     })
     .catch((err) => {
       res.status(500).json({
-        messege: "something went wrong!",
+        message: "something went wrong!",
         err,
       });
     });
@@ -161,13 +161,13 @@ const editProfile = (req, res) => {
         });
       } else {
         res.status(401).json({
-          messege: "No user found",
+          message: "No user found",
         });
       }
     })
     .catch((err) => {
       res.status(500).json({
-        messege: "something went wrong!",
+        message: "something went wrong!",
         err,
       });
     });
@@ -179,17 +179,17 @@ const deleteUser = (req, res) => {
     .then((result) => {
       if (result) {
         res.status(200).json({
-          messege: `User  deleted`,
+          message: `User  deleted`,
         });
       } else {
         res.status(404).json({
-          messege: `User not found`,
+          message: `User not found`,
         });
       }
     })
     .catch((err) => {
       res.status(500).json({
-        messege: "Something went wrong",
+        message: "Something went wrong",
       });
     });
 };
@@ -231,7 +231,7 @@ const index = (req, res) => {
     })
     .catch((error) => {
       res.status(500).json({
-        messege: "Something went wrong!!",
+        message: "Something went wrong!!",
         error,
       });
     });
@@ -253,13 +253,13 @@ const show = (req, res) => {
         res.status(200).json(result);
       } else {
         res.status(404).json({
-          messege: "Id not found",
+          message: "Id not found",
         });
       }
     })
     .catch((error) => {
       res.status(500).json({
-        messege: "Something went wrong!!",
+        message: "Something went wrong!!",
         error,
       });
     });

@@ -11,7 +11,6 @@ function save(req,res){
         CategoryImage : img,
         parentId : req.body.parentId == 'null' ? null : req.body.parentId
     }
-    console.log(category);
 
     models.Category.create(category).then(result => {
         res.status(201).json({
@@ -34,7 +33,6 @@ const showAll = async (req,res)=>{
 
             let categories = await AllCategories(AllCategory);
             const objectsWithEmptyChild = getObjectsWithEmptyChild(categories);
-            console.log(objectsWithEmptyChild);
 
             res.status(200).json({
                 data:categories,
@@ -171,7 +169,6 @@ const  showCategoryById = async(req, res) => {
 //update user
 const updateCategoryById = (req, res) => {
 
-  // console.log("=========================update it accordingly",req.body,"isfile",req.file)
     models.Category.findOne({ where: { id: req.params.id } })
       .then(async (exist) => {
         const editCategory = {
