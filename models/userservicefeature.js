@@ -14,8 +14,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   UserServiceFeature.init({
-    customer_id: DataTypes.INTEGER,
-    feature_id: DataTypes.INTEGER
+    userServiceId: DataTypes.INTEGER,
+    featureId: DataTypes.INTEGER,
+    featurePrice:DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'UserServiceFeature',

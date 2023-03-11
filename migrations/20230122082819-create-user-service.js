@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      user_id: {
+      userId: {
         type: Sequelize.INTEGER
       },
       image:{
@@ -21,17 +21,23 @@ module.exports = {
       status: {
         type: Sequelize.BOOLEAN
       },
-      service_id: {
+      serviceId: {
         type: Sequelize.INTEGER
       },
-      payment_id: {
+      paymentId: {
         type: Sequelize.INTEGER
       },
-      store_id: {
+      storeId: {
         type: Sequelize.INTEGER
       },
-      fiscal_year_id: {
-        type: Sequelize.INTEGER
+      serviceLatitude: {
+        type: Sequelize.STRING
+      },
+      serviceLongitude : {
+        type: Sequelize.STRING
+      },
+      serviceLocation : {
+        type: Sequelize.STRING
       },
 
       createdAt: {

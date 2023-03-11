@@ -31,6 +31,10 @@ module.exports = {
         type: Sequelize.ENUM("SuperAdmin", "Admin", "Vendor","User"), 
         defaultValue: "User"
       },
+      subTotal: {
+        type: Sequelize.INTEGER,
+        defaultValue:0
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
