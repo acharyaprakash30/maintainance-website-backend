@@ -30,12 +30,6 @@ exports.validateUser = [
               }
             }
           );
-        } else {
-          return models.User.findOne({ where: { email: email } }).then((user) => {
-            if (user) {
-              throw "Email already exists!!";
-            }
-          });
         }
       })
       .isEmail()
@@ -69,15 +63,7 @@ exports.validateUser = [
               }
             }
           );
-        } else {
-          return models.User.findOne({
-            where: { contact: contact },
-          }).then((result) => {
-            if (result) {
-              throw "contact is already registered!!";
-            }
-          });
-        }
+        } 
       })
       .matches("^([9][0-9]{9})$")
       .withMessage("Please enter valid contact!!"),
@@ -106,12 +92,110 @@ exports.validateCategory = [
     .notEmpty()
     .withMessage("category name is required!!")
     .matches("^[A-Za-z ]+$")
+    .withMessage("Please enter valid category name!!")
+    .isLength({ min: 3 })
+    .withMessage("Minimum 3 characters required!!"),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+    next();
+  },
+];
+
+
+exports.validateService = [
+  check("name")
+    .notEmpty()
+    .withMessage("service name is required!!")
+    .matches("^[A-Za-z ]+$")
     .withMessage("Please enter valid full name!!")
     .isLength({ min: 3 })
     .withMessage("Minimum 3 characters required!!"),
-  check("parentId")
+  check("slug")
     .notEmpty()
-    .withMessage("category name is required!!"),
+    .withMessage("service slug is required!!")
+    .matches("^[A-Za-z ]+$")
+    .withMessage("Please enter valid slug!!")
+    .isLength({ min: 3 })
+    .withMessage("Minimum 3 characters required!!"),
+  check("userId")
+    .notEmpty()
+    .withMessage("user id is required!!"),
+  check("categoryId")
+    .notEmpty()
+    .withMessage("category id is required!!"),
+    
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+    next();
+  },
+];
+
+
+exports.validateFiscalYear = [
+  check("year")
+    .notEmpty()
+    .withMessage("category id is required!!"),
+    
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+    next();
+  },
+];
+
+
+exports.validateStore = [
+  check("name")
+    .notEmpty()
+    .withMessage("store name is required!!")
+    .matches("^[A-Za-z ]+$")
+    .withMessage("Please enter valid full name!!")
+    .isLength({ min: 3 })
+    .withMessage("Minimum 3 characters required!!"),
+  check("latitude")
+    .notEmpty()
+    .withMessage("latitude is required!!"),
+  check("longitude")
+    .notEmpty()
+    .withMessage("longitude is required!!"),
+  check("address")
+    .notEmpty()
+    .withMessage("address is required!!"),
+  check("userId")
+    .notEmpty()
+    .withMessage("user id is required!!"),
+    check("contactNumber")
+    .notEmpty()
+    .withMessage("contact number is required!!")
+    .custom((contactNumber, { req }) => {
+      if (req.params.id) {
+        const store_Id = req.params.id;
+        return models.Store.findOne({ where: { id: store_Id } }).then(
+          (checkdata) => {
+            if (contactNumber == checkdata.contactNumber) {
+            } else {
+              return models.Store.findOne({
+                where: { contactNumber: contactNumber },
+              }).then((result) => {
+                if (result) {
+                  throw "contact is already registered!!";
+                }
+              });
+            }
+          }
+        );
+      } 
+    })
+    .matches("^([9][0-9]{9})$")
+    .withMessage("Please enter valid contact!!"),
     
   (req, res, next) => {
     const errors = validationResult(req);

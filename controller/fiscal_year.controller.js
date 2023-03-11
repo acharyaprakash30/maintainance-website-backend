@@ -1,4 +1,6 @@
 const models = require('../models');
+const PaginationData = require("../utils/pagination");
+const { Op } = require("sequelize");
 
 async function userInput (req, res){
     const fiscal_yearData = {
@@ -25,7 +27,7 @@ async function userInput (req, res){
 
 //     const id = req.params.id;
 
-//     models.Fiscal_year.findAll().then(fiscal_year => {
+//     models.Fiscal_year.findAndCountAll().then(fiscal_year => {
 
 //         statusData = [];
 
@@ -48,32 +50,27 @@ async function userInput (req, res){
 // }
 
 function showData(req, res){
-    const pageAsNumber = Number.parseInt(req.query.page);
-    const sizeAsNumber = Number.parseInt(req.query.size);
-  
-    let page = 0;
-    if (!Number.isNaN(pageAsNumber) && pageAsNumber > 0) {
-      page = pageAsNumber;
-    }
-  
-    let size = 10;
-    if (
-      !Number.isNaN(sizeAsNumber) &&
-      !(sizeAsNumber > 10) &&
-      !(sizeAsNumber < 1)
-    ) {
-      size = sizeAsNumber;
-    }
+    const { page = 0, size = 10 } = req.query;
+    const { limit, offset } = PaginationData.getPagination(page, size);
+    const { filter = "" } = req.query;
     models.Fiscal_year.findAndCountAll({    
-      limit: size,
-      offset: page * size
+        limit,
+        offset,
+        where: {
+            [Op.or]: [
+              {
+                year: {
+                  [Op.like]: "%" + filter + "%",
+                },
+              },
+            ],
+          },
     })
       .then((result) => {
         res
           .status(200)
           .json({
-            content: result.rows,
-            totalPages: Math.ceil(result.count / Number.parseInt(size)),
+            data:PaginationData.getPagingData(result,page,limit)
           });
       }).catch(error => {
         res.status(501).json({
@@ -98,7 +95,7 @@ function editfiscalyear(req, res) {
             
             // databasema fiscal year true vako 
             if(req.body.status == true){
-                let fiscalYearData = models.Fiscal_year.findAll({where: {status: true} }).then(result => {
+                let fiscalYearData = models.Fiscal_year.findAndCountAll({where: {status: true} }).then(result => {
                     result.forEach(result => {
                         result.status = false;
                         result.save();

@@ -5,11 +5,154 @@ const verifyMiddleware = require("../middleware/verify")
 const imageUpload = require("../helpers/image-uploader");
 
 
+
+/**
+     * @swagger
+     *  components:
+     *    schemas:
+     *      userService:
+     *        type: object
+     *        required:
+     *          - user_id
+     *          - image
+     *          - description
+     *          - status
+     *          - service_id
+     *          - payment_id
+     *          - userservice_id
+     *          - fiscal_year_id
+     *        properties:
+     *          user_id:
+     *           type: string
+     *           description: userService's user_id
+     *          image:
+     *           type: string
+     *           description: userService's image
+     *          description:
+     *           type: float
+     *           description: userService's description
+     *          status:
+     *           type: float
+     *           description: userService's status
+     *          service_id:
+     *           type: string
+     *           description: userService's service_id
+     *          payment_id:
+     *           type: integer
+     *           description: userService's payment_id
+     *          userservice_id:
+     *           type: string
+     *           description: userService's userservice_id
+     *          fiscal_year_id:
+     *           type: string
+     *           description: userService's fiscal_year_id
+     */
+    // /**
+    //  * @swagger
+    //  * tags:
+    //  *     name: userservice
+    //  *     description: The userservice managing API endpoint
+    //  */
+              
+    /**
+ * @swagger
+ * /userservice/create:
+ *   post:
+ *     summary: Create new userservice
+ *     security:
+ *       - jwt: []
+ *     tags: [userservice]
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/userservice'  
+ *     responses:
+ *       200:
+ *         description: Created userservice successfully
+ *       500:
+ *         description: Some Server Error
+ */
+
+
 router.post("/create",verifyMiddleware.verification,imageUpload.upload.single('image'),userserviceController.createUserService)
+
+/**
+ * @swagger
+ * /userservice:
+ *   get:
+ *     summary: List of all userservice
+ *     security:
+ *       - jwt: []
+ *     tags: [userservice]
+ *     responses:
+ *      200:
+ *          description: userservice List retrieved successfully
+ *      500:
+ *          description: Some Server Error
+ */
+
 router.get("/",verifyMiddleware.verification,userserviceController.getUserSerivce)
 //router.get("/find",userserviceController.findAll)
+
+/**
+ * @swagger
+ * /userservice/delete/{id}:
+ *   delete:
+ *     summary: Delete userservice
+ *     security:
+ *       - jwt: []
+ *     tags: [userservice]
+ *     parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: integer
+ *          required: true
+ *          description: userservice's id
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/userservice'
+ *     responses:
+ *      200:
+ *          description: userservice deleted successfully
+ *      500:
+ *          description: Some Server Error
+ */
+
 router.delete("/delete/:id",verifyMiddleware.verification,userserviceController.delet)
+
 //router.put("/update",verifyMiddleware.verification,userserviceController.update)
+
+/**
+ * @swagger
+ * /userservice/update/{id}:
+ *   put:
+ *     summary: Update userservice
+ *     security:
+ *       - jwt: []
+ *     tags: [userservice]
+ *     parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: integer
+ *          required: true
+ *          description: userservice's id
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/userservice'
+ *     responses:
+ *      200:
+ *          description: userservice updated successfully
+ *      500:
+ *          description: Some Server Error
+ */
+
 router.patch("/update/:id",verifyMiddleware.verification,imageUpload.upload.single('image'),userserviceController.update)
 
 

@@ -1,5 +1,7 @@
 const model = require("../models");
 const fs = require("fs");
+const PaginationData = require("../utils/pagination");
+const { Op } = require("sequelize");
 
 // create service
 const addService = async (req, res) => {
@@ -30,7 +32,7 @@ const addService = async (req, res) => {
 
 //get all sercvices
 // const index = (req, res) => {
-//     model.Service.findAll({attributes:{
+//     model.Service.findAndCountAll({attributes:{
 
 //         include : [
 //           {
@@ -50,7 +52,35 @@ const addService = async (req, res) => {
 //       });
 //   };
 const index = (req, res) => {
-  model.Service.findAll({
+  const { page = 0, size = 10 } = req.query;
+  const { limit, offset } = PaginationData.getPagination(page, size);
+  const { filter = "" } = req.query;
+  model.Service.findAndCountAll({
+    limit,
+    offset,    where: {
+      [Op.or]: [
+        {
+          name: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          slug: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          userId: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          categoryId: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+      ],
+    },
     include: [
       {
         as: "selectedcategory",
@@ -63,7 +93,9 @@ const index = (req, res) => {
     ],
   })
     .then((result) => {
-      res.status(200).json(result);
+      res
+        .status(200)
+        .json({ data: PaginationData.getPagingData(result, page, limit) });
     })
     .catch((error) => {
       res.status(500).json({
@@ -75,7 +107,12 @@ const index = (req, res) => {
 
 //get only those services which have a relation with service features
 const servicesByFeatues = (req, res) => {
-  model.Service.findAll({
+  const { page = 0, size = 10 } = req.query;
+  const { limit, offset } = PaginationData.getPagination(page, size);
+  const { filter = "" } = req.query;
+  model.Service.findAndCountAll({
+    limit,
+      offset, 
     include: [
       {
         as: "selectedcategory",
@@ -89,7 +126,8 @@ const servicesByFeatues = (req, res) => {
     ],
   })
     .then((result) => {
-      res.status(200).json(result);
+      res.status(200).json({        data:PaginationData.getPagingData(result,page,limit)
+      });
     })
     .catch((error) => {
       res.status(500).json({
@@ -208,9 +246,9 @@ const getserviceByCategory = async (req, res) => {
     await model.Service.findAll({
       where: { categoryId: req.params.categoryId },
     })
-      .then((data) => {
+      .then((result) => {
         return res.status(200).json({
-          data,
+  result:result          ,
         });
       })
       .catch((err) => {

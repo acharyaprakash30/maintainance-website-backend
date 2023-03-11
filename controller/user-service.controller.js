@@ -1,4 +1,7 @@
 const models = require('../models');
+const PaginationData = require("../utils/pagination");
+const { Op } = require("sequelize");
+
 
 
 const createUserService =  async(req, res) => {
@@ -44,32 +47,57 @@ const createUserService =  async(req, res) => {
 }
 
 const getUserSerivce = (req, res) => {
-  const pageAsNumber = Number.parseInt(req.query.page);
-  const sizeAsNumber = Number.parseInt(req.query.size);
-
-  let page = 0;
-  if (!Number.isNaN(pageAsNumber) && pageAsNumber > 0) {
-    page = pageAsNumber;
-  }
-
-  let size = 10;
-  if (
-    !Number.isNaN(sizeAsNumber) &&
-    !(sizeAsNumber > 10) &&
-    !(sizeAsNumber < 1)
-  ) {
-    size = sizeAsNumber;
-  }
+  const { page = 0, size = 10 } = req.query;
+  const { limit, offset } = PaginationData.getPagination(page, size);
+  const { filter = "" } = req.query;
   models.userService.findAndCountAll({    
-    limit: size,
-    offset: page * size
+    limit,
+    offset,     where: {
+      [Op.or]: [
+        {
+          user_id: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          description: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          status: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          service_id: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          payment_id: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          store_id: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          fiscal_year_id: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+      ],
+    },
   })
     .then((result) => {
       res
         .status(200)
         .json({
-          content: result.rows,
-          totalPages: Math.ceil(result.count / Number.parseInt(size)),
+          data:PaginationData.getPagingData(result,page,limit)
+
         });
     }).catch(error => {
     res.status(501).json({

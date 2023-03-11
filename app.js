@@ -22,7 +22,6 @@ const swaggerDocs=require('./docs/swagger.docs')
 
 const app = express();
 app.use(cors());
-
 app.use(express.json({ limit: "50mb" }));
 app.use(cors());
 app.use(bodyParser.json({ limit: "50mb" }));
@@ -30,7 +29,9 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use('/api-docs/',swaggeruiexpress.serve,swaggeruiexpress.setup(swaggerjsdoc(swaggerDocs)))
 
-
+// app.use('/',(req,res)=>{
+//     res.send("Welcome to maintainance website backend")
+// })
 app.use('/user',user);
 app.use('/service',service)
 app.use('/userservice',userService)
