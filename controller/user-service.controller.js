@@ -1,121 +1,151 @@
 const models = require('../models');
+const { sequelize } = require("../models");
+const PaginationData = require("../utils/pagination");
+const { Op } = require("sequelize");
 
 
-const createUserService =  async(req, res) => {
+
+const createUserService = async (req, res) => {
   if (req.file) {
     var img = req.file.filename;
   }
   const userService = {
-    user_id: req.body.user_id,
-    image:img,
+    userId: req.body.userId,
+    image: img,
     description: req.body.description,
     status: req.body.status,
-    service_id: req.body.service_id,
-    payment_id: req.body.payment_id,
-    store_id: req.body.store_id,
-    fiscal_year_id : req.body.fiscal_year_id
+    serviceId: req.body.serviceId,
+    paymentId: req.body.paymentId,
+    storeId: req.body.storeId,
+    fiscal_year_id: req.body.fiscal_year_id
   }
 
-  await models.userService.findOne({where : {user_id : req.body.user_id}}).then(result => {
-    if(result){
-      models.userService.create(userService).then(result =>{
+  await models.userService.findOne({ where: { userId: req.body.userId } }).then(result => {
+    if (result) {
+      models.userService.create(userService).then(result => {
         console.log(userService);
         res.status(201).json({
           message: "UserService created succesfully",
-          result : userService
-        });  
+          result: userService
+        });
       }).catch(error => {
-          res.status(501).json({
-            message: "Something went wrong!! ",
-            error : error
-          });
+        res.status(501).json({
+          message: "Something went wrong!! ",
+          error: error
+        });
       });
-    }else{
+    } else {
       res.status(501).json({
-        message : "User_id doesnot exists!!"
+        message: "userId doesnot exists!!"
       });
     }
   }).catch(error => {
     res.status(501).json({
       message: "Something went wrong!! ",
-      error : error
+      error: error
     });
-  });  
+  });
 }
 
 const getUserSerivce = (req, res) => {
-  const pageAsNumber = Number.parseInt(req.query.page);
-  const sizeAsNumber = Number.parseInt(req.query.size);
 
-  let page = 0;
-  if (!Number.isNaN(pageAsNumber) && pageAsNumber > 0) {
-    page = pageAsNumber;
-  }
-
-  let size = 10;
-  if (
-    !Number.isNaN(sizeAsNumber) &&
-    !(sizeAsNumber > 10) &&
-    !(sizeAsNumber < 1)
-  ) {
-    size = sizeAsNumber;
-  }
+  const { page = 0, size = 10 } = req.query;
+  const { limit, offset } = PaginationData.getPagination(page, size);
+  const { filter = "" } = req.query;
   models.userService.findAndCountAll({    
-    limit: size,
-    offset: page * size
+    limit,
+    offset,     where: {
+      [Op.or]: [
+        {
+          user_id: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          description: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          status: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          service_id: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          payment_id: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          store_id: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          fiscal_year_id: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+      ],
+    },
   })
     .then((result) => {
       res
         .status(200)
         .json({
-          content: result.rows,
-          totalPages: Math.ceil(result.count / Number.parseInt(size)),
+          data:PaginationData.getPagingData(result,page,limit)
+
         });
     }).catch(error => {
-    res.status(501).json({
-      message : "Something went wrong !!"
+      res.status(501).json({
+        message: "Something went wrong !!"
+      });
     });
-  });
-  
+
 }
 
 
 const update = (req, res) => {
   const id = req.params.id;
 
-  models.userService.findOne({where: {id:id}}).then(exists => {
-    if(exists){
+  models.userService.findOne({ where: { id: id } }).then(exists => {
+    if (exists) {
       const updatedUserService = {
-        user_id: req.body.user_id,
-        image:req.file.filename,
+        userId: req.body.userId,
+        image: req.file.filename,
         description: req.body.description,
         status: req.body.status,
-        service_id: req.body.service_id,
-        payment_id: req.body.payment_id,
-        store_id: req.body.store_id,
-        fiscal_year_id : req.body.fiscal_year_id
-    
+        serviceId: req.body.serviceId,
+        paymentId: req.body.paymentId,
+        storeId: req.body.storeId,
+        fiscal_year_id: req.body.fiscal_year_id
+
       }
-      models.userService.update(updatedUserService,{where : {id:id}}).then(result => {
+      models.userService.update(updatedUserService, { where: { id: id } }).then(result => {
         res.status(200).json({
           message: "UserService updated successfully!!",
           result: updatedUserService
         });
       }).catch(error => {
-        res.status(501).json( {
-          message : "Something went wrong!! ",
-          error : error
+        res.status(501).json({
+          message: "Something went wrong!! ",
+          error: error
         });
       });
-    }else {
+    } else {
       res.status(404).json({
-        message : "User Service with id " + id + " is not valid"
-      });      
+        message: "User Service with id " + id + " is not valid"
+      });
     }
   }).catch(error => {
     res.status(501).json({
-      message : "Something went wrong!!",
-      error : error
+      message: "Something went wrong!!",
+      error: error
     });
   });
 
@@ -126,33 +156,101 @@ const delet = (req, res) => {
 
   const id = req.params.id;
 
-  models.userService.destroy({where: {id:id}}).then(result => {
-    if(result){
+  models.userService.destroy({ where: { id: id } }).then(result => {
+    if (result) {
       res.status(200).json({
-          message: "User Service deleted succesfully",
-          
+        message: "User Service deleted succesfully",
+
       });
-    }else{
+    } else {
       res.status(404).json({
-          message: "User Service id is not in the list!!"
+        message: "User Service id is not in the list!!"
       });
     }
-    
+
   }).catch(error => {
-      res.status(500).json({
-          message : "Something went wrong",
-          error : error
-      });
-    
+    res.status(500).json({
+      message: "Something went wrong",
+      error: error
+    });
+
   });
 }
 
+const bulkServiceSubmit = async (req, res) => {
+  try {
+    let t;
+    await sequelize.transaction(async (t) => {
+      if (req.file) {
+        var img = req.file.path;
+      }
+      const serviceData = {
+        userId: req.userData.id,
+        image: img,
+        description: req.body.description,
+        status: req.body.status,
+        serviceId: req.body.serviceId,
+        paymentId: req.body.paymentId,
+        storeId: req.body.storeId,
+      };
+      const UserServiceFeatureArray = JSON.parse(req.body.serviceFeatures);
+      let userService = await models.userService.create(serviceData, { transaction: t });
+      let subTotalPriceOfUser = 0;
+      await Promise.all(
+        UserServiceFeatureArray.map(async (item) => {
+
+          const service = await models.UserServiceFeature.findByPk(item.featureId);
+
+          if (!service) {
+            return res.status(400).json({
+              message: "service feature doesnot exist",
+            });
+          }
+
+          let serviceDatas = {
+            userServiceId: userService.id,
+            featureId: item.featureId,
+            featurePrice: item.featurePrice,
+          };
+          subTotalPriceOfUser = subTotalPriceOfUser + featurePrice;
+          let savedOrderItem = await models.UserServiceFeature.create(serviceDatas, {
+            transaction: t,
+          });
+        })
+      );
+
+    let isUser =  await models.User.findByPk(req.body.userId);
+    if(!isUser){
+      return res.status(400).json({
+        message: "user doesnot exist",
+      });
+
+    }
+    else{
+      let updatedItem = {
+        subTotal:subTotalPriceOfUser
+      }
+      await models.user.update(updatedItem,{where:{id:isUser.id}},{ transaction: t });
+    }
+      return res.status(200).json({
+        message: "user service created successfully",
+      });
+
+    });
+  } catch (error) {
+    return res.status(500).json({
+      data: error,
+      mesasge: error.message,
+    });
+  }
+}
 
 module.exports = {
   createUserService,
   getUserSerivce,
   delet,
-  update
+  update,
+  bulkServiceSubmit
 }
 
 
@@ -165,8 +263,8 @@ module.exports = {
 
 // //create userservice
 // const createUserService = (req, res) => {
-//   const user_id = req.userData.id;
-//   model.User.findByPk(user_id, {
+//   const userId = req.userData.id;
+//   model.User.findByPk(userId, {
 //     include: [
 //       {
 //         model: Service,
@@ -186,23 +284,23 @@ module.exports = {
 //       if (user) {
 //         let userServicesCreated = 0;
 //         const serviceIds = user.Service.map((service) => service.id);
-//         serviceIds.forEach((service_id) => {
-//           user_id;
-//           const serviceId = service_id;
-//           const payment_id = user.Payment.id;
+//         serviceIds.forEach((serviceId) => {
+//           userId;
+//           const serviceId = serviceId;
+//           const paymentId = user.Payment.id;
 
 //           model.userService
 //             .create({
-//               user_id,
-//               service_id: service_id,
-//               payment_id: payment_id,
+//               userId,
+//               serviceId: serviceId,
+//               paymentId: paymentId,
 //             })
 //             .then((result) => {
 //               userServicesCreated++;
 //               if (userServicesCreated === serviceIds.length) {
 //                 res.status(200).json({
 //                   message: "Successfully created!!",
-//                   result: { user_id, serviceIds, payment_id },
+//                   result: { userId, serviceIds, paymentId },
 //                 });
 //               }
 //             })
@@ -227,11 +325,11 @@ module.exports = {
 
 // //find all
 // const findAll = (req, res) => {
-//   // const user_id = req.body.id;
+//   // const userId = req.body.id;
 //   model.userService
 //     .findAll({
-//       // where: { user_id: user_id },
-//       attributes: ["user_id", "service_id", "payment_id"],
+//       // where: { userId: userId },
+//       attributes: ["userId", "serviceId", "paymentId"],
 //     })
 //     .then((userServices) => {
 //       if (userServices) {
@@ -249,15 +347,15 @@ module.exports = {
 
 // //delete
 // const delet = (req, res) => {
-//   const user_id = req.userData.id;
+//   const userId = req.userData.id;
 //   model.userService
 //     .destroy({
-//       where: { user_id: user_id },
+//       where: { userId: userId },
 //     })
 //     .then((deletedUserService) => {
 //       if (deletedUserService) {
 //         res.status(200).json({
-//           message: `Successfully deleted ${user_id}`,
+//           message: `Successfully deleted ${userId}`,
 //         });
 //       } else {
 //         res.status(404).json({
@@ -274,18 +372,18 @@ module.exports = {
 
 // //update
 // const update = (req, res) => {
-//   const user_id = req.userData.id;
-//   const new_service_id = req.body.service_id;
-//   const new_payment_id = req.body.payment_id;
+//   const userId = req.userData.id;
+//   const new_serviceId = req.body.serviceId;
+//   const new_paymentId = req.body.paymentId;
 //   model.userService
 //     .findOne({
-//       where: { user_id: user_id },
-//       attributes: ["user_id", "service_id", "payment_id"],
+//       where: { userId: userId },
+//       attributes: ["userId", "serviceId", "paymentId"],
 //     })
 //     .then((userService) => {
 //       if (userService) {
-//         userService.service_id = new_service_id;
-//         userService.payment_id = new_payment_id;
+//         userService.serviceId = new_serviceId;
+//         userService.paymentId = new_paymentId;
 //         model.userService
 //           .save()
 //           .then((updatedUserService) => {

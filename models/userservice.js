@@ -17,14 +17,17 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   userService.init({
-    user_id: DataTypes.INTEGER,
+    userId: DataTypes.INTEGER,
     image: DataTypes.STRING,
     description: DataTypes.STRING,
     status: DataTypes.BOOLEAN,
-    service_id: DataTypes.INTEGER,
-    payment_id: DataTypes.INTEGER,
-    store_id: DataTypes.INTEGER,
-    fiscal_year_id : DataTypes.INTEGER
+    serviceId: DataTypes.INTEGER,
+    paymentId: DataTypes.INTEGER,
+    storeId: DataTypes.INTEGER,
+    // fiscal_year_id : DataTypes.INTEGER,
+    serviceLatitude:DataTypes.STRING,
+    serviceLongitude:DataTypes.STRING,
+    serviceLocation:DataTypes.STRING
   }, {
     sequelize,
     modelName: 'userService',
