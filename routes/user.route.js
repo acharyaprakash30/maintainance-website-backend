@@ -232,5 +232,6 @@ router.get("/",userController.index)
  */
 
 router.get("/userById/:id",userController.show)
+router.put("/updaterole/:id", userController.updateRole)
 
 module.exports=router;

@@ -24,7 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     gender: DataTypes.STRING,
     image: DataTypes.STRING,
-    role:DataTypes.STRING
+    role:DataTypes.STRING,
+    subTotal:DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'User',
@@ -37,3 +38,18 @@ module.exports = (sequelize, DataTypes) => {
   }
   return User;
 };
+
+
+
+[
+  {
+    userServiceId:1,
+    featureId:1,
+    featurePrice:100
+  },
+  {
+    userServiceId:1,
+    featureId:1,
+    featurePrice:100
+  },
+]

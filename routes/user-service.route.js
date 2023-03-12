@@ -155,6 +155,8 @@ router.delete("/delete/:id",verifyMiddleware.verification,userserviceController.
 
 router.patch("/update/:id",verifyMiddleware.verification,imageUpload.upload.single('image'),userserviceController.update)
 
+router.post("/multiple",verifyMiddleware.verification,imageUpload.upload.single('image'), userserviceController.bulkServiceSubmit)
+
 
 
 module.exports=router
