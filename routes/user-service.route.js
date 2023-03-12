@@ -1,7 +1,7 @@
 const experss = require("express")
 const router = experss.Router();
 const userserviceController =require("../controller/user-service.controller")
-const verifyMiddleware = require("../middleware/verify")
+const verifyMiddleware = require("../middleware/verify");
 const imageUpload = require("../helpers/image-uploader");
 
 
@@ -11,8 +11,6 @@ router.get("/",verifyMiddleware.verification,userserviceController.getUserSerivc
 router.delete("/delete/:id",verifyMiddleware.verification,userserviceController.delet)
 //router.put("/update",verifyMiddleware.verification,userserviceController.update)
 router.patch("/update/:id",verifyMiddleware.verification,imageUpload.upload.single('image'),userserviceController.update)
-
-
 
 module.exports=router
 
