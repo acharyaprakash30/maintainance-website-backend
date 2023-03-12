@@ -1,4 +1,7 @@
 const models = require("../models");
+const PaginationData = require("../utils/pagination");
+const { Op } = require("sequelize");
+
 
 const create = (req, res) => {
   const rolecreate = {
@@ -20,30 +23,25 @@ const create = (req, res) => {
 };
 
 const showAll = (req, res) => {
-  const pageAsNumber = Number.parseInt(req.query.page);
-  const sizeAsNumber = Number.parseInt(req.query.size);
-
-  let page = 0;
-  if (!Number.isNaN(pageAsNumber) && pageAsNumber > 0) {
-    page = pageAsNumber;
-  }
-
-  let size = 10;
-  if (
-    !Number.isNaN(sizeAsNumber) &&
-    !(sizeAsNumber > 10) &&
-    !(sizeAsNumber < 1)
-  ) {
-    size = sizeAsNumber;
-  }
+  const { page = 0, size = 10 } = req.query;
+  const { limit, offset } = PaginationData.getPagination(page, size);
+  const { filter = "" } = req.query;
   models.Role.findAndCountAll({
-    limit: size,
-    offset: page * size,
+    limit,
+    offset,     where: {
+      [Op.or]: [
+        {
+          name: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+      ],
+    },
   })
     .then((result) => {
       res.status(200).json({
-        content: result.rows,
-        totalPages: Math.ceil(result.count / Number.parseInt(size)),
+        data:PaginationData.getPagingData(result,page,limit)
+
       });
     })
     .catch((error) => {

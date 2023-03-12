@@ -1,6 +1,8 @@
 const models = require("../models");
 const geolib = require("geolib");
 const { sequelize } = require("../models");
+const PaginationData = require("../utils/pagination");
+const { Op } = require("sequelize");
 
 //this user input store the data in three databases 1.Store 2.ServiceStore 3.StoreServiceFeature
 //in first promise function we save the data of store and service store data in database
@@ -124,7 +126,35 @@ function serviceOrderToFindArray(savedOrderItemArray,storeService){
 }
 
 function showdata(req, res) {
-  models.Store.findAll({
+  const { page = 0, size = 10 } = req.query;
+  const { limit, offset } = PaginationData.getPagination(page, size);
+  const { filter = "" } = req.query;
+  models.Store.findAndCountAll({
+    limit,
+      offset,    where: {
+        [Op.or]: [
+          {
+            name: {
+              [Op.like]: "%" + filter + "%",
+            },
+          },
+          {
+            address: {
+              [Op.like]: "%" + filter + "%",
+            },
+          },
+          {
+            userId: {
+              [Op.like]: "%" + filter + "%",
+            },
+          },
+          {
+            contactNumber: {
+              [Op.like]: "%" + filter + "%",
+            },
+          },
+        ],
+      }, 
     include: [
       {
         model: models.User,
@@ -138,6 +168,7 @@ function showdata(req, res) {
           {
             model: models.Service,
             as: "service",
+
           },
           {
             model: models.StoreServiceFeature,
@@ -154,7 +185,8 @@ function showdata(req, res) {
     ],
   })
     .then((result) => {
-      res.status(201).json(result);
+      res.status(201).json({        data:PaginationData.getPagingData(result,page,limit)
+      });
     })
     .catch((error) => {
       res.status(501).json({

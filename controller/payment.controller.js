@@ -1,4 +1,7 @@
 const model = require("../models");
+const PaginationData = require("../utils/pagination");
+const { Op } = require("sequelize");
+
 
 //create Payment
 
@@ -85,32 +88,37 @@ const deletePayment = (req, res) => {
 
 //get all lcoation
 const index = (req, res) => {
-  const pageAsNumber = Number.parseInt(req.query.page);
-  const sizeAsNumber = Number.parseInt(req.query.size);
-
-  let page = 0;
-  if (!Number.isNaN(pageAsNumber) && pageAsNumber > 0) {
-    page = pageAsNumber;
-  }
-
-  let size = 10;
-  if (
-    !Number.isNaN(sizeAsNumber) &&
-    !(sizeAsNumber > 10) &&
-    !(sizeAsNumber < 1)
-  ) {
-    size = sizeAsNumber;
-  }
+  const { page = 0, size = 10 } = req.query;
+  const { limit, offset } = PaginationData.getPagination(page, size);
+  const { filter = "" } = req.query;
   model.Payment.model.Payment.findAndCountAll(
-    { limit: size, offset: page * size },{
+    { limit,
+      offset,     where: {
+        [Op.or]: [
+          {
+            userId: {
+              [Op.like]: "%" + filter + "%",
+            },
+          },
+          {
+            payment_type: {
+              [Op.like]: "%" + filter + "%",
+            },
+          },
+          {
+            payment_method: {
+              [Op.like]: "%" + filter + "%",
+            },
+          },
+        ],
+      },},{
     attributes: {
       exclude: ["createdAt", "updatedAt"],
     },
   })
     .then((result) => {
       res.status(200).json({
-        content: result.rows,
-        totalPages: Math.ceil(result.count / Number.parseInt(size)),
+        data:PaginationData.getPagingData(result,page,limit)
       });
     })
     .catch((error) => {
