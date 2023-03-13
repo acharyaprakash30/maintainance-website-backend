@@ -1,6 +1,6 @@
 const express = require('express');
 const ServiceTypeController = require('../controller/serviceType.controller');
-
+const {validateServiceType}=require("../middleware/FormValidator")
 const router = express.Router();
 
 
@@ -50,7 +50,7 @@ const router = express.Router();
  *         description: Some Server Error
  */
 
-router.post("/create", ServiceTypeController.userInput);
+router.post("/create", validateServiceType,ServiceTypeController.userInput);
 
 /**
  * @swagger

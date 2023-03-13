@@ -31,7 +31,15 @@ function showdata(req, res){
     const { filter = "" } = req.query;
     models.ServiceType.findAndCountAll({    
         limit,
-        offset, 
+        offset, where: {
+            [Op.or]: [
+              {
+                name: {
+                  [Op.like]: "%" + filter + "%",
+                },
+              },
+            ],
+          }
     })
       .then((result) => {
         res

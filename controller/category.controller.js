@@ -58,7 +58,15 @@ const showAll = async (req, res) => {
   try {
     const AllCategory = await models.Category.findAndCountAll({
       limit,
-      offset,
+      offset,where: {
+        [Op.or]: [
+          {
+            CategoryName: {
+              [Op.like]: "%" + filter + "%",
+            },
+          },
+        ],
+      }
     });
     if (AllCategory) {
       let categories = await AllCategories(AllCategory);
