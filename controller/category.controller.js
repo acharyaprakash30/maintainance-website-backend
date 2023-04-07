@@ -49,7 +49,6 @@ function save(req, res) {
 //         }
 //       }
 //     }
-
         
 const showAll = async (req, res) => {
   const { page = 0, size = 10 } = req.query;
