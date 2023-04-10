@@ -107,12 +107,7 @@ const index = (req, res) => {
 
 //get only those services which have a relation with service features
 const servicesByFeatues = (req, res) => {
-  const { page = 0, size = 10 } = req.query;
-  const { limit, offset } = PaginationData.getPagination(page, size);
-  const { filter = "" } = req.query;
-  model.Service.findAndCountAll({
-    limit,
-      offset, 
+  model.Service.findAll({
     include: [
       {
         as: "selectedcategory",
@@ -126,8 +121,7 @@ const servicesByFeatues = (req, res) => {
     ],
   })
     .then((result) => {
-      res.status(200).json({        data:PaginationData.getPagingData(result,page,limit)
-      });
+      res.status(200).json(result);
     })
     .catch((error) => {
       res.status(500).json({

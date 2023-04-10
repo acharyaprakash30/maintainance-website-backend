@@ -161,7 +161,7 @@ router.get("/me",verifyMiddleware.verification,userController.editProfile)
  *          description: Some Server Error
  */
 
-router.patch("/:id",imageUpload.upload.single('image'),verifyMiddleware.verification,validateUser,userController.editUser)
+router.patch("/:id",imageUpload.upload.single('image'),verifyMiddleware.verification,userController.editUser)
 
 /**
  * @swagger

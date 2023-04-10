@@ -15,7 +15,6 @@ const {validateService}=require("../middleware/FormValidator")
      *          - name
      *          - image
      *          - slug
-     *          - userId
      *          - categoryId
      *        properties:
      *          name:
@@ -27,9 +26,6 @@ const {validateService}=require("../middleware/FormValidator")
      *          slug:
      *           type: string
      *           description: Service's slug
-     *          userId:
-     *           type: integer
-     *           description: Service's userId
      *          categoryId:
      *           type: integer
      *           description: Service's categoryId

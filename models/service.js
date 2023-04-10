@@ -32,13 +32,10 @@ module.exports = (sequelize, DataTypes) => {
       as : "SubServicelist",
       foreignKey : "serviceId"
     });
-    // Service.belongsTo(models.Store, {
-    //   as : "serviceStore",
-    //   foreignKey : "storeId"
-    // });
     Service.belongsTo(models.Category, {
       as : "selectedcategory",
-      foreignKey : "categoryId"
+      foreignKey : "categoryId",
+      onDelete: "CASCADE",
     })
   }
 

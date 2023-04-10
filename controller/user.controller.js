@@ -12,6 +12,7 @@ const create = (req, res) => {
   if (req.file) {
     var img = req.file.path;
   }
+  console.log("===============================user login form ")
   const newUser = {
     email: req.body.email,
     name: req.body.name,

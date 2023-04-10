@@ -52,11 +52,9 @@ const userInput = async (req, res) => {
         transaction: t,
       });
       let savedOrderItemArray = [];
-      console.log("========================================aa")
       await Promise.all(
         storeService.map(async (item) => {
           const service = await models.Service.findByPk(item.serviceId);
-          console.log("here===================================================")
           if (!service) {
             return res.status(400).json({
               message: "service item doesnot exist",

@@ -31,7 +31,13 @@ function showdata(req, res){
     const { filter = "" } = req.query;
     models.ServiceType.findAndCountAll({    
         limit,
-        offset, 
+        offset,
+        include: [
+            {
+              as: "SubService",
+              model: models.Service
+            }
+          ],
     })
       .then((result) => {
         res
