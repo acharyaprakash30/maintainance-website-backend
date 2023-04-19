@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 const { catchError } = require("../middleware/catchError");
 
 
-catchError(async function userInput(req, res) {
+const userInput =catchError(async (req, res)=> {
     const fiscal_yearData = {
         year: req.body.year,
         status: false
@@ -46,7 +46,7 @@ catchError(async function userInput(req, res) {
 
 // }
 
-catchError(function showData(req, res) {
+const showData =catchError( (req, res) =>{
     const { page = 0, size = 10 } = req.query;
     const { limit, offset } = PaginationData.getPagination(page, size);
     const { filter = "" } = req.query;
@@ -73,7 +73,7 @@ catchError(function showData(req, res) {
 }
 )
 
-catchError(function editfiscalyear(req, res) {
+const editfiscalyear=catchError((req, res) =>{
 
     const id = req.params.id;
 
@@ -121,7 +121,7 @@ catchError(function editfiscalyear(req, res) {
 })
 
 
-catchError(function deletefiscalyear(req, res) {
+const deletefiscalyear=catchError((req, res)=> {
     const id = req.params.id;
 
     models.Fiscal_year.destroy({ where: { id: id } }).then(result => {

@@ -39,7 +39,6 @@ const createUserService = catchError(async (req, res) => {
   })
 })
 
-
 const getUserSerivce = catchError((req, res) => {
 
   const { page = 0, size = 10 } = req.query;

@@ -5,7 +5,7 @@ const { catchError } = require("../middleware/catchError");
 
 
 
-catchError(function userInput(req, res) {
+const userInput = catchError((req, res) =>{
     const serviceType = {
         name: req.body.name,
         serviceId: req.body.serviceId,
@@ -22,7 +22,7 @@ catchError(function userInput(req, res) {
 })
 
 
-catchError(function showdata(req, res) {
+const showdata =catchError((req, res)=> {
     const { page = 0, size = 10 } = req.query;
     const { limit, offset } = PaginationData.getPagination(page, size);
     const { filter = "" } = req.query;
@@ -47,7 +47,7 @@ catchError(function showdata(req, res) {
 }
 )
 
-catchError(function showdataById(req, res) {
+const showdataById =catchError((req, res)=> {
     models.ServiceType.findByPk(req.params.id).then(result => {
         res.status(201).json(result);
     })
@@ -56,7 +56,7 @@ catchError(function showdataById(req, res) {
 
 
 
-catchError(function editServiceType(req, res) {
+const editServiceType =catchError((req, res)=> {
 
     const id = req.params.id;
 
@@ -82,7 +82,7 @@ catchError(function editServiceType(req, res) {
     })
 })
 
-catchError(function destroyServiceType(req, res) {
+const destroyServiceType=catchError((req, res)=> {
 
     const id = req.params.id;
 
