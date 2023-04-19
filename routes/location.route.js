@@ -17,9 +17,6 @@ const verifyMiddleware = require("../middleware/verify")
      *          address:
      *           type: string
      *           description: location's address
-     *          userId:
-     *           type: integer
-     *           description: location's userId
      */
 
     // /**
@@ -138,11 +135,6 @@ router.put("/update/:id",locationController.editlocation)
  *          type: integer
  *          required: true
  *          description: location's id
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/location'
  *     responses:
  *      200:
  *          description: location deleted successfully
