@@ -120,11 +120,11 @@ router.get("/:id", ServiceTypeController.showdataById);
  *          description: Some Server Error
  */
 
-router.patch("/:id", ServiceTypeController.editServiceType);
+router.put("/:id", ServiceTypeController.editServiceType);
 
 /**
  * @swagger
- * /servicetype/{id}:
+ * /servicetype/delete/{id}:
  *   delete:
  *     summary: Delete servicetype
  *     security:
@@ -137,11 +137,6 @@ router.patch("/:id", ServiceTypeController.editServiceType);
  *          type: integer
  *          required: true
  *          description: servicetype's id
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/servicetype'
  *     responses:
  *      200:
  *          description: servicetype deleted successfully
@@ -149,6 +144,6 @@ router.patch("/:id", ServiceTypeController.editServiceType);
  *          description: Some Server Error
  */
 
-router.delete("/:id", ServiceTypeController.destroyServiceType);
+router.delete("/delete/:id", ServiceTypeController.destroyServiceType);
 
 module.exports = router;

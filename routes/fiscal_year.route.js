@@ -98,12 +98,12 @@ router.get("/", fiscal_yearController.showData);
  *          description: Some Server Error
  */
 
-router.patch("/:id", fiscal_yearController.editfiscalyear);
+router.put("/:id", fiscal_yearController.editfiscalyear);
 
 
 /**
  * @swagger
- * /fiscalyear/{id}:
+ * /fiscalyear/delete/{id}:
  *   delete:
  *     summary: Delete User
  *     security:
@@ -116,11 +116,6 @@ router.patch("/:id", fiscal_yearController.editfiscalyear);
  *          type: integer
  *          required: true
  *          description: fiscalyear's id
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/fiscal_year'
  *     responses:
  *      200:
  *          description: fiscalyear deleted successfully
@@ -128,6 +123,6 @@ router.patch("/:id", fiscal_yearController.editfiscalyear);
  *          description: Some Server Error
  */
 
-router.delete("/:id", fiscal_yearController.deletefiscalyear);
+router.delete("/delete/:id", fiscal_yearController.deletefiscalyear);
 
 module.exports = router;

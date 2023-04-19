@@ -27,7 +27,7 @@ const router = express.Router();
      *           type: string
      *           description: store's name
      *          image:
-     *           type: string
+     *           type: file
      *           description: store's image
      *          latitude:
      *           type: float
@@ -38,9 +38,6 @@ const router = express.Router();
      *          address:
      *           type: string
      *           description: store's address
-     *          userId:
-     *           type: integer
-     *           description: store's userId
      *          contactNumber:
      *           type: string
      *           description: store's contactNumber
@@ -64,7 +61,7 @@ const router = express.Router();
  *     tags: [store]
  *     requestBody:
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             $ref: '#/components/schemas/store'  
  *     responses:
@@ -128,7 +125,7 @@ router.patch("/:id",verifyMiddleware.verification,imageUploader.upload.single('i
 
 /**
  * @swagger
- * /store/{id}:
+ * /store/delete/{id}:
  *   delete:
  *     summary: Delete store
  *     security:
@@ -141,11 +138,6 @@ router.patch("/:id",verifyMiddleware.verification,imageUploader.upload.single('i
  *          type: integer
  *          required: true
  *          description: store's id
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/store'
  *     responses:
  *      200:
  *          description: store deleted successfully
@@ -153,7 +145,7 @@ router.patch("/:id",verifyMiddleware.verification,imageUploader.upload.single('i
  *          description: Some Server Error
  */
 
-router.delete("/:id", StoreController.destroyStoreData);
+router.delete("/delete/:id", StoreController.destroyStoreData);
 
 
 /**

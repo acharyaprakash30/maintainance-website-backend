@@ -3,6 +3,8 @@ const geolib = require("geolib");
 const { sequelize } = require("../models");
 const PaginationData = require("../utils/pagination");
 const { Op } = require("sequelize");
+const { catchError } = require("../middleware/catchError");
+
 
 //this user input store the data in three databases 1.Store 2.ServiceStore 3.StoreServiceFeature
 //in first promise function we save the data of store and service store data in database
@@ -31,8 +33,8 @@ const { Op } = require("sequelize");
 //     ]
 //   }
 // ]
-const userInput = async (req, res) => {
-  try {
+const userInput = catchError(async (req, res) => {
+  
     let t;
     await sequelize.transaction(async (t) => {
       if (req.file) {
@@ -48,14 +50,14 @@ const userInput = async (req, res) => {
         contactNumber: req.body.contactNumber,
       };
       const storeService = JSON.parse(req.body.storeService);
+      console.log("========================================aa")
       const savedStore = await models.Store.create(storeData, {
         transaction: t,
       });
       let savedOrderItemArray = [];
-      console.log("========================================aa")
       await Promise.all(
         storeService.map(async (item) => {
-          const service = await models.Service.findByPk(item.serviceId);
+          const service = await models.Service.findByPk(item.serviceId);  
           console.log("here===================================================")
           if (!service) {
             return res.status(400).json({
@@ -97,17 +99,11 @@ const userInput = async (req, res) => {
       return res.status(200).json({
         message: "store created sucessfully",
       });
-    });
-  } catch (err) {
-    return res.status(500).json({
-      data:err,
-      mesasge: err.message,
-    });
-  }
-};
+    })}
 
+)
 //this function was called from userinput which return a array for storeservicefeature model
-function serviceOrderToFindArray(savedOrderItemArray,storeService){
+const serviceOrderToFindArray=catchError((savedOrderItemArray,storeService)=>{
       var servicesArrayTemp = [];
   
       for(let i=0; i<storeService.length;i++){
@@ -123,9 +119,9 @@ function serviceOrderToFindArray(savedOrderItemArray,storeService){
       }
       return servicesArrayTemp;
 
-}
+})
 
-function showdata(req, res) {
+const showdata=catchError((req, res)=> {
   const { page = 0, size = 10 } = req.query;
   const { limit, offset } = PaginationData.getPagination(page, size);
   const { filter = "" } = req.query;
@@ -185,18 +181,15 @@ function showdata(req, res) {
     ],
   })
     .then((result) => {
-      res.status(201).json({        data:PaginationData.getPagingData(result,page,limit)
+      res.status(201).json({data:result.rows
       });
     })
-    .catch((error) => {
-      res.status(501).json({
-        message: "Something went wrong!!",
-        error: error,
-      });
-    });
+    
 }
+)
 
-function editStoreData(req, res) {
+
+const editStoreData=catchError((req, res)=> {
   const id = req.params.id;
 
   models.Store.findByPk(id)
@@ -220,26 +213,18 @@ function editStoreData(req, res) {
               result: updatedStoreData,
             });
           })
-          .catch((error) => {
-            res.status(500).json({
-              message: "something went wrong",
-              error: error,
-            });
-          });
+ 
       } else {
         res.status(404).json({
           message: "StoreData with id " + id + " is not valid",
         });
       }
     })
-    .catch((error) => {
-      res.status(500).json({
-        message: "Something went wrong!!",
-        error: error,
-      });
-    });
-}
-function destroyStoreData(req, res) {
+
+})
+
+
+const destroyStoreData=catchError((req, res)=> {
   const id = req.params.id;
 
   models.Store.destroy({ where: { id: id } })
@@ -254,14 +239,11 @@ function destroyStoreData(req, res) {
         });
       }
     })
-    .catch((error) => {
-      res.status(500).json({
-        message: "Something went wrong",
-        error: error,
-      });
-    });
-}
-async function getPlaceByCoordinates(req, res) {
+
+})
+
+
+ const getPlaceByCoordinates =catchError(async(req, res)=> {
   const givenLatitude = req.params.latitude;
   const givenLongitude = req.params.longitude;
   const serviceId = req.params.serviceId;
@@ -304,7 +286,7 @@ async function getPlaceByCoordinates(req, res) {
         
       },
     ],
-  });
+  })
   // check if there are any stores in the database
   if (!Array.isArray(allresult) || allresult.length === 0) {
     return res.status(400).json({
@@ -327,7 +309,8 @@ async function getPlaceByCoordinates(req, res) {
       distance: parseFloat(distance.toFixed(2)) + " km",
       address:allresult[i].address,
       Servicestore: allresult[i].Servicestore,
-    });
+    })
+
     async function getPlaceByCoordinates(req, res) {
       const givenLatitude = req.params.latitude;
 
@@ -395,7 +378,7 @@ async function getPlaceByCoordinates(req, res) {
       result: nearbyplaces,
     });
   }
-}
+})
 
 module.exports = {
   userInput: userInput,

@@ -22,14 +22,11 @@ const {validateService}=require("../middleware/FormValidator")
      *           type: string
      *           description: Service's name
      *          image:
-     *           type: string
+     *           type: file
      *           description: Service's image
      *          slug:
      *           type: string
      *           description: Service's slug
-     *          userId:
-     *           type: integer
-     *           description: Service's userId
      *          categoryId:
      *           type: integer
      *           description: Service's categoryId
@@ -49,17 +46,9 @@ const {validateService}=require("../middleware/FormValidator")
  *     security:
  *       - jwt: []
  *     tags: [service]
- *     consumes:
- *        - multipart/form-data
- *     parameters:
- *        - in: formData
- *          name: image
- *          type: file
- *          required: true
- *          description: The image file to upload
  *     requestBody:
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             $ref: '#/components/schemas/service'  
  *     responses:
@@ -182,7 +171,7 @@ router.get("/:id",serviceController.show)
 
 /**
  * @swagger
- * /service/{id}:
+ * /service/delete/{id}:
  *   delete:
  *     summary: Delete service
  *     security:
@@ -195,11 +184,6 @@ router.get("/:id",serviceController.show)
  *          type: integer
  *          required: true
  *          description: service id
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/service'
  *     responses:
  *      200:
  *          description: serivce deleted successfully
@@ -207,7 +191,7 @@ router.get("/:id",serviceController.show)
  *          description: Some Server Error
  */
 
-router.delete("/:id",serviceController.deleteService)
+router.delete("/delete/:id",serviceController.deleteService)
 
 
 

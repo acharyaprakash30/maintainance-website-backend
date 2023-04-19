@@ -93,12 +93,12 @@ router.get("/", roleController.showAll);
  *          description: Some Server Error
  */
 
-router.patch("/:id", roleController.update);
+router.put("/:id", roleController.update);
 
 
 /**
  * @swagger
- * /role/{id}:
+ * /role/delete/{id}:
  *   delete:
  *     summary: Delete role
  *     security:
@@ -111,11 +111,6 @@ router.patch("/:id", roleController.update);
  *          type: integer
  *          required: true
  *          description: role's email
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/role'
  *     responses:
  *      200:
  *          description: role deleted successfully
@@ -123,6 +118,6 @@ router.patch("/:id", roleController.update);
  *          description: Some Server Error
  */
 
-router.delete("/:id", roleController.delet);
+router.delete("/delete/:id", roleController.delet);
 
 module.exports = router;

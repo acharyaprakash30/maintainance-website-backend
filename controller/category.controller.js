@@ -2,8 +2,10 @@ const models = require("../models");
 const fs = require("fs");
 const PaginationData = require("../utils/pagination");
 const { Op } = require("sequelize");
+const { catchError } = require("../middleware/catchError");
 
-function save(req, res) {
+
+const  save= catchError((req, res) =>{
   if (req.file) {
     var img = req.file.path;
   }
@@ -16,17 +18,11 @@ function save(req, res) {
   models.Category.create(category)
     .then((result) => {
       res.status(201).json({
-        message: "Product created succesfully",
+        message: "Category created succesfully",
         result: result,
       });
     })
-    .catch((error) => {
-      res.status(500).json({
-        message: "Something went wring",
-        error: error,
-      });
-    });
-}
+})
 
 // const showAll = async (req,res)=>{
 //     try{
@@ -51,11 +47,11 @@ function save(req, res) {
 //     }
 
         
-const showAll = async (req, res) => {
+const showAll = catchError(async (req, res) => { 
   const { page = 0, size = 10 } = req.query;
   const { limit, offset } = PaginationData.getPagination(page, size);
   const { filter = "" } = req.query;
-  try {
+
     const AllCategory = await models.Category.findAndCountAll({
       limit,
       offset,where: {
@@ -72,22 +68,20 @@ const showAll = async (req, res) => {
       let categories = await AllCategories(AllCategory);
       const objectsWithEmptyChild = getObjectsWithEmptyChild(categories);
       console.log(objectsWithEmptyChild);
-
-      res.status(200).json({
-        data: PaginationData.getPagingData(result, page, limit),
-        objectsWithEmptyChild: objectsWithEmptyChild,
+      
+      res.status(200).json(
+        {
+          // data:AllCategory.rows,
+        data:categories.rows,
+        // objectsWithEmptyChild: objectsWithEmptyChild,
       });
     } else {
       res.status(404).json({
         message: "Category not found",
       });
-    }
-  } catch (err) {
-    res.status(500).json({
-      error: err.message,
-    });
-  }
-};
+    
+  } 
+})
 
 function getObjectsWithEmptyChild(categories) {
   const result = [];
@@ -105,16 +99,18 @@ function getObjectsWithEmptyChild(categories) {
 }
 
 const AllCategories = async (data, parentId = null) => {
+  let dataArray =  [data]
   let categoryList = [];
   let parentCat;
 
-  if (parentId == null) {
-    parentCat = data.filter((element) => element.parentId == null);
+  if (parentId === null) {
+    parentCat = dataArray.filter((element) => {element.parentId == null});
   } else {
-    parentCat = data.filter((element) => element.parentId == parentId);
+    parentCat = dataArray.filter((element) => element.parentId == parentId);
   }
 
-  for (let dataCat of parentCat) {
+  
+for (let dataCat of parentCat) {
     categoryList.push({
       id: dataCat.id,
       CategoryName: dataCat.CategoryName,
@@ -146,7 +142,7 @@ const showCategoryById = async (req, res) => {
   }
 };
 
-const showCategories = async (req, res) => {
+const showCategories = catchError(async (req, res) => {
   const { page = 0, size = 10 } = req.query;
   const { limit, offset } = PaginationData.getPagination(page, size);
   const { filter = "" } = req.query;
@@ -159,53 +155,48 @@ const showCategories = async (req, res) => {
       },
     ],
   }, })
-    .then(async (result) => {
-      let categoryWithParentName = await getCategoriesWithParent(result);
+  .then(async (result) => {
+    // let categoryWithParentName = await getCategoriesWithParent(result);
       res
-        .status(201)
-        .json({ data: PaginationData.getPagingData(result, page, limit) });
+      .status(201)
+      .json({ data: result.rows });
     })
-    .catch((error) => {
-      res.status(501).json({
-        message: "Something went wrong!!",
-        error: error,
-      });
-    });
-};
-
-const getCategoriesWithParent = (data) => {
-  let categoryWithParentName = [];
-
-  data.forEach((item) => {
-    if (item.parentId == null) {
-      let itemcategoryWithParentName = {
-        id: item.id,
-        CategoryName: item.CategoryName,
-        CategoryImage: item.CategoryImage,
-        parentId: item.parentId,
-        parentName: null,
-      };
-      categoryWithParentName.push(itemcategoryWithParentName);
-    } else {
-      data.forEach((dataloop) => {
-        if (item.parentId == dataloop.id) {
-          let itemcategoryWithParentName = {
-            id: item.id,
-            CategoryName: item.CategoryName,
-            CategoryImage: item.CategoryImage,
-            parentId: item.parentId,
-            parentName: dataloop.CategoryName,
-          };
-          categoryWithParentName.push(itemcategoryWithParentName);
-        }
-      });
-    }
-  });
-  return categoryWithParentName;
-};
+    
+  })
+  
+//   const getCategoriesWithParent = (data) => {
+//     let categoryWithParentName = [];
+    
+//     data.forEach((item) => {
+//     if (item.parentId == null) {
+//       let itemcategoryWithParentName = {
+//         id: item.id,
+//         CategoryName: item.CategoryName,
+//         CategoryImage: item.CategoryImage,
+//         parentId: item.parentId,
+//         parentName: null,
+//       };
+//       categoryWithParentName.push(itemcategoryWithParentName);
+//     } else {
+//       data.forEach((dataloop) => {
+//         if (item.parentId == dataloop.id) {
+//           let itemcategoryWithParentName = {
+//             id: item.id,
+//             CategoryName: item.CategoryName,
+//             CategoryImage: item.CategoryImage,
+//             parentId: item.parentId,
+//             parentName: dataloop.CategoryName,
+//           };
+//           categoryWithParentName.push(itemcategoryWithParentName);
+//         }
+//       });
+//     }
+//   });
+//   return categoryWithParentName;
+// };
 
 //update user
-const updateCategoryById = (req, res) => {
+const updateCategoryById = catchError( (req, res) => {
   models.Category.findOne({ where: { id: req.params.id } })
     .then(async (exist) => {
       const editCategory = {
@@ -229,28 +220,18 @@ const updateCategoryById = (req, res) => {
               updated: update,
             });
           })
-          .catch((err) => {
-            res.status(500).json({
-              messege: "something went wrong!",
-              err,
-            });
-          });
+
       } else {
         res.status(401).json({
           messege: "user not found",
         });
       }
     })
-    .catch((err) => {
-      res.status(500).json({
-        messege: "something went wrong!",
-        err,
-      });
-    });
-};
+    
+});
 
 //delete user
-const deleteCategory = (req, res) => {
+const deleteCategory = catchError((req, res) => {
   models.Category.destroy({ where: { id: req.params.id } })
     .then((result) => {
       if (result) {
@@ -264,12 +245,8 @@ const deleteCategory = (req, res) => {
         });
       }
     })
-    .catch((err) => {
-      res.status(500).json({
-        messege: "Something went wrong",
-      });
-    });
-};
+
+});
 
 module.exports = {
   save: save,

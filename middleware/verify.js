@@ -3,6 +3,7 @@ const { CHAR } = require("sequelize");
 const dotenv = require("dotenv");
 dotenv.config();
 
+// console.log("_________  ")
 const verification = (req,res,next)=>{
     try{
         const token = req.headers.authorization.split(" ")[1];

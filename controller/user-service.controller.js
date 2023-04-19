@@ -1,3 +1,4 @@
+const { catchError } = require('../middleware/catchError');
 const models = require('../models');
 const { sequelize } = require("../models");
 const PaginationData = require("../utils/pagination");
@@ -5,7 +6,7 @@ const { Op } = require("sequelize");
 
 
 
-const createUserService = async (req, res) => {
+const createUserService =catchError( async (req, res) => {
   if (req.file) {
     var img = req.file.filename;
   }
@@ -28,26 +29,16 @@ const createUserService = async (req, res) => {
           message: "UserService created succesfully",
           result: userService
         });
-      }).catch(error => {
-        res.status(501).json({
-          message: "Something went wrong!! ",
-          error: error
-        });
-      });
+      })
     } else {
       res.status(501).json({
         message: "userId doesnot exists!!"
       });
     }
-  }).catch(error => {
-    res.status(501).json({
-      message: "Something went wrong!! ",
-      error: error
-    });
-  });
-}
+  })
+})
 
-const getUserSerivce = (req, res) => {
+const getUserSerivce = catchError((req, res) => {
 
   const { page = 0, size = 10 } = req.query;
   const { limit, offset } = PaginationData.getPagination(page, size);
@@ -98,19 +89,15 @@ const getUserSerivce = (req, res) => {
       res
         .status(200)
         .json({
-          data:PaginationData.getPagingData(result,page,limit)
+          data:result.rows
 
         });
-    }).catch(error => {
-      res.status(501).json({
-        message: "Something went wrong !!"
-      });
-    });
+    })
 
-}
+})
 
 
-const update = (req, res) => {
+const update = catchError((req, res) => {
   const id = req.params.id;
 
   models.userService.findOne({ where: { id: id } }).then(exists => {
@@ -131,28 +118,18 @@ const update = (req, res) => {
           message: "UserService updated successfully!!",
           result: updatedUserService
         });
-      }).catch(error => {
-        res.status(501).json({
-          message: "Something went wrong!! ",
-          error: error
-        });
-      });
+      })
     } else {
       res.status(404).json({
         message: "User Service with id " + id + " is not valid"
       });
     }
-  }).catch(error => {
-    res.status(501).json({
-      message: "Something went wrong!!",
-      error: error
-    });
-  });
+  })
 
 }
+)
 
-
-const delet = (req, res) => {
+const delet = catchError((req, res) => {
 
   const id = req.params.id;
 
@@ -168,17 +145,10 @@ const delet = (req, res) => {
       });
     }
 
-  }).catch(error => {
-    res.status(500).json({
-      message: "Something went wrong",
-      error: error
-    });
+  })
+})
 
-  });
-}
-
-const bulkServiceSubmit = async (req, res) => {
-  try {
+const bulkServiceSubmit = catchError(async (req, res) => {
     let t;
     await sequelize.transaction(async (t) => {
       if (req.file) {
@@ -237,14 +207,9 @@ const bulkServiceSubmit = async (req, res) => {
       });
 
     });
-  } catch (error) {
-    return res.status(500).json({
-      data: error,
-      mesasge: error.message,
-    });
-  }
+ 
 }
-
+)
 module.exports = {
   createUserService,
   getUserSerivce,

@@ -14,9 +14,6 @@ const verifyMiddleware = require("../middleware/verify")
      *          - payment_type
      *          - payment_method
      *        properties:
-     *          userId:
-     *           type: integer
-     *           description: Category's userId
      *          payment_type:
      *           type: string
      *           description: Category's payment_type
@@ -143,11 +140,6 @@ router.put("/update/:id",paymentController.editPayment)
  *          type: integer
  *          required: true
  *          description: payment's id
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/payment'
  *     responses:
  *      200:
  *          description: payment deleted successfully
