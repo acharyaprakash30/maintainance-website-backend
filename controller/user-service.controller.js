@@ -2,10 +2,12 @@ const models = require('../models');
 const { sequelize } = require("../models");
 const PaginationData = require("../utils/pagination");
 const { Op } = require("sequelize");
+const { catchError } = require("../middleware/catchError");
 
 
 
-const createUserService = async (req, res) => {
+
+const createUserService = catchError(async (req, res) => {
   if (req.file) {
     var img = req.file.filename;
   }
@@ -30,33 +32,23 @@ const createUserService = async (req, res) => {
           message: "UserService created succesfully",
           result: userService
         });
-      }).catch(error => {
-        res.status(501).json({
-          message: "Something went wrong!! ",
-          error: error
-        });
-      });
+      })
     } else {
       res.status(501).json({
         message: "userId doesnot exists!!"
       });
     }
-  }).catch(error => {
-    res.status(501).json({
-      message: "Something went wrong!! ",
-      error: error
-    });
-  });
-}
+  })
+})
 
-const getUserSerivce = (req, res) => {
+const getUserSerivce = catchError((req, res) => {
 
   const { page = 0, size = 10 } = req.query;
   const { limit, offset } = PaginationData.getPagination(page, size);
   const { filter = "" } = req.query;
-  models.userService.findAndCountAll({    
+  models.userService.findAndCountAll({
     limit,
-    offset,     where: {
+    offset, where: {
       [Op.or]: [
         {
           user_id: {
@@ -100,19 +92,15 @@ const getUserSerivce = (req, res) => {
       res
         .status(200)
         .json({
-          data:PaginationData.getPagingData(result,page,limit)
+          data: result.rows
 
         });
-    }).catch(error => {
-      res.status(501).json({
-        message: "Something went wrong !!"
-      });
-    });
+    })
 
-}
+})
 
 
-const update = (req, res) => {
+const update = catchError((req, res) => {
   const id = req.params.id;
 
   models.userService.findOne({ where: { id: id } }).then(exists => {
@@ -133,28 +121,18 @@ const update = (req, res) => {
           message: "UserService updated successfully!!",
           result: updatedUserService
         });
-      }).catch(error => {
-        res.status(501).json({
-          message: "Something went wrong!! ",
-          error: error
-        });
-      });
+      })
     } else {
       res.status(404).json({
         message: "User Service with id " + id + " is not valid"
       });
     }
-  }).catch(error => {
-    res.status(501).json({
-      message: "Something went wrong!!",
-      error: error
-    });
-  });
+  })
 
 }
+)
 
-
-const delet = (req, res) => {
+const delet = catchError((req, res) => {
 
   const id = req.params.id;
 
@@ -170,84 +148,100 @@ const delet = (req, res) => {
       });
     }
 
-  }).catch(error => {
-    res.status(500).json({
-      message: "Something went wrong",
-      error: error
-    });
+  })
+})
 
-  });
-}
+const bulkServiceSubmit = catchError(async (req, res) => { return null})
+//   let t;
+//   await sequelize.transaction(async (t) => {
+//     if (req.file) {
+//       var img = req.file.path;
+//     }
+//     const serviceData = {
+//       userId: req.userData.id,
+//       image: img,
+//       description: req.body.description,
+//       status: req.body.status,
+//       serviceId: req.body.serviceId,
+//       paymentId: req.body.paymentId,
+//       storeId: req.body.storeId,
+//     };
+//     const UserServiceFeatureArray = JSON.parse(req.body.serviceFeatures);
+//     let userService = await models.userService.create(serviceData, { transaction: t });
+//     let subTotalPriceOfUser = 0;
+//     await Promise.all(
+//       UserServiceFeatureArray.map(async (item) => {
 
-const bulkServiceSubmit = async (req, res) => {
-  try {
-    // let t;
-    // await sequelize.transaction(async (t) => {
-    //   if (req.file) {
-    //     var img = req.file.path;
-    //   }
-      const serviceData = {
-        userId: req.userData.id,
-        description: req.body.description,
-        status: req.body.status,
-        serviceId: req.body.serviceId,
-        paymentId: req.body.paymentId,
-        storeId: req.body.storeId,
-        serviceLatitude: req.body.serviceLatitude,
-        serviceLongitude: req.body.serviceLongitude,
-        serviceLocation: req.body.serviceLocation,
-      };
-      // const UserServiceFeatureArray = JSON.parse(req.body.serviceFeatures);
-      let userService = await models.userService.create(serviceData);
-      // let subTotalPriceOfUser = 0;
-      // await Promise.all(
-      //   UserServiceFeatureArray.map(async (item) => {
+// const bulkServiceSubmit = async (req, res) => {
+//   try {
+//     // let t;
+//     // await sequelize.transaction(async (t) => {
+//     //   if (req.file) {
+//     //     var img = req.file.path;
+//     //   }
+//       const serviceData = {
+//         userId: req.userData.id,
+//         description: req.body.description,
+//         status: req.body.status,
+//         serviceId: req.body.serviceId,
+//         paymentId: req.body.paymentId,
+//         storeId: req.body.storeId,
+//         serviceLatitude: req.body.serviceLatitude,
+//         serviceLongitude: req.body.serviceLongitude,
+//         serviceLocation: req.body.serviceLocation,
+//       };
+//       // const UserServiceFeatureArray = JSON.parse(req.body.serviceFeatures);
+//       let userService = await models.userService.create(serviceData);
+//       // let subTotalPriceOfUser = 0;
+//       // await Promise.all(
+//       //   UserServiceFeatureArray.map(async (item) => {
 
-      //     const service = await models.UserServiceFeature.findByPk(item.featureId);
+//       //     const service = await models.UserServiceFeature.findByPk(item.featureId);
 
-      //     if (!service) {
-      //       return res.status(400).json({
-      //         message: "service feature doesnot exist",
-      //       });
-      //     }
+//       //     if (!service) {
+//       //       return res.status(400).json({
+//       //         message: "service feature doesnot exist",
+//       //       });
+//       //     }
 
-      //     let serviceDatas = {
-      //       userServiceId: userService.id,
-      //       featureId: item.featureId,
-      //       featurePrice: item.featurePrice,
-      //     };
-      //     subTotalPriceOfUser = subTotalPriceOfUser + featurePrice;
-      //     let savedOrderItem = await models.UserServiceFeature.create(serviceDatas, {
-      //       transaction: t,
-      //     });
-      //   })
-      // );
+//       //     let serviceDatas = {
+//       //       userServiceId: userService.id,
+//       //       featureId: item.featureId,
+//       //       featurePrice: item.featurePrice,
+//       //     };
+//       //     subTotalPriceOfUser = subTotalPriceOfUser + featurePrice;
+//       //     let savedOrderItem = await models.UserServiceFeature.create(serviceDatas, {
+//       //       transaction: t,
+//       //     });
+//       //   })
+//       // );
 
-    // let isUser =  await models.User.findByPk(req.body.userId);
-    // if(!isUser){
-    //   return res.status(400).json({
-    //     message: "user doesnot exist",
-    //   });
+//     // let isUser =  await models.User.findByPk(req.body.userId);
+//     // if(!isUser){
+//     //   return res.status(400).json({
+//     //     message: "user doesnot exist",
+//     //   });
 
-    // }
-    // else{
-    //   let updatedItem = {
-    //     subTotal:subTotalPriceOfUser
-    //   }
-    //   await models.user.update(updatedItem,{where:{id:isUser.id}},{ transaction: t });
-    // }
-      return res.status(200).json({
-        message: "user service created successfully",
-      });
+//     // }
+//     // else{
+//     //   let updatedItem = {
+//     //     subTotal:subTotalPriceOfUser
+//     //   }
+//     //   await models.user.update(updatedItem,{where:{id:isUser.id}},{ transaction: t });
+//     // }
+//       return res.status(200).json({
+//         message: "user service created successfully",
+//       });
 
-    // });
-  } catch (error) {
-    return res.status(500).json({
-      data: error,
-      mesasge: error.message,
-    });
-  }
-}
+//     // });
+//   } catch (error) {
+//     return res.status(500).json({
+//       data: error,
+//       mesasge: error.message,
+//     });
+//   }
+// }
+// )
 
 module.exports = {
   createUserService,

@@ -2,9 +2,10 @@ const model = require("../models");
 const fs = require("fs");
 const PaginationData = require("../utils/pagination");
 const { Op } = require("sequelize");
+const { catchError } = require("../middleware/catchError");
 
 // create service
-const addService = async (req, res) => {
+const addService = catchError(async (req, res) => {
   if (req.file) {
     var img = req.file.path;
   }
@@ -13,22 +14,16 @@ const addService = async (req, res) => {
     image: img,
     slug: req.body.slug,
     userId: req.userData.id,
+
     categoryId: req.body.categoryId,
   };
-  await model.Service.create(service)
-    .then((result) => {
-      res.status(201).json({
-        messege: "Service created successfully",
-        result: result,
-      });
-    })
-    .catch((error) => {
-      res.status(500).json({
-        messege: "Something went wrong",
-        error,
-      });
+  await model.Service.create(service).then((result) => {
+    res.status(201).json({
+      messege: "Service created successfully",
+      result: result,
     });
-};
+  });
+});
 
 //get all sercvices
 // const index = (req, res) => {
@@ -51,13 +46,17 @@ const addService = async (req, res) => {
 //         });
 //       });
 //   };
-const index = (req, res) => {
+
+
+
+const index = catchError((req, res) => {
   const { page = 0, size = 10 } = req.query;
   const { limit, offset } = PaginationData.getPagination(page, size);
   const { filter = "" } = req.query;
   model.Service.findAndCountAll({
     limit,
-    offset,    where: {
+    offset,
+    where: {
       [Op.or]: [
         {
           name: {
@@ -91,23 +90,19 @@ const index = (req, res) => {
         model: model.ServiceType,
       },
     ],
-  })
-    .then((result) => {
-      res
-        .status(200)
-        .json({ data: PaginationData.getPagingData(result, page, limit) });
-    })
-    .catch((error) => {
-      res.status(500).json({
-        messege: "Something went wrong!!",
-        error,
-      });
-    });
-};
+  }).then((result) => {
+    res.status(200).json({ data: result.rows });
+  });
+});
 
 //get only those services which have a relation with service features
-const servicesByFeatues = (req, res) => {
-  model.Service.findAll({
+const servicesByFeatues = catchError((req, res) => {
+  const { page = 0, size = 10 } = req.query;
+  const { limit, offset } = PaginationData.getPagination(page, size);
+  const { filter = "" } = req.query;
+  model.Service.findAndCountAll({
+    limit,
+    offset,
     include: [
       {
         as: "selectedcategory",
@@ -119,20 +114,17 @@ const servicesByFeatues = (req, res) => {
         required: true,
       },
     ],
-  })
-    .then((result) => {
-      res.status(200).json(result);
-    })
-    .catch((error) => {
-      res.status(500).json({
-        messege: "Something went wrong!!",
-        error,
+  }).then((result) => {
+    res
+      .status(200)
+      .json({
+        data: result.rows,
       });
-    });
-};
+  });
+});
 
 //get service by id
-const show = (req, res) => {
+const show = catchError((req, res) => {
   const id = req.params.id;
 
   model.Service.findByPk(id, {
@@ -146,117 +138,83 @@ const show = (req, res) => {
         model: model.ServiceType,
       },
     ],
-  })
-    .then((result) => {
-      if (result) {
-        res.status(200).json(result);
-      } else {
-        res.status(404).json({
-          messege: "Service not found",
-        });
-      }
-    })
-    .catch((error) => {
-      res.status(500).json({
-        messege: "Something went wrong!!",
-        error,
+  }).then((result) => {
+    if (result) {
+      res.status(200).json(result);
+    } else {
+      res.status(404).json({
+        messege: "Service not found",
       });
-    });
-};
+    }
+  });
+});
 
 //update service
-const updateService = (req, res) => {
-  model.Service.findOne({ where: { id: req.params.id } })
-    .then((exist) => {
-      if (exist) {
-        if (req.file) {
-          let oldFileName = "";
-          oldFileName = exist.image;
-          if (oldFileName) {
-            fs.unlinkSync(oldFileName);
-          }
-          var img = req.file.path;
+const updateService = catchError((req, res) => {
+  model.Service.findOne({ where: { id: req.params.id } }).then((exist) => {
+    if (exist) {
+      if (req.file) {
+        let oldFileName = "";
+        oldFileName = exist.image;
+        if (oldFileName) {
+          fs.unlinkSync(oldFileName);
         }
-
-        const updated = {
-          name: req.body.name,
-          image: img,
-          slug: req.body.slug,
-          userId: req.userData.id,
-          categoryId: req.body.categoryId,
-        };
-        model.Service.update(updated, { where: { id: req.params.id } })
-          .then((update) => {
-            res.status(200).json({
-              messege: "Service updated succcessfully!",
-              updated,
-            });
-          })
-          .catch((err) => {
-            res.status(500).json({
-              messege: "something went wrong!",
-              err,
-            });
-          });
-      } else {
-        res.status(401).json({
-          messege: "Service not found",
-        });
+        var img = req.file.path;
       }
-    })
-    .catch((err) => {
-      res.status(500).json({
-        messege: "something went wrong!",
-        err,
+
+      const updated = {
+        name: req.body.name,
+        image: img,
+        slug: req.body.slug,
+        userId: req.userData.id,
+        categoryId: req.body.categoryId,
+      };
+      model.Service.update(updated, { where: { id: req.params.id } }).then(
+        (update) => {
+          res.status(200).json({
+            messege: "Service updated succcessfully!",
+            updated,
+          });
+        }
+      );
+    } else {
+      res.status(401).json({
+        messege: "Service not found",
       });
-    });
-};
+    }
+  });
+});
 
 //delete service
-const deleteService = (req, res) => {
-  model.Service.destroy({ where: { id: req.params.id } })
-    .then((result) => {
-      if (result) {
-        res.status(200).json({
-          messege: `Service  deleted`,
-        });
-      } else {
-        res.status(404).json({
-          messege: `Service not found`,
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).json({
-        messege: "Something went wrong",
-        err,
+const deleteService = catchError((req, res) => {
+  model.Service.destroy({ where: { id: req.params.id } }).then((result) => {
+    if (result) {
+      res.status(200).json({
+        messege: `Service  deleted`,
       });
-    });
-};
+    } else {
+      res.status(404).json({
+        messege: `Service not found`,
+      });
+    }
+  });
+});
 
 //get service by categoryname/categoryId
-const getserviceByCategory = async (req, res) => {
-  try {
-    await model.Service.findAll({
-      where: { categoryId: req.params.categoryId },
-    })
-      .then((result) => {
-        return res.status(200).json({
-  result:result          ,
-        });
-      })
-      .catch((err) => {
-        return res.status(500).json({
-          error: err.message,
-          message: "Internal server error",
-        });
-      });
-  } catch (err) {
-    return res.status(500).json({
-      error: err.message,
+const getserviceByCategory = catchError(async (req, res) => {
+  const { page = 0, size = 10 } = req.query;
+  const { limit, offset } = PaginationData.getPagination(page, size);
+  const { filter = "" } = req.query;
+  await model.Service.findAndCountAll({
+    limit,
+    offset,
+    where: { categoryId: req.params.categoryId },
+  }).then((result) => {
+    return res.status(200).json({
+      result: result.rows,
     });
-  }
-};
+  });
+});
 module.exports = {
   addService,
   index,

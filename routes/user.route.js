@@ -3,7 +3,7 @@ const router = experss.Router();
 const userController =require("../controller/user.controller")
 const verifyMiddleware = require("../middleware/verify")
 const imageUpload = require("../helpers/image-uploader")
-const {validateUser} = require("../middleware/FormValidator")
+const {validateUser, changePassword, validateChangePassword} = require("../middleware/FormValidator")
 
 
 /**
@@ -39,7 +39,7 @@ const {validateUser} = require("../middleware/FormValidator")
      *           type: string
      *           description: User's gender
      *          image:
-     *           type: string
+     *           type: file
      *           description: User's image
      *         
      */
@@ -59,17 +59,9 @@ const {validateUser} = require("../middleware/FormValidator")
  *     security:
  *       - jwt: []
  *     tags: [user]
- *     consumes:
- *        - multipart/form-data
- *     parameters:
- *        - in: formData
- *          name: image
- *          type: file
- *          required: true
- *          description: The image file to upload
  *     requestBody:
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             $ref: '#/components/schemas/user'  
  *     responses:
@@ -102,12 +94,6 @@ const {validateUser} = require("../middleware/FormValidator")
  *          type: string
  *          required: true
  *          description: user's password
- *         
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/user'
  *     responses:
  *      200:
  *          description: logged in successfully
@@ -161,7 +147,7 @@ router.get("/me",verifyMiddleware.verification,userController.editProfile)
  *          description: Some Server Error
  */
 
-router.patch("/:id",imageUpload.upload.single('image'),verifyMiddleware.verification,userController.editUser)
+router.put("/:id",imageUpload.upload.single('image'),verifyMiddleware.verification,validateUser,userController.editUser)
 
 /**
  * @swagger
@@ -178,11 +164,6 @@ router.patch("/:id",imageUpload.upload.single('image'),verifyMiddleware.verifica
  *          type: string
  *          required: true
  *          description: user's email
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/user'
  *     responses:
  *      200:
  *          description: user deleted successfully
@@ -232,6 +213,33 @@ router.get("/",userController.index)
  */
 
 router.get("/userById/:id",userController.show)
+/**
+ * @swagger
+ * /updaterole/{id}:
+ *   put:
+ *     summary: update user role
+ *     security:
+ *       - jwt: []
+ *     tags: [user]
+ *     parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: integer
+ *          required: true
+ *          description: user's id
+ *     responses:
+ *      200:
+ *          description: user retrieved successfully
+ *      500:
+ *          description: Some Server Error
+ */
+
 router.put("/updaterole/:id", userController.updateRole)
+
+router.post("/forgetpassword",userController.forgetPassword)
+router.post("/resetpassword",userController.resetPassword)
+router.put("/changepassword/:id",verifyMiddleware.verification,validateChangePassword,userController.changePassword)
+
 
 module.exports=router;

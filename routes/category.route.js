@@ -19,8 +19,8 @@ const router = express.Router();
      *          CategoryName:
      *           type: string
      *           description: Category's CategoryName
-     *          CategoryImage:
-     *           type: string
+     *          image:
+     *           type: file
      *           description: Category's CategoryImage
      *          parentId:
      *           type: integer
@@ -34,7 +34,8 @@ const router = express.Router();
     //  *     description: The category managing API endpoint
     //  */
     
-    /**
+
+ /**
  * @swagger
  * /category/create:
  *   post:
@@ -42,17 +43,9 @@ const router = express.Router();
  *     security:
  *       - jwt: []
  *     tags: [category]
- *     consumes:
- *        - multipart/form-data
- *     parameters:
- *        - in: formData
- *          name: image
- *          type: file
- *          required: true
- *          description: The image file to upload
  *     requestBody:
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             $ref: '#/components/schemas/category'  
  *     responses:
@@ -109,11 +102,11 @@ router.get("/", categoryController.showAll);
  *          description: Some Server Error
  */
 
-router.patch("/:id",imageUpload.upload.single('image'),validateCategory,categoryController.updateCategoryById);
+router.put("/:id",imageUpload.upload.single('image'),validateCategory,categoryController.updateCategoryById);
 
 /**
  * @swagger
- * /category/{id}:
+ * /category/delete/{id}:
  *   delete:
  *     summary: Delete category
  *     security:
@@ -126,11 +119,6 @@ router.patch("/:id",imageUpload.upload.single('image'),validateCategory,category
  *          type: integer
  *          required: true
  *          description: category's id
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/category'
  *     responses:
  *      200:
  *          description: category deleted successfully
@@ -138,7 +126,7 @@ router.patch("/:id",imageUpload.upload.single('image'),validateCategory,category
  *          description: Some Server Error
  */
 
-router.delete("/:id",categoryController.deleteCategory);
+router.delete("/delete/:id",categoryController.deleteCategory);
 
 
 /**

@@ -10,42 +10,39 @@ const imageUpload = require("../helpers/image-uploader");
      * @swagger
      *  components:
      *    schemas:
-     *      userService:
+     *      userservice:
      *        type: object
      *        required:
-     *          - user_id
+     *          - userId
      *          - image
      *          - description
      *          - status
-     *          - service_id
-     *          - payment_id
-     *          - userservice_id
-     *          - fiscal_year_id
+     *          - serviceId
+     *          - paymentId
+     *          - userserviceId
      *        properties:
-     *          user_id:
+     *          userId:
      *           type: string
      *           description: userService's user_id
      *          image:
-     *           type: string
+     *           type: file
      *           description: userService's image
      *          description:
-     *           type: float
+     *           type: string
      *           description: userService's description
      *          status:
-     *           type: float
+     *           type: boolean
      *           description: userService's status
-     *          service_id:
-     *           type: string
+     *          serviceId:
+     *           type: integer
      *           description: userService's service_id
-     *          payment_id:
+     *          paymentId:
      *           type: integer
      *           description: userService's payment_id
-     *          userservice_id:
-     *           type: string
-     *           description: userService's userservice_id
-     *          fiscal_year_id:
-     *           type: string
-     *           description: userService's fiscal_year_id
+     *          userserviceId:
+     *           type: integer
+     *           description: userService's payment_id
+     *    
      */
     // /**
     //  * @swagger
@@ -64,7 +61,7 @@ const imageUpload = require("../helpers/image-uploader");
  *     tags: [userservice]
  *     requestBody:
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             $ref: '#/components/schemas/userservice'  
  *     responses:
@@ -110,11 +107,6 @@ router.get("/",verifyMiddleware.verification,userserviceController.getUserSerivc
  *          type: integer
  *          required: true
  *          description: userservice's id
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/userservice'
  *     responses:
  *      200:
  *          description: userservice deleted successfully
