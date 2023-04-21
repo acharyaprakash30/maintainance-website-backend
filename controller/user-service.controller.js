@@ -17,7 +17,9 @@ const createUserService = async (req, res) => {
     serviceId: req.body.serviceId,
     paymentId: req.body.paymentId,
     storeId: req.body.storeId,
-    fiscal_year_id: req.body.fiscal_year_id
+    serviceLatitude:req.body.serviceLatitude,
+    serviceLongitude:req.body.serviceLongitude,
+    serviceLocation:req.body.serviceLocation,
   }
 
   await models.userService.findOne({ where: { userId: req.body.userId } }).then(result => {
@@ -179,64 +181,66 @@ const delet = (req, res) => {
 
 const bulkServiceSubmit = async (req, res) => {
   try {
-    let t;
-    await sequelize.transaction(async (t) => {
-      if (req.file) {
-        var img = req.file.path;
-      }
+    // let t;
+    // await sequelize.transaction(async (t) => {
+    //   if (req.file) {
+    //     var img = req.file.path;
+    //   }
       const serviceData = {
         userId: req.userData.id,
-        image: img,
         description: req.body.description,
         status: req.body.status,
         serviceId: req.body.serviceId,
         paymentId: req.body.paymentId,
         storeId: req.body.storeId,
+        serviceLatitude: req.body.serviceLatitude,
+        serviceLongitude: req.body.serviceLongitude,
+        serviceLocation: req.body.serviceLocation,
       };
-      const UserServiceFeatureArray = JSON.parse(req.body.serviceFeatures);
-      let userService = await models.userService.create(serviceData, { transaction: t });
-      let subTotalPriceOfUser = 0;
-      await Promise.all(
-        UserServiceFeatureArray.map(async (item) => {
+      // const UserServiceFeatureArray = JSON.parse(req.body.serviceFeatures);
+      let userService = await models.userService.create(serviceData);
+      // let subTotalPriceOfUser = 0;
+      // await Promise.all(
+      //   UserServiceFeatureArray.map(async (item) => {
 
-          const service = await models.UserServiceFeature.findByPk(item.featureId);
+      //     const service = await models.UserServiceFeature.findByPk(item.featureId);
 
-          if (!service) {
-            return res.status(400).json({
-              message: "service feature doesnot exist",
-            });
-          }
+      //     if (!service) {
+      //       return res.status(400).json({
+      //         message: "service feature doesnot exist",
+      //       });
+      //     }
 
-          let serviceDatas = {
-            userServiceId: userService.id,
-            featureId: item.featureId,
-            featurePrice: item.featurePrice,
-          };
-          subTotalPriceOfUser = subTotalPriceOfUser + featurePrice;
-          let savedOrderItem = await models.UserServiceFeature.create(serviceDatas, {
-            transaction: t,
-          });
-        })
-      );
+      //     let serviceDatas = {
+      //       userServiceId: userService.id,
+      //       featureId: item.featureId,
+      //       featurePrice: item.featurePrice,
+      //     };
+      //     subTotalPriceOfUser = subTotalPriceOfUser + featurePrice;
+      //     let savedOrderItem = await models.UserServiceFeature.create(serviceDatas, {
+      //       transaction: t,
+      //     });
+      //   })
+      // );
 
-    let isUser =  await models.User.findByPk(req.body.userId);
-    if(!isUser){
-      return res.status(400).json({
-        message: "user doesnot exist",
-      });
+    // let isUser =  await models.User.findByPk(req.body.userId);
+    // if(!isUser){
+    //   return res.status(400).json({
+    //     message: "user doesnot exist",
+    //   });
 
-    }
-    else{
-      let updatedItem = {
-        subTotal:subTotalPriceOfUser
-      }
-      await models.user.update(updatedItem,{where:{id:isUser.id}},{ transaction: t });
-    }
+    // }
+    // else{
+    //   let updatedItem = {
+    //     subTotal:subTotalPriceOfUser
+    //   }
+    //   await models.user.update(updatedItem,{where:{id:isUser.id}},{ transaction: t });
+    // }
       return res.status(200).json({
         message: "user service created successfully",
       });
 
-    });
+    // });
   } catch (error) {
     return res.status(500).json({
       data: error,

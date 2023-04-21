@@ -39,17 +39,3 @@ module.exports = (sequelize, DataTypes) => {
   return User;
 };
 
-
-
-[
-  {
-    userServiceId:1,
-    featureId:1,
-    featurePrice:100
-  },
-  {
-    userServiceId:1,
-    featureId:1,
-    featurePrice:100
-  },
-]

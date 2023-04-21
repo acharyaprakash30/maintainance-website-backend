@@ -12,14 +12,12 @@ module.exports = {
       userId: {
         type: Sequelize.INTEGER
       },
-      image:{
-        type: Sequelize.STRING
-      },
       description: {
         type: Sequelize.STRING
       },
       status: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.ENUM("Pending", "Accept Order", "Maintaining","Done"),
+        defaultValue: "Pending"
       },
       serviceId: {
         type: Sequelize.INTEGER
