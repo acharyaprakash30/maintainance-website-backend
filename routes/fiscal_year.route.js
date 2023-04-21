@@ -2,7 +2,8 @@ const express = require('express');
 const fiscal_yearController = require('../controller/fiscal_year.controller');
 const {validateFiscalYear}=require("../middleware/FormValidator")
 const router = express.Router();
-
+const verifyMiddleware = require("../middleware/verify")
+const { CheckRole } = require("../middleware/CheckRole");
 
 /**
      * @swagger
@@ -21,13 +22,6 @@ const router = express.Router();
      *           type: boolean
      *           description: fiscal_year's status      
      */
-
-    // /**
-    //  * @swagger
-    //  * tags:
-    //  *     name: fiscal year
-    //  *     description: The fiscal year managing API endpoint
-    //  */
 
  
  /**
@@ -50,7 +44,7 @@ const router = express.Router();
  *         description: Some Server Error
  */
 
-router.post("/create",validateFiscalYear, fiscal_yearController.userInput);
+router.post("/create",verifyMiddleware.verification,CheckRole("SuperAdmin"),validateFiscalYear, fiscal_yearController.userInput);
 
 
 /**
@@ -68,7 +62,7 @@ router.post("/create",validateFiscalYear, fiscal_yearController.userInput);
  *          description: Some Server Error
  */
 
-router.get("/", fiscal_yearController.showData);
+router.get("/", verifyMiddleware.verification,CheckRole("SuperAdmin"),fiscal_yearController.showData);
 
 
 /**
@@ -98,7 +92,7 @@ router.get("/", fiscal_yearController.showData);
  *          description: Some Server Error
  */
 
-router.put("/:id", fiscal_yearController.editfiscalyear);
+router.put("/:id", verifyMiddleware.verification,CheckRole("SuperAdmin"),fiscal_yearController.editfiscalyear);
 
 
 /**
@@ -123,6 +117,6 @@ router.put("/:id", fiscal_yearController.editfiscalyear);
  *          description: Some Server Error
  */
 
-router.delete("/delete/:id", fiscal_yearController.deletefiscalyear);
+router.delete("/delete/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"), fiscal_yearController.deletefiscalyear);
 
 module.exports = router;

@@ -2,6 +2,8 @@ const express = require('express');
 const ServiceTypeController = require('../controller/serviceType.controller');
 const {validateServiceType}=require("../middleware/FormValidator")
 const router = express.Router();
+const verifyMiddleware = require("../middleware/verify")
+const { CheckRole } = require("../middleware/CheckRole");
 
 
 /**
@@ -22,12 +24,7 @@ const router = express.Router();
      *           description: servicetype's serviceId
      *         
      */
-    // /**
-    //  * @swagger
-    //  * tags:
-    //  *     name: servicetype
-    //  *     description: The servicetype managing API endpoint
-    //  */
+
 
 
  /**
@@ -50,7 +47,7 @@ const router = express.Router();
  *         description: Some Server Error
  */
 
-router.post("/create",validateServiceType, ServiceTypeController.userInput);
+router.post("/create",verifyMiddleware.verification,CheckRole("SuperAdmin"),validateServiceType, ServiceTypeController.userInput);
 
 /**
  * @swagger
@@ -67,7 +64,7 @@ router.post("/create",validateServiceType, ServiceTypeController.userInput);
  *          description: Some Server Error
  */
 
-router.get("/", ServiceTypeController.showdata);
+router.get("/", verifyMiddleware.verification,CheckRole("SuperAdmin"),ServiceTypeController.showdata);
 
 /**
  * @swagger
@@ -91,7 +88,7 @@ router.get("/", ServiceTypeController.showdata);
  *          description: Some Server Error
  */
 
-router.get("/:id", ServiceTypeController.showdataById);
+router.get("/:id", verifyMiddleware.verification,CheckRole("SuperAdmin"),ServiceTypeController.showdataById);
 
 /**
  * @swagger
@@ -120,7 +117,7 @@ router.get("/:id", ServiceTypeController.showdataById);
  *          description: Some Server Error
  */
 
-router.patch("/:id", ServiceTypeController.editServiceType);
+router.patch("/:id", verifyMiddleware.verification,CheckRole("SuperAdmin"),ServiceTypeController.editServiceType);
 
 /**
  * @swagger
@@ -149,6 +146,6 @@ router.patch("/:id", ServiceTypeController.editServiceType);
  *          description: Some Server Error
  */
 
-router.delete("/:id", ServiceTypeController.destroyServiceType);
+router.delete("/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"), ServiceTypeController.destroyServiceType);
 
 module.exports = router;

@@ -23,6 +23,7 @@ const create = catchError((req, res) => {
     password: req.body.password,
     gender: req.body.gender,
     image: req.file ? img : null,
+    role: req.body.role
   };
 
   if (newUser.password === req.body.confirmPassword) {
@@ -58,7 +59,7 @@ const login = catchError((req, res) => {
               name: user.name,
               id: user.id,
               email: user.email,
-              // role: user.role,
+              role: user.role,
             },
             process.env.VERIFY_SEC,
             { expiresIn: "7d" },

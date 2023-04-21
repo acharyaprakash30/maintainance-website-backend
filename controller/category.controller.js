@@ -25,21 +25,9 @@ const save = catchError((req, res) => {
 
 
 const showAll = catchError(async (req, res) => {
-  const { page = 0, size = 10 } = req.query;
-  const { limit, offset } = PaginationData.getPagination(page, size);
-  const { filter = "" } = req.query;
 
-  const AllCategory = await models.Category.findAndCountAll({
-    limit,
-    offset, where: {
-      [Op.or]: [
-        {
-          CategoryName: {
-            [Op.like]: "%" + filter + "%",
-          },
-        },
-      ],
-    }
+  const AllCategory = await models.Category.findAll({
+
   });
   if (AllCategory) {
     let categories = await AllCategories(AllCategory);
@@ -47,7 +35,7 @@ const showAll = catchError(async (req, res) => {
 
     res.status(200).json(
       {
-        data: categories.rows,
+        data: categories,
         objectsWithEmptyChild: objectsWithEmptyChild,
       });
   } else {
@@ -117,24 +105,12 @@ const showCategoryById = catchError(async (req, res) => {
 
 
 const showCategories = catchError(async (req, res) => {
-  const { page = 0, size = 10 } = req.query;
-  const { limit, offset } = PaginationData.getPagination(page, size);
-  const { filter = "" } = req.query;
 
   await models.Category.findAll({
-    limit, offset, where: {
-      [Op.or]: [
-        {
-          CategoryName: {
-            [Op.like]: "%" + filter + "%",
-          },
-        },
-      ],
-    },
   }).then(async (result) => {
     let categoryWithParentName = await getCategoriesWithParent(result);
     res.status(201).json(
-      { data: categoryWithParentName.rows }
+      { data: categoryWithParentName }
     );
   })
 }

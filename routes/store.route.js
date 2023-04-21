@@ -3,6 +3,7 @@ const express = require('express');
 const StoreController = require('../controller/store.controller');
 const imageUploader = require("../helpers/image-uploader")
 const verifyMiddleware = require("../middleware/verify");
+const { CheckRole } = require("../middleware/CheckRole");
 const { validateStore } = require('../middleware/FormValidator');
 
 
@@ -43,12 +44,7 @@ const router = express.Router();
      *           description: store's contactNumber
      */
 
-    // /**
-    //  * @swagger
-    //  * tags:
-    //  *     name: store
-    //  *     description: The store managing API endpoint
-    //  */
+
        
        
     /**
@@ -72,7 +68,7 @@ const router = express.Router();
  */
 
 
-router.post("/create",verifyMiddleware.verification, imageUploader.upload.single('image'),validateStore,StoreController.userInput);
+router.post("/create",verifyMiddleware.verification,CheckRole("SuperAdmin"),imageUploader.upload.single('image'),validateStore,StoreController.userInput);
 
 /**
  * @swagger
@@ -89,7 +85,7 @@ router.post("/create",verifyMiddleware.verification, imageUploader.upload.single
  *          description: Some Server Error
  */
 
-router.get("/", StoreController.showdata);
+router.get("/",verifyMiddleware.verification,CheckRole("SuperAdmin"), StoreController.showdata);
 
 
 
@@ -120,7 +116,7 @@ router.get("/", StoreController.showdata);
  *          description: Some Server Error
  */
 
-router.patch("/:id",verifyMiddleware.verification,imageUploader.upload.single('image'), StoreController.editStoreData);
+router.patch("/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),imageUploader.upload.single('image'), StoreController.editStoreData);
 
 
 /**
@@ -145,7 +141,7 @@ router.patch("/:id",verifyMiddleware.verification,imageUploader.upload.single('i
  *          description: Some Server Error
  */
 
-router.delete("/delete/:id", StoreController.destroyStoreData);
+router.delete("/delete/:id", verifyMiddleware.verification,CheckRole("SuperAdmin"),StoreController.destroyStoreData);
 
 
 /**
@@ -170,6 +166,6 @@ router.delete("/delete/:id", StoreController.destroyStoreData);
  *          description: Some Server Error
  */
 
-router.get("/:latitude/:longitude/:serviceId", StoreController.getPlaceByCoordinates);
+router.get("/:latitude/:longitude/:serviceId", verifyMiddleware.verification,CheckRole("SuperAdmin"),StoreController.getPlaceByCoordinates);
 
 module.exports = router;
