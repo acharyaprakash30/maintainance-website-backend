@@ -1,6 +1,7 @@
 const express = require("express")
 const router = express.Router();
 const verifyMiddleware = require("../middleware/verify")
+const { CheckRole } = require("../middleware/CheckRole");
 const serviceController = require("../controller/service.controller");
 const imageUpload = require("../helpers/image-uploader");
 const {validateService}=require("../middleware/FormValidator")
@@ -31,13 +32,7 @@ const {validateService}=require("../middleware/FormValidator")
      *           type: integer
      *           description: Service's categoryId
      */
-    
-   //  /**
-   //   * @swagger
-   //   * tags:
-   //   *     name: Service
-   //   *     description: The Service managing API endpoint
-   //   */
+
     /**
  * @swagger
  * /service/create:
@@ -57,7 +52,7 @@ const {validateService}=require("../middleware/FormValidator")
  *       500:
  *         description: Some Server Error
  */
-router.post("/create",verifyMiddleware.verification,imageUpload.upload.single('image'),validateService,serviceController.addService);
+router.post("/create",verifyMiddleware.verification,CheckRole("SuperAdmin"),imageUpload.upload.single('image'),validateService,serviceController.addService);
 
 /**
  * @swagger
@@ -86,7 +81,7 @@ router.post("/create",verifyMiddleware.verification,imageUpload.upload.single('i
  *          description: Some Server Error
  */
 
-router.patch("/:id",verifyMiddleware.verification,imageUpload.upload.single('image'),serviceController.updateService)
+router.patch("/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),imageUpload.upload.single('image'),serviceController.updateService)
 
 /**
  * @swagger
@@ -103,7 +98,7 @@ router.patch("/:id",verifyMiddleware.verification,imageUpload.upload.single('ima
  *          description: Some Server Error
  */
 
-router.get("/",serviceController.index)
+router.get("/",verifyMiddleware.verification,CheckRole("SuperAdmin"),serviceController.index)
 
 /**
  * @swagger
@@ -120,7 +115,7 @@ router.get("/",serviceController.index)
  *          description: Some Server Error
  */
 
-router.get("/serviceFeatures",serviceController.servicesByFeatues)
+router.get("/serviceFeatures",verifyMiddleware.verification,CheckRole("SuperAdmin"),serviceController.servicesByFeatues)
 
 /**
  * @swagger
@@ -144,7 +139,7 @@ router.get("/serviceFeatures",serviceController.servicesByFeatues)
  *          description: Some Server Error
  */
 
-router.get("/category/:categoryId",serviceController.getserviceByCategory)
+router.get("/category/:categoryId",verifyMiddleware.verification,CheckRole("SuperAdmin"),serviceController.getserviceByCategory)
 /**
  * @swagger
  * /service/{id}:
@@ -166,7 +161,7 @@ router.get("/category/:categoryId",serviceController.getserviceByCategory)
  *      500:
  *          description: Some Server Error
  */
-router.get("/:id",serviceController.show)
+router.get("/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),serviceController.show)
 
 
 /**
@@ -191,7 +186,7 @@ router.get("/:id",serviceController.show)
  *          description: Some Server Error
  */
 
-router.delete("/delete/:id",serviceController.deleteService)
+router.delete("/delete/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),serviceController.deleteService)
 
 
 

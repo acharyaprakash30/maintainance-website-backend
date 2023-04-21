@@ -2,7 +2,7 @@ const express = require("express")
 const router = express.Router();
 const locationController = require("../controller/location.controller")
 const verifyMiddleware = require("../middleware/verify")
-
+const { CheckRole } = require("../middleware/CheckRole");
 
 /**
      * @swagger
@@ -19,12 +19,7 @@ const verifyMiddleware = require("../middleware/verify")
      *           description: location's address
      */
 
-    // /**
-    //  * @swagger
-    //  * tags:
-    //  *     name: location
-    //  *     description: The location managing API endpoint
-    //  */
+ 
        
     /**
  * @swagger
@@ -46,7 +41,7 @@ const verifyMiddleware = require("../middleware/verify")
  *         description: Some Server Error
  */
 
-router.post("/create",verifyMiddleware.verification,locationController.locationInput)
+router.post("/create",verifyMiddleware.verification,CheckRole("SuperAdmin"),locationController.locationInput)
 
 
 /**
@@ -64,7 +59,7 @@ router.post("/create",verifyMiddleware.verification,locationController.locationI
  *          description: Some Server Error
  */
 
-router.get("/",locationController.index)
+router.get("/",verifyMiddleware.verification,CheckRole("SuperAdmin"),locationController.index)
 
 /**
  * @swagger
@@ -88,7 +83,7 @@ router.get("/",locationController.index)
  *          description: Some Server Error
  */
 
-router.get("/:id",locationController.show)
+router.get("/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),locationController.show)
 
 
 /**
@@ -118,7 +113,7 @@ router.get("/:id",locationController.show)
  *          description: Some Server Error
  */
 
-router.put("/update/:id",locationController.editlocation)
+router.put("/update/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),locationController.editlocation)
 
 /**
  * @swagger
@@ -142,7 +137,7 @@ router.put("/update/:id",locationController.editlocation)
  *          description: Some Server Error
  */
 
-router.delete("/delete/:id",locationController.deleteLocation)
+router.delete("/delete/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),locationController.deleteLocation)
 
 
 

@@ -2,6 +2,7 @@ const experss = require("express")
 const router = experss.Router();
 const userserviceController =require("../controller/user-service.controller")
 const verifyMiddleware = require("../middleware/verify");
+const { CheckRole } = require("../middleware/CheckRole");
 const imageUpload = require("../helpers/image-uploader");
 
 
@@ -48,12 +49,7 @@ router.post("/multiple",verifyMiddleware.verification,imageUpload.upload.array('
      *           description: userService's payment_id
      *    
      */
-    // /**
-    //  * @swagger
-    //  * tags:
-    //  *     name: userservice
-    //  *     description: The userservice managing API endpoint
-    //  */
+
               
     /**
  * @swagger
@@ -74,7 +70,10 @@ router.post("/multiple",verifyMiddleware.verification,imageUpload.upload.array('
  *       500:
  *         description: Some Server Error
  */
-router.post("/create",verifyMiddleware.verification,imageUpload.upload.single('image'),userserviceController.createUserService)
+
+
+router.post("/create",verifyMiddleware.verification,CheckRole("SuperAdmin"),imageUpload.upload.single('image'),userserviceController.createUserService)
+
 /**
  * @swagger
  * /userservice:
@@ -90,7 +89,7 @@ router.post("/create",verifyMiddleware.verification,imageUpload.upload.single('i
  *          description: Some Server Error
  */
 
-router.get("/",verifyMiddleware.verification,userserviceController.getUserSerivce)
+router.get("/",verifyMiddleware.verification,CheckRole("SuperAdmin"),userserviceController.getUserSerivce)
 //router.get("/find",userserviceController.findAll)
 
 /**
@@ -115,7 +114,7 @@ router.get("/",verifyMiddleware.verification,userserviceController.getUserSerivc
  *          description: Some Server Error
  */
 
-router.delete("/delete/:id",verifyMiddleware.verification,userserviceController.delet)
+router.delete("/delete/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),userserviceController.delet)
 
 //router.put("/update",verifyMiddleware.verification,userserviceController.update)
 
@@ -146,9 +145,9 @@ router.delete("/delete/:id",verifyMiddleware.verification,userserviceController.
  *          description: Some Server Error
  */
 
-router.patch("/update/:id",verifyMiddleware.verification,imageUpload.upload.single('image'),userserviceController.update)
+router.patch("/update/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),imageUpload.upload.single('image'),userserviceController.update)
 
-
+router.post("/multiple",verifyMiddleware.verification,CheckRole("SuperAdmin"),imageUpload.upload.array('image',10), userserviceController.bulkServiceSubmit)
 
 
 

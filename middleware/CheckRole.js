@@ -1,7 +1,11 @@
-exports.CheckRole = (...roles) => {
+exports.CheckRole = (roles) => {
     return (req, res, next) => {
 
-      if (!roles.includes(req.userData.roles[0].name.toLowerCase())) {
+     console.log("role:",req.userData.role)
+      console.log("role:",roles)
+
+
+      if (roles.toLowerCase() !== req.userData.role.toLowerCase()) {
         return next(
           res.status(403).json({
             message: 'Unauthorized user',

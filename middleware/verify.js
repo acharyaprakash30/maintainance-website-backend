@@ -3,7 +3,7 @@ const { CHAR } = require("sequelize");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const verification = (req,res,next)=>{
+const   verification = (req,res,next)=>{
     try{
         const token = req.headers.authorization.split(" ")[1];
         const decoded = jwt.verify(token, process.env.VERIFY_SEC);

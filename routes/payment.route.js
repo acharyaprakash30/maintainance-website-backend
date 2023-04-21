@@ -2,7 +2,7 @@ const express = require("express")
 const router = express.Router();
 const paymentController = require("../controller/payment.controller")
 const verifyMiddleware = require("../middleware/verify")
-
+const { CheckRole } = require("../middleware/CheckRole");
 /**
      * @swagger
      *  components:
@@ -23,12 +23,7 @@ const verifyMiddleware = require("../middleware/verify")
      */
 
 
-    // /**
-    //  * @swagger
-    //  * tags:
-    //  *     name: payment
-    //  *     description: The payment managing API endpoint
-    //  */
+ 
         
     /**
  * @swagger
@@ -50,7 +45,7 @@ const verifyMiddleware = require("../middleware/verify")
  *         description: Some Server Error
  */
 
-router.post("/create",verifyMiddleware.verification,paymentController.PaymentInput)
+router.post("/create",verifyMiddleware.verification,CheckRole("SuperAdmin"),paymentController.PaymentInput)
 
 /**
  * @swagger
@@ -67,7 +62,7 @@ router.post("/create",verifyMiddleware.verification,paymentController.PaymentInp
  *          description: Some Server Error
  */
 
-router.get("/",paymentController.index)
+router.get("/",verifyMiddleware.verification,CheckRole("SuperAdmin"),paymentController.index)
 
 
 /**
@@ -92,7 +87,7 @@ router.get("/",paymentController.index)
  *          description: Some Server Error
  */
 
-router.get("/:id",paymentController.show)
+router.get("/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),paymentController.show)
 
 
 /**
@@ -122,7 +117,7 @@ router.get("/:id",paymentController.show)
  *          description: Some Server Error
  */
 
-router.put("/update/:id",paymentController.editPayment)
+router.put("/update/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),paymentController.editPayment)
 
 
 /**
@@ -147,7 +142,7 @@ router.put("/update/:id",paymentController.editPayment)
  *          description: Some Server Error
  */
 
-router.delete("/delete/:id",paymentController.deletePayment)
+router.delete("/delete/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),paymentController.deletePayment)
 
 
 

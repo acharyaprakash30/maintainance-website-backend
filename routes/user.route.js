@@ -1,9 +1,10 @@
 const experss = require("express")
 const router = experss.Router();
 const userController =require("../controller/user.controller")
-const verifyMiddleware = require("../middleware/verify")
 const imageUpload = require("../helpers/image-uploader")
-const {validateUser, changePassword, validateChangePassword} = require("../middleware/FormValidator")
+const {validateUser, changePassword, validateChangePassword, validateUserUpdate} = require("../middleware/FormValidator");
+const verifyMiddleware = require("../middleware/verify")
+const { CheckRole } = require("../middleware/CheckRole");
 
 
 /**
@@ -44,12 +45,7 @@ const {validateUser, changePassword, validateChangePassword} = require("../middl
      *         
      */
 
-    // /**
-    //  * @swagger
-    //  * tags:
-    //  *     name: User
-    //  *     description: The User managing API endpoint
-    //  */
+
 
  /**
  * @swagger
@@ -118,7 +114,7 @@ router.post("/login",userController.login)
  *          description: Some Server Error
  */
 
-router.get("/me",verifyMiddleware.verification,userController.editProfile)
+router.get("/me",verifyMiddleware.verification,CheckRole("SuperAdmin"),userController.editProfile)
 
 /**
  * @swagger
@@ -147,7 +143,7 @@ router.get("/me",verifyMiddleware.verification,userController.editProfile)
  *          description: Some Server Error
  */
 
-router.put("/:id",imageUpload.upload.single('image'),verifyMiddleware.verification,userController.editUser)
+router.put("/:id",imageUpload.upload.single('image'),verifyMiddleware.verification,CheckRole("SuperAdmin"),validateUserUpdate,userController.editUser)
 
 /**
  * @swagger
@@ -171,7 +167,7 @@ router.put("/:id",imageUpload.upload.single('image'),verifyMiddleware.verificati
  *          description: Some Server Error
  */
 
-router.delete("/delete",userController.deleteUser)
+router.delete("/delete",verifyMiddleware.verification,CheckRole("SuperAdmin"),userController.deleteUser)
 
 /**
  * @swagger
@@ -188,7 +184,7 @@ router.delete("/delete",userController.deleteUser)
  *          description: Some Server Error
  */
 
-router.get("/",userController.index)
+router.get("/",verifyMiddleware.verification,CheckRole("SuperAdmin"),userController.index)
 
 /**
  * @swagger
@@ -212,7 +208,7 @@ router.get("/",userController.index)
  *          description: Some Server Error
  */
 
-router.get("/userById/:id",userController.show)
+router.get("/userById/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),userController.show)
 /**
  * @swagger
  * /updaterole/{id}:
@@ -235,11 +231,11 @@ router.get("/userById/:id",userController.show)
  *          description: Some Server Error
  */
 
-router.put("/updaterole/:id", userController.updateRole)
+router.put("/updaterole/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),userController.updateRole)
 
 router.post("/forgetpassword",userController.forgetPassword)
 router.post("/resetpassword",userController.resetPassword)
-router.put("/changepassword/:id",verifyMiddleware.verification,validateChangePassword,userController.changePassword)
+router.put("/changepassword/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),validateChangePassword,userController.changePassword)
 
 
 module.exports=router;
