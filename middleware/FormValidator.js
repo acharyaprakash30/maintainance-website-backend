@@ -101,6 +101,22 @@ exports.validateUser = [
   },
 ];
 
+exports.validateChangePassword =[
+  check("newPassword")
+  .notEmpty()
+  .withMessage("newpassword  cannot be empty!!")
+  .matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})")
+  .withMessage(
+    "Password must be greater than 8 and contain at least one uppercase letter, one lowercase letter,one number and one special character"
+  ),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+    next();
+  }
+]
 exports.validateCategory = [
   check("CategoryName")
     .notEmpty()

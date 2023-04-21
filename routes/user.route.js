@@ -3,7 +3,7 @@ const router = experss.Router();
 const userController =require("../controller/user.controller")
 const verifyMiddleware = require("../middleware/verify")
 const imageUpload = require("../helpers/image-uploader")
-const {validateUser} = require("../middleware/FormValidator")
+const {validateUser, changePassword, validateChangePassword} = require("../middleware/FormValidator")
 
 
 /**
@@ -236,5 +236,10 @@ router.get("/userById/:id",userController.show)
  */
 
 router.put("/updaterole/:id", userController.updateRole)
+
+router.post("/forgetpassword",userController.forgetPassword)
+router.post("/resetpassword",userController.resetPassword)
+router.put("/changepassword/:id",verifyMiddleware.verification,validateChangePassword,userController.changePassword)
+
 
 module.exports=router;
