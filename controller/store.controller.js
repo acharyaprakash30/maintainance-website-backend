@@ -103,7 +103,7 @@ const userInput = catchError(async (req, res) => {
 )
 
 //this function was called from userinput which return a array for storeservicefeature model
-const serviceOrderToFindArray = catchError((savedOrderItemArray, storeService) => {
+const serviceOrderToFindArray = ((savedOrderItemArray, storeService) => {
   var servicesArrayTemp = [];
 
   for (let i = 0; i < storeService.length; i++) {

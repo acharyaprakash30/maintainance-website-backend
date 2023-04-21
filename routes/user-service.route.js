@@ -6,6 +6,10 @@ const imageUpload = require("../helpers/image-uploader");
 
 
 
+
+
+router.post("/multiple",verifyMiddleware.verification,imageUpload.upload.array('image',10), userserviceController.bulkServiceSubmit)
+
 /**
      * @swagger
      *  components:
@@ -70,10 +74,7 @@ const imageUpload = require("../helpers/image-uploader");
  *       500:
  *         description: Some Server Error
  */
-
-
 router.post("/create",verifyMiddleware.verification,imageUpload.upload.single('image'),userserviceController.createUserService)
-
 /**
  * @swagger
  * /userservice:
@@ -147,7 +148,7 @@ router.delete("/delete/:id",verifyMiddleware.verification,userserviceController.
 
 router.patch("/update/:id",verifyMiddleware.verification,imageUpload.upload.single('image'),userserviceController.update)
 
-router.post("/multiple",verifyMiddleware.verification,imageUpload.upload.array('image',10), userserviceController.bulkServiceSubmit)
+
 
 
 

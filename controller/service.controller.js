@@ -14,8 +14,7 @@ const addService = catchError(async (req, res) => {
     image: img,
     slug: req.body.slug,
     userId: req.userData.id,
-
-    categoryId: req.body.categoryId,
+    categoryId: req.body.categoryId
   };
   await model.Service.create(service).then((result) => {
     res.status(201).json({
