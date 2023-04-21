@@ -1,7 +1,8 @@
-const { catchError } = require("../middleware/catchError");
 const model = require("../models");
 const PaginationData = require("../utils/pagination");
 const { Op } = require("sequelize");
+const { catchError } = require("../middleware/catchError");
+
 
 //create location
 
@@ -10,12 +11,14 @@ const locationInput = catchError((req, res) => {
     address: req.body.address,
     userId: req.userData.id,
   };
-  model.Location.create(location).then((Result) => {
-    res.status(200).json({
-      message: "location added successfully",
-      result: location,
-    });
-  });
+  model.Location.create(location)
+    .then((Result) => {
+      res.status(200).json({
+        message: "location added successfully",
+        result: location,
+      });
+    })
+
 });
 
 //edit location
@@ -24,38 +27,44 @@ const editlocation = catchError((req, res) => {
   const editedLocation = {
     address: req.body.address,
   };
-  model.Location.findOne({ where: { id: req.params.id } }).then((result) => {
-    if (result) {
-      model.Location.update(editedLocation, {
-        where: { id: req.params.id },
-      }).then((update) => {
-        res.status(200).json({
-          messege: "location updated succcessfully!",
-          editedLocation,
+  model.Location.findOne({ where: { id: req.params.id } })
+    .then((result) => {
+      if (result) {
+        model.Location.update(editedLocation, {
+          where: { id: req.params.id },
+        })
+          .then((update) => {
+            res.status(200).json({
+              messege: "location updated succcessfully!",
+              editedLocation,
+            });
+          })
+
+      } else {
+        res.status(401).json({
+          messege: "No location found",
         });
-      });
-    } else {
-      res.status(401).json({
-        messege: "No location found",
-      });
-    }
-  });
+      }
+    })
+
 });
 //delete
 
 const deleteLocation = catchError((req, res) => {
-  model.Location.destroy({ where: { id: req.params.id } }).then((result) => {
-    if (result) {
-      res.status(200).json({
-        messege: `Location ${req.params.id} deleted`,
-      });
-    } else {
-      res.status(404).json({
-        messege: `Location not found`,
-      });
-    }
-  });
-});
+  model.Location.destroy({ where: { id: req.params.id } })
+    .then((result) => {
+      if (result) {
+        res.status(200).json({
+          messege: `Location ${req.params.id} deleted`,
+        });
+      } else {
+        res.status(404).json({
+          messege: `Location not found`,
+        });
+      }
+    })
+
+})
 
 //get all lcoation
 const index = catchError((req, res) => {
@@ -65,8 +74,7 @@ const index = catchError((req, res) => {
   model.Location.findAndCountAll(
     {
       limit,
-      offset,
-      where: {
+      offset, where: {
         [Op.or]: [
           {
             address: {
@@ -86,12 +94,14 @@ const index = catchError((req, res) => {
         exclude: ["createdAt", "updatedAt"],
       },
     }
-  ).then((result) => {
-    res.status(200).json({
-      data: result.rows,
-    });
-  });
-});
+  )
+    .then((result) => {
+      res.status(200).json({
+        data: result.rows,
+
+      });
+    })
+})
 
 //get Location by id
 const show = catchError((req, res) => {
@@ -101,15 +111,16 @@ const show = catchError((req, res) => {
     attributes: {
       exclude: ["createdAt", "updatedAt"],
     },
-  }).then((result) => {
-    if (result) {
-      res.status(200).json(result);
-    } else {
-      res.status(404).json({
-        messege: "Location not found",
-      });
-    }
-  });
+  })
+    .then((result) => {
+      if (result) {
+        res.status(200).json(result);
+      } else {
+        res.status(404).json({
+          messege: "Location not found",
+        });
+      }
+    })
 });
 
 module.exports = {

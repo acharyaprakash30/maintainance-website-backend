@@ -18,13 +18,11 @@ module.exports = (sequelize, DataTypes) => {
   }
   userService.init({
     userId: DataTypes.INTEGER,
-    image: DataTypes.STRING,
     description: DataTypes.STRING,
-    status: DataTypes.BOOLEAN,
+    status: DataTypes.STRING,
     serviceId: DataTypes.INTEGER,
     paymentId: DataTypes.INTEGER,
     storeId: DataTypes.INTEGER,
-    // fiscal_year_id : DataTypes.INTEGER,
     serviceLatitude:DataTypes.STRING,
     serviceLongitude:DataTypes.STRING,
     serviceLocation:DataTypes.STRING

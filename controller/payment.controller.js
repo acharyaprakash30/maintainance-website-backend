@@ -1,7 +1,8 @@
-const { catchError } = require("../middleware/catchError");
 const model = require("../models");
 const PaginationData = require("../utils/pagination");
 const { Op } = require("sequelize");
+const { catchError } = require("../middleware/catchError");
+
 
 
 //create Payment
@@ -19,7 +20,7 @@ const PaymentInput = catchError((req, res) => {
         result: Payment,
       });
     })
-    
+
 });
 
 //edit Payment
@@ -41,14 +42,14 @@ const editPayment = catchError((req, res) => {
               editedPayment,
             });
           })
-          
+
       } else {
         res.status(401).json({
           messege: "No Payment found",
         });
       }
     })
-    
+
 });
 //delete
 
@@ -73,9 +74,10 @@ const index = catchError((req, res) => {
   const { page = 0, size = 10 } = req.query;
   const { limit, offset } = PaginationData.getPagination(page, size);
   const { filter = "" } = req.query;
-  model.Payment.findAndCountAll(
-    { limit,
-      offset,     where: {
+  model.Payment.model.Payment.findAndCountAll(
+    {
+      limit,
+      offset, where: {
         [Op.or]: [
           {
             userId: {
@@ -93,17 +95,18 @@ const index = catchError((req, res) => {
             },
           },
         ],
-      },},{
+      },
+    }, {
     attributes: {
       exclude: ["createdAt", "updatedAt"],
     },
   })
     .then((result) => {
       res.status(200).json({
-        data:result.rows
+        data: result.rows,
       });
     })
-    
+
 });
 
 //get Payment by id
@@ -124,7 +127,7 @@ const show = catchError((req, res) => {
         });
       }
     })
-    
+
 });
 
 module.exports = {

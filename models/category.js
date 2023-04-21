@@ -6,7 +6,6 @@ module.exports = (sequelize, DataTypes) => {
   class Category extends Model {
     static associate(models) {
       // define association here
-      this.hasMany(models.Service,{foreignKey:"categoryId"})
     }
   }
   Category.init({
@@ -17,11 +16,12 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Category',
   });
-  // Category.associate = function (models){
-  //   Category.hasMany(models.Service, {
-  //     as : "CategoryServices",
-  //     foreignKey : "categoryId"
-  //   })
-  // }
+  Category.associate = function (models){
+    Category.hasMany(models.Service, {
+      as : "CategoryServices",
+      foreignKey : "id",
+      onDelete: "CASCADE",
+    })
+  }
   return Category;
 };

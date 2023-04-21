@@ -9,6 +9,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      userServiceId: {
+        type: Sequelize.INTEGER
+      },
       featureId: {
         type: Sequelize.INTEGER
       },

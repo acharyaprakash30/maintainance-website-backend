@@ -2,6 +2,9 @@ const express = require('express');
 const roleController = require('../controller/role.controller');
 
 const router = express.Router();
+const verifyMiddleware = require("../middleware/verify")
+const { CheckRole } = require("../middleware/CheckRole");
+
 
 
 /**
@@ -19,12 +22,7 @@ const router = express.Router();
      *         
      */
 
-    // /**
-    //  * @swagger
-    //  * tags:
-    //  *     name: Role
-    //  *     description: The Role managing API endpoint
-    //  */
+
 
 
  /**
@@ -47,7 +45,7 @@ const router = express.Router();
  *         description: Some Server Error
  */
 
-router.post("/create", roleController.create);
+router.post("/create", verifyMiddleware.verification,CheckRole("SuperAdmin"),roleController.create);
 
 /**
  * @swagger
@@ -64,7 +62,7 @@ router.post("/create", roleController.create);
  *          description: Some Server Error
  */
 
-router.get("/", roleController.showAll);
+router.get("/",verifyMiddleware.verification,CheckRole("SuperAdmin"), roleController.showAll);
 
 /**
  * @swagger
@@ -93,7 +91,7 @@ router.get("/", roleController.showAll);
  *          description: Some Server Error
  */
 
-router.put("/:id", roleController.update);
+router.put("/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"), roleController.update);
 
 
 /**
@@ -118,6 +116,6 @@ router.put("/:id", roleController.update);
  *          description: Some Server Error
  */
 
-router.delete("/delete/:id", roleController.delet);
+router.delete("/delete/:id", verifyMiddleware.verification,CheckRole("SuperAdmin"),roleController.delet);
 
 module.exports = router;

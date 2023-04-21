@@ -11,10 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.User,{foreignKey:"userId",as:"user"})
-      this.belongsTo(models.Category,{foreignKey:"categoryId",as:"categoryService"})
+      this.belongsTo(models.User,{foreignKey:"userId"})
       this.hasMany(models.userService,{foreignKey:"service_id",as:"service"})
-      
     }
   }
   Service.init({
@@ -34,14 +32,11 @@ module.exports = (sequelize, DataTypes) => {
       as : "SubServicelist",
       foreignKey : "serviceId"
     });
-    // Service.belongsTo(models.Store, {
-    //   as : "serviceStore",
-    //   foreignKey : "storeId"
-    // });
-    // Service.belongsTo(models.Category, {
-    //   as : "selectedcategory",
-    //   foreignKey : "categoryId"
-    // })
+    Service.belongsTo(models.Category, {
+      as : "selectedcategory",
+      foreignKey : "categoryId",
+      onDelete: "CASCADE",
+    })
   }
 
   return Service;

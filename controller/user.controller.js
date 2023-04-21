@@ -6,10 +6,13 @@ const jwt = require("jsonwebtoken");
 const PaginationData = require("../utils/pagination");
 const { Op } = require("sequelize");
 const { catchError } = require("../middleware/catchError");
+const nodemailer = require("nodemailer")
+const {SMTP_MAIL,SMTP_PWD} = process.env
+
 
 dotenv.config();
 //creating user
-const create = (req, res) => {
+const create = catchError((req, res) => {
   if (req.file) {
     var img = req.file.path;
   }
@@ -20,6 +23,7 @@ const create = (req, res) => {
     password: req.body.password,
     gender: req.body.gender,
     image: req.file ? img : null,
+    role: req.body.role
   };
 
   if (newUser.password === req.body.confirmPassword) {
@@ -41,8 +45,8 @@ const create = (req, res) => {
       message: "Password doesn't match",
     });
   }
-};
-
+}
+)
 //user login
 const login = catchError((req, res) => {
   model.User.findOne({ where: { email: req.body.email } }).then((user) => {
@@ -55,7 +59,7 @@ const login = catchError((req, res) => {
               name: user.name,
               id: user.id,
               email: user.email,
-              // role: user.role,
+              role: user.role,
             },
             process.env.VERIFY_SEC,
             { expiresIn: "7d" },
@@ -113,6 +117,8 @@ const editUser = catchError((req, res) => {
     }
   });
 });
+
+
 //update profile
 const editProfile = catchError((req, res) => {
   let userId = req.userData.id;
@@ -180,6 +186,8 @@ const index = catchError((req, res) => {
   });
 });
 
+
+
 //get user by id
 const show = catchError((req, res) => {
   const id = req.params.id;
@@ -217,6 +225,158 @@ const updateRole = catchError((req, res) => {
   });
 });
 
+
+//forget password
+
+const forgetPassword =catchError(async (req, res, next) => {
+  const { email } = req.body;
+  const user = await model.User.findOne({ where: { email:email } });
+
+  if (!user) {
+    return res.status(404).json({
+      message: `Sorry!, The email address ${
+        req.body.email
+      } is not associated with any account. Verify your email address and try again.`,
+    });
+  }
+
+  const token = jwt.sign(
+    { email: email },
+    process.env.MAIL_SEC,
+    { expiresIn: '150s' },
+  );
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port:587,
+    secure:false,
+    requireTLS:true,
+    auth: {
+           user: process.env.SMTP_MAIL,
+           pass: process.env.SMTP_PWD,
+    }
+  });
+
+  const subject = 'Password change request';
+  const to = email;
+  const from = SMTP_MAIL;
+  // const link = http://localhost:8000/resetpassword/${token};
+  const html = `<p>Hi ${user.name},</p>
+                  <p>Please click on the following <a href=http://localhost:8000/resetpassword/${token}>link</a> to reset your password.</p> 
+                  <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>`;
+
+  const info = await  
+  // sendMail(req.body.email,mailSubject,content)
+  transporter.sendMail({
+    to, from, subject, html,
+  });
+
+
+
+  if (info) {
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+    await user.save();
+  }
+
+  return res.status(200).json({
+    message:
+      `An email has been sent to ${
+        email
+      } with further instructions.`,
+  });
+});
+
+
+//resetpasswored
+
+const resetPassword = catchError(async (req, res, next) => {
+  const { token } = req.params;
+
+  const user = await model.User.findOne({
+    resetPasswordToken: token,
+    resetPasswordExpires: {
+      [Op.gt]: Date.now(),
+    },
+  });
+
+  if (!user) {
+    return res.status(400).json({
+      message: 'Password reset token is invalid or has expired.',
+    });
+  }
+
+  if (req.body.password === req.body.confirmPassword) {
+    user.password = bcrypt.hashSync(req.body.password, 11);
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+
+    await user.save();
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.SMTP_MAIL,
+        pass: process.env.SMTP_PWD,
+      },
+    });
+
+    const subject = 'Your password has been changed';
+    const to = user.email;
+    const from = process.env.SMTP_MAIL;
+    const html = `<p>Hi ${user.name},</p>
+                  <p>This is a confirmation that the password for your account ${user.email} has just been changed.</p>`;
+
+    await transporter.sendMail({
+      to, from, subject, html,
+    });
+
+    return res.status(200).json({
+      message: 'Your password has been updated!!',
+    });
+  }
+  return res.status(400).json({
+    message: 'Password does not match!!',
+  });
+});
+
+
+const changePassword = catchError(async (req, res, next) => {
+  const id = req.params.id;
+  // const passwordDetails = {
+    const oldPassword = req.body.oldPassword
+    const newPassword = req.body.newPassword
+    const confirmPassword = req.body.confirmPassword
+  // };
+
+  if (confirmPassword !== newPassword) {
+    res.status(401).json({ message: 'Password Not Matched!' });
+  } else {
+    const user = await model.User.findByPk(id);
+    const checkPassword = user.password;
+    const passwordIsValid = bcrypt.compareSync(
+      oldPassword,
+      checkPassword,
+    );
+
+    if (!passwordIsValid) {
+      res.status(400).json({ message: 'Incorrect Password!!' });
+    } else {
+      const hashedPassword = bcrypt.hashSync(newPassword, 11);
+
+      await model.User.update(
+        { password: hashedPassword },
+        { where: { id: id } },
+      );
+
+      res.status(200).json({ message: 'Password Changed Successfully!' });
+    }
+  }
+});
+
+
+
 module.exports = {
   create,
   login,
@@ -226,4 +386,7 @@ module.exports = {
   show,
   editProfile,
   updateRole,
+  forgetPassword,
+  resetPassword,
+  changePassword
 };

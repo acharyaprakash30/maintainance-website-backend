@@ -34,123 +34,123 @@ const { catchError } = require("../middleware/catchError");
 //   }
 // ]
 const userInput = catchError(async (req, res) => {
-  
-    let t;
-    await sequelize.transaction(async (t) => {
-      if (req.file) {
-        var img = req.file.path;
-      }
-      const storeData = {
-        name: req.body.name,
-        image: img,
-        latitude: req.body.latitude,
-        longitude: req.body.longitude,
-        address: req.body.address,
-        userId: req.userData.id,
-        contactNumber: req.body.contactNumber,
-      };
-      const storeService = JSON.parse(req.body.storeService);
-      console.log("========================================aa")
-      const savedStore = await models.Store.create(storeData, {
-        transaction: t,
-      });
-      let savedOrderItemArray = [];
-      await Promise.all(
-        storeService.map(async (item) => {
-          const service = await models.Service.findByPk(item.serviceId);  
-          console.log("here===================================================")
-          if (!service) {
-            return res.status(400).json({
-              message: "service item doesnot exist",
-            });
-          }
-          let serviceDatas = {
-            storeId: savedStore.id,
-            serviceId: item.serviceId,
-          };
-          let savedOrderItem = await models.ServiceStore.create(serviceDatas, {
-            transaction: t,
+
+  let t;
+  await sequelize.transaction(async (t) => {
+    if (req.file) {
+      var img = req.file.path;
+    }
+    const storeData = {
+      name: req.body.name,
+      image: img,
+      latitude: req.body.latitude,
+      longitude: req.body.longitude,
+      address: req.body.address,
+      userId: req.userData.id,
+      contactNumber: req.body.contactNumber,
+    };
+    const storeService = JSON.parse(req.body.storeService);
+    const savedStore = await models.Store.create(storeData, {
+      transaction: t,
+    });
+    let savedOrderItemArray = [];
+    await Promise.all(
+      storeService.map(async (item) => {
+        const service = await models.Service.findByPk(item.serviceId);
+        if (!service) {
+          return res.status(400).json({
+            message: "service item doesnot exist",
           });
-          let itemObject = {
-            itemId: savedOrderItem.id,
-          };
-          savedOrderItemArray.push(itemObject);
-        })
-      );
-      const servicesArrayTemp = serviceOrderToFindArray(savedOrderItemArray,storeService);
-      await Promise.all(
-        servicesArrayTemp.map(async (item) => {
-          const serviceFeatures = await models.ServiceType.findByPk(item.serviceFeatureId);
-          if (!serviceFeatures) {
-            return res.status(400).json({
-              message: "service feature item doesnot exist",
-            });
-          } 
-          let serviceDatas = {
-            serviceFeatureId:item.serviceFeatureId,
-            price:item.price,
-            storeServiceId:item.storeServiceId
-          };
-          let savedOrderItemFeature = await models.StoreServiceFeature.create(serviceDatas, {
-            transaction: t,
+        }
+        let serviceDatas = {
+          storeId: savedStore.id,
+          serviceId: item.serviceId,
+        };
+        let savedOrderItem = await models.ServiceStore.create(serviceDatas, {
+          transaction: t,
+        });
+        let itemObject = {
+          itemId: savedOrderItem.id,
+        };
+        savedOrderItemArray.push(itemObject);
+      })
+    );
+    const servicesArrayTemp = serviceOrderToFindArray(savedOrderItemArray, storeService);
+    await Promise.all(
+      servicesArrayTemp.map(async (item) => {
+        const serviceFeatures = await models.ServiceType.findByPk(item.serviceFeatureId);
+        if (!serviceFeatures) {
+          return res.status(400).json({
+            message: "service feature item doesnot exist",
           });
-        })
-      );
-      return res.status(200).json({
-        message: "store created sucessfully",
-      });
-    })}
+        }
+        let serviceDatas = {
+          serviceFeatureId: item.serviceFeatureId,
+          price: item.price,
+          storeServiceId: item.storeServiceId
+        };
+        let savedOrderItemFeature = await models.StoreServiceFeature.create(serviceDatas, {
+          transaction: t,
+        });
+      })
+    );
+    return res.status(200).json({
+      message: "store created sucessfully",
+    });
+  })
+}
 
 )
+
 //this function was called from userinput which return a array for storeservicefeature model
-const serviceOrderToFindArray=catchError((savedOrderItemArray,storeService)=>{
-      var servicesArrayTemp = [];
-  
-      for(let i=0; i<storeService.length;i++){
-        let storeFeatureTest = storeService[i].serviceTypeFeature;
-          for(let j = 0;j<storeFeatureTest.length;j++){
-            let services = {
-              serviceFeatureId: storeFeatureTest[j].serviceFeatureId,
-              price: storeFeatureTest[j].price,
-              storeServiceId: savedOrderItemArray[i].itemId,
-            };
-            servicesArrayTemp.push(services)
-          }
-      }
-      return servicesArrayTemp;
+const serviceOrderToFindArray = ((savedOrderItemArray, storeService) => {
+  var servicesArrayTemp = [];
+
+  for (let i = 0; i < storeService.length; i++) {
+    let storeFeatureTest = storeService[i].serviceTypeFeature;
+    for (let j = 0; j < storeFeatureTest.length; j++) {
+      let services = {
+        serviceFeatureId: storeFeatureTest[j].serviceFeatureId,
+        price: storeFeatureTest[j].price,
+        storeServiceId: savedOrderItemArray[i].itemId,
+      };
+      servicesArrayTemp.push(services)
+    }
+  }
+  return servicesArrayTemp;
 
 })
 
-const showdata=catchError((req, res)=> {
+const showdata = catchError((req, res) => {
   const { page = 0, size = 10 } = req.query;
   const { limit, offset } = PaginationData.getPagination(page, size);
   const { filter = "" } = req.query;
   models.Store.findAndCountAll({
     limit,
-      offset,    where: {
-        [Op.or]: [
-          {
-            name: {
-              [Op.like]: "%" + filter + "%",
-            },
+    offset, where: {
+      [Op.or]: [
+        {
+          name: {
+            [Op.like]: "%" + filter + "%",
           },
-          {
-            address: {
-              [Op.like]: "%" + filter + "%",
-            },
+        },
+        {
+          address: {
+            [Op.like]: "%" + filter + "%",
           },
-          {
-            userId: {
-              [Op.like]: "%" + filter + "%",
-            },
+        },
+        {
+          userId: {
+            [Op.like]: "%" + filter + "%",
           },
-          {
-            contactNumber: {
-              [Op.like]: "%" + filter + "%",
-            },
+        },
+        {
+          contactNumber: {
+            [Op.like]: "%" + filter + "%",
           },
-        ],
-      }, 
+        },
+      ],
+    },
     include: [
       {
         model: models.User,
@@ -169,7 +169,7 @@ const showdata=catchError((req, res)=> {
           {
             model: models.StoreServiceFeature,
             as: "serviceStoreFeatures",
-            include:[
+            include: [
               {
                 model: models.ServiceType,
                 as: "serviceType",
@@ -181,15 +181,15 @@ const showdata=catchError((req, res)=> {
     ],
   })
     .then((result) => {
-      res.status(201).json({data:result.rows
+      res.status(201).json({
+        data: result.rows
       });
     })
-    
+
 }
 )
 
-
-const editStoreData=catchError((req, res)=> {
+const editStoreData = catchError((req, res) => {
   const id = req.params.id;
 
   models.Store.findByPk(id)
@@ -213,7 +213,7 @@ const editStoreData=catchError((req, res)=> {
               result: updatedStoreData,
             });
           })
- 
+
       } else {
         res.status(404).json({
           message: "StoreData with id " + id + " is not valid",
@@ -224,7 +224,7 @@ const editStoreData=catchError((req, res)=> {
 })
 
 
-const destroyStoreData=catchError((req, res)=> {
+const destroyStoreData = catchError((req, res) => {
   const id = req.params.id;
 
   models.Store.destroy({ where: { id: id } })
@@ -239,11 +239,9 @@ const destroyStoreData=catchError((req, res)=> {
         });
       }
     })
-
 })
 
-
- const getPlaceByCoordinates =catchError(async(req, res)=> {
+const getPlaceByCoordinates = catchError(async (req, res) => {
   const givenLatitude = req.params.latitude;
   const givenLongitude = req.params.longitude;
   const serviceId = req.params.serviceId;
@@ -272,7 +270,7 @@ const destroyStoreData=catchError((req, res)=> {
           {
             model: models.StoreServiceFeature,
             as: "serviceStoreFeatures",
-            include:[
+            include: [
               {
                 model: models.ServiceType,
                 as: "serviceType",
@@ -280,10 +278,10 @@ const destroyStoreData=catchError((req, res)=> {
             ]
           },
         ],
-        where:{
-          serviceId:serviceId
+        where: {
+          serviceId: serviceId
         }
-        
+
       },
     ],
   })
@@ -307,7 +305,7 @@ const destroyStoreData=catchError((req, res)=> {
       longitude: allresult[i].longitude,
       image: allresult[i].image,
       distance: parseFloat(distance.toFixed(2)) + " km",
-      address:allresult[i].address,
+      address: allresult[i].address,
       Servicestore: allresult[i].Servicestore,
     })
 

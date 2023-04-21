@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.hasOne(models.userService,{foreignKey:"userId",as:"user"})
+      this.hasOne(models.userService,{foreignKey:"user_id",as:"user"})
       this.hasMany(models.Service,{foreignKey:"userId",as:"Service"})
       this.hasOne(models.Location,{foreignKey:"userId",as:"Location"})
       this.hasOne(models.Payment,{foreignKey:"userId",as:"Payment"})
@@ -39,17 +39,3 @@ module.exports = (sequelize, DataTypes) => {
   return User;
 };
 
-
-
-[
-  {
-    userServiceId:1,
-    featureId:1,
-    featurePrice:100
-  },
-  {
-    userServiceId:1,
-    featureId:1,
-    featurePrice:100
-  },
-]

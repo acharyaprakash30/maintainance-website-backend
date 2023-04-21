@@ -14,8 +14,7 @@ const addService = catchError(async (req, res) => {
     image: img,
     slug: req.body.slug,
     userId: req.userData.id,
-
-    categoryId: req.body.categoryId,
+    categoryId: req.body.categoryId
   };
   await model.Service.create(service).then((result) => {
     res.status(201).json({
@@ -46,6 +45,9 @@ const addService = catchError(async (req, res) => {
 //         });
 //       });
 //   };
+
+
+
 const index = catchError((req, res) => {
   const { page = 0, size = 10 } = req.query;
   const { limit, offset } = PaginationData.getPagination(page, size);
@@ -114,7 +116,9 @@ const servicesByFeatues = catchError((req, res) => {
   }).then((result) => {
     res
       .status(200)
-      .json({ data: PaginationData.getPagingData(result, page, limit) });
+      .json({
+        data: result.rows,
+      });
   });
 });
 
@@ -197,11 +201,16 @@ const deleteService = catchError((req, res) => {
 
 //get service by categoryname/categoryId
 const getserviceByCategory = catchError(async (req, res) => {
-  await model.Service.findAll({
+  const { page = 0, size = 10 } = req.query;
+  const { limit, offset } = PaginationData.getPagination(page, size);
+  const { filter = "" } = req.query;
+  await model.Service.findAndCountAll({
+    limit,
+    offset,
     where: { categoryId: req.params.categoryId },
   }).then((result) => {
     return res.status(200).json({
-      result: result,
+      result: result.rows,
     });
   });
 });
