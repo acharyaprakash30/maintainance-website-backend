@@ -68,7 +68,7 @@ const router = express.Router();
  */
 
 
-router.post("/create",verifyMiddleware.verification,CheckRole("SuperAdmin"),imageUploader.upload.single('image'),validateStore,StoreController.userInput);
+router.post("/create",verifyMiddleware.verification,CheckRole("superadmin"),imageUploader.upload.single('image'),validateStore,StoreController.userInput);
 
 /**
  * @swagger
@@ -85,7 +85,7 @@ router.post("/create",verifyMiddleware.verification,CheckRole("SuperAdmin"),imag
  *          description: Some Server Error
  */
 
-router.get("/",verifyMiddleware.verification,CheckRole("SuperAdmin"), StoreController.showdata);
+router.get("/",verifyMiddleware.verification,CheckRole("superadmin"), StoreController.showdata);
 
 
 
@@ -116,7 +116,7 @@ router.get("/",verifyMiddleware.verification,CheckRole("SuperAdmin"), StoreContr
  *          description: Some Server Error
  */
 
-router.patch("/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),imageUploader.upload.single('image'), StoreController.editStoreData);
+router.patch("/:id",verifyMiddleware.verification,CheckRole("superadmin"),imageUploader.upload.single('image'), StoreController.editStoreData);
 
 
 /**
@@ -141,7 +141,7 @@ router.patch("/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),imageU
  *          description: Some Server Error
  */
 
-router.delete("/delete/:id", verifyMiddleware.verification,CheckRole("SuperAdmin"),StoreController.destroyStoreData);
+router.delete("/delete/:id", verifyMiddleware.verification,CheckRole("superadmin"),StoreController.destroyStoreData);
 
 
 /**
@@ -166,6 +166,6 @@ router.delete("/delete/:id", verifyMiddleware.verification,CheckRole("SuperAdmin
  *          description: Some Server Error
  */
 
-router.get("/:latitude/:longitude/:serviceId", verifyMiddleware.verification,CheckRole("SuperAdmin"),StoreController.getPlaceByCoordinates);
+router.get("/:latitude/:longitude/:serviceId", verifyMiddleware.verification,CheckRole("superadmin"),StoreController.getPlaceByCoordinates);
 
 module.exports = router;

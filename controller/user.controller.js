@@ -59,7 +59,7 @@ const login = catchError((req, res) => {
               name: user.name,
               id: user.id,
               email: user.email,
-              role: user.role,
+              role: user.role
             },
             process.env.VERIFY_SEC,
             { expiresIn: "7d" },

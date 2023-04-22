@@ -15,6 +15,9 @@ module.exports = {
       description: {
         type: Sequelize.STRING
       },
+      image:{
+        type: Sequelize.STRING
+      },
       status: {
         type: Sequelize.ENUM("Pending", "Accept Order", "Maintaining","Done"),
         defaultValue: "Pending"

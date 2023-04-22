@@ -11,9 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.User,{foreignKey:"user_id",as:"serviceUser"})
-      this.belongsTo(models.Service,{foreignKey:"service_id",as:"serviceStore"})
-      this.belongsTo(models.Payment,{foreignKey:"payment_id"})
+      // this.belongsTo(models.User,{foreignKey:"userId",as:"serviceUser"})
+      // this.belongsTo(models.Service,{foreignKey:"serviceId",as:"serviceStore"})
+      // this.belongsTo(models.Payment,{foreignKey:"paymentId",as:"payment"})
     }
   }
   userService.init({
@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     serviceId: DataTypes.INTEGER,
     paymentId: DataTypes.INTEGER,
     storeId: DataTypes.INTEGER,
+    image:DataTypes.STRING,
     serviceLatitude:DataTypes.STRING,
     serviceLongitude:DataTypes.STRING,
     serviceLocation:DataTypes.STRING
@@ -30,5 +31,26 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'userService',
   });
+  userService.associate = function(models){
+    userService.belongsTo(models.User, {
+      as : "user",
+      foreignKey: "userId"
+    });
+    userService.belongsTo(models.Service, {
+      as : "service",
+      foreignKey: "serviceId"
+    });
+    userService.belongsTo(models.Store, {
+      as : "store",
+      foreignKey: "storeId"
+    });
+    userService.hasMany(models.UserServiceFeature, {
+      as : "servicefeatures",
+      foreignKey : "userServiceId"
+    })
+ 
+  }
+
+
   return userService;
 };

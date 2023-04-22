@@ -39,7 +39,6 @@ const createUserService = catchError(async (req, res) => {
       }
     });
 });
-
 const getUserSerivce = catchError((req, res) => {
   const { page = 0, size = 10 } = req.query;
   const { limit, offset } = PaginationData.getPagination(page, size);
@@ -51,7 +50,7 @@ const getUserSerivce = catchError((req, res) => {
       where: {
         [Op.or]: [
           {
-            user_id: {
+            userId: {
               [Op.like]: "%" + filter + "%",
             },
           },
@@ -66,27 +65,41 @@ const getUserSerivce = catchError((req, res) => {
             },
           },
           {
-            service_id: {
+            serviceId: {
               [Op.like]: "%" + filter + "%",
             },
           },
           {
-            payment_id: {
+            paymentId: {
               [Op.like]: "%" + filter + "%",
             },
           },
           {
-            store_id: {
+            storeId: {
               [Op.like]: "%" + filter + "%",
             },
-          },
-          {
-            fiscal_year_id: {
-              [Op.like]: "%" + filter + "%",
-            },
-          },
+          }
         ],
       },
+      include: [
+        {
+          model: models.User,
+          as: "user",
+          attributes: ["id", "name", "email", "contact", "gender"],
+        },
+        {
+          model: models.Service,
+          as: "service"
+        },
+        {
+          model: models.Store,
+          as: "store"
+        },
+        {
+          model: models.UserServiceFeature,
+          as: "servicefeatures"
+        },
+      ],
     })
     .then((result) => {
       res.status(200).json({
@@ -94,27 +107,53 @@ const getUserSerivce = catchError((req, res) => {
       });
     });
 });
-
+//get user by id
+const getUserSerivceByUserId = catchError(async(req, res) => {
+  const id = req.params.id;
+await models.User.findByPk(id,{
+  include: [
+    {
+      model: models.userService,
+      as: "userServices",
+      include:[
+        {
+          model: models.Service,
+          as: "service"
+        },
+        {
+          model: models.Store,
+          as: "store"
+        },
+        {
+          model: models.UserServiceFeature,
+          as: "servicefeatures"
+        },
+      ]
+    }
+  ]
+}).then((result) => {
+    if (result) {
+      res.status(200).json(result);
+    } else {
+      res.status(404).json({
+        message: "Id not found",
+      });
+    }
+  });
+});
 const update = catchError((req, res) => {
   const id = req.params.id;
 
   models.userService.findOne({ where: { id: id } }).then((exists) => {
     if (exists) {
       const updatedUserService = {
-        userId: req.body.userId,
-        image: req.file.filename,
-        description: req.body.description,
-        status: req.body.status,
-        serviceId: req.body.serviceId,
-        paymentId: req.body.paymentId,
-        storeId: req.body.storeId,
-        fiscal_year_id: req.body.fiscal_year_id,
+        status: req.body.status
       };
       models.userService
         .update(updatedUserService, { where: { id: id } })
         .then((result) => {
           res.status(200).json({
-            message: "UserService updated successfully!!",
+            message: "service status updated successfully!!",
             result: updatedUserService,
           });
         });
@@ -125,30 +164,17 @@ const update = catchError((req, res) => {
     }
   });
 });
-
-const delet = catchError((req, res) => {
-  const id = req.params.id;
-
-  models.userService.destroy({ where: { id: id } }).then((result) => {
-    if (result) {
-      res.status(200).json({
-        message: "User Service deleted succesfully",
-      });
-    } else {
-      res.status(404).json({
-        message: "User Service id is not in the list!!",
-      });
-    }
-  });
-});
-
 const bulkServiceSubmit= (async(req,res)=>{
   try{
     let t;
     await sequelize.transaction(async (t) => {
-      // if (req.file) {
-      //   var img = req.file.path;
-      // }
+      let images = [];
+      if (req.files) {
+          for (let i = 0; i < req.files.length; i++) {
+              let imagefile = req.files[i].path;
+              images.push(imagefile);
+          }
+      }
       const serviceData = {
         userId: req.userData.id,
         description: req.body.description,
@@ -159,6 +185,7 @@ const bulkServiceSubmit= (async(req,res)=>{
         serviceLatitude: req.body.serviceLatitude,
         serviceLongitude: req.body.serviceLongitude,
         serviceLocation: req.body.serviceLocation,
+        image:JSON.stringify(images)
       };
       const UserServiceFeatureArray = JSON.parse(req.body.serviceFeatures);
 
@@ -181,7 +208,8 @@ const bulkServiceSubmit= (async(req,res)=>{
             featureId: item.featureId,
             featurePrice: item.featurePrice,
           };
-          subTotalPriceOfUser = subTotalPriceOfUser + featurePrice;
+
+          subTotalPriceOfUser = subTotalPriceOfUser + item.featurePrice;
           let savedOrderItem = await models.UserServiceFeature.create(
             serviceDatas,
             {
@@ -196,7 +224,7 @@ const bulkServiceSubmit= (async(req,res)=>{
         await models.User.update(updatedItem,{where:{id:req.userData.id}},{ transaction: t })
 
       return res.status(200).json({
-        message: "user service created successfully",
+        message: "user order have been placed",
       });
     });
   }catch(e){
@@ -210,7 +238,7 @@ const bulkServiceSubmit= (async(req,res)=>{
 module.exports = {
   createUserService,
   getUserSerivce,
-  delet,
   update,
   bulkServiceSubmit,
+  getUserSerivceByUserId
 };

@@ -52,7 +52,7 @@ const {validateService}=require("../middleware/FormValidator")
  *       500:
  *         description: Some Server Error
  */
-router.post("/create",verifyMiddleware.verification,CheckRole("SuperAdmin"),imageUpload.upload.single('image'),validateService,serviceController.addService);
+router.post("/create",verifyMiddleware.verification,CheckRole("superadmin"),imageUpload.upload.single('image'),validateService,serviceController.addService);
 
 /**
  * @swagger
@@ -81,7 +81,7 @@ router.post("/create",verifyMiddleware.verification,CheckRole("SuperAdmin"),imag
  *          description: Some Server Error
  */
 
-router.patch("/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),imageUpload.upload.single('image'),serviceController.updateService)
+router.patch("/:id",verifyMiddleware.verification,CheckRole("superadmin"),imageUpload.upload.single('image'),serviceController.updateService)
 
 /**
  * @swagger
@@ -98,7 +98,7 @@ router.patch("/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),imageU
  *          description: Some Server Error
  */
 
-router.get("/",verifyMiddleware.verification,CheckRole("SuperAdmin"),serviceController.index)
+router.get("/",verifyMiddleware.verification,CheckRole("superadmin"),serviceController.index)
 
 /**
  * @swagger
@@ -115,7 +115,7 @@ router.get("/",verifyMiddleware.verification,CheckRole("SuperAdmin"),serviceCont
  *          description: Some Server Error
  */
 
-router.get("/serviceFeatures",verifyMiddleware.verification,CheckRole("SuperAdmin"),serviceController.servicesByFeatues)
+router.get("/serviceFeatures",verifyMiddleware.verification,CheckRole("superadmin"),serviceController.servicesByFeatues)
 
 /**
  * @swagger
@@ -139,7 +139,7 @@ router.get("/serviceFeatures",verifyMiddleware.verification,CheckRole("SuperAdmi
  *          description: Some Server Error
  */
 
-router.get("/category/:categoryId",verifyMiddleware.verification,CheckRole("SuperAdmin"),serviceController.getserviceByCategory)
+router.get("/category/:categoryId",verifyMiddleware.verification,CheckRole("superadmin"),serviceController.getserviceByCategory)
 /**
  * @swagger
  * /service/{id}:
@@ -161,7 +161,7 @@ router.get("/category/:categoryId",verifyMiddleware.verification,CheckRole("Supe
  *      500:
  *          description: Some Server Error
  */
-router.get("/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),serviceController.show)
+router.get("/:id",verifyMiddleware.verification,CheckRole("superadmin"),serviceController.show)
 
 
 /**
@@ -186,7 +186,7 @@ router.get("/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),serviceC
  *          description: Some Server Error
  */
 
-router.delete("/delete/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),serviceController.deleteService)
+router.delete("/delete/:id",verifyMiddleware.verification,CheckRole("superadmin"),serviceController.deleteService)
 
 
 

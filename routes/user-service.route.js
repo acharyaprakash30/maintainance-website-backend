@@ -72,7 +72,7 @@ router.post("/multiple",verifyMiddleware.verification,imageUpload.upload.array('
  */
 
 
-router.post("/create",verifyMiddleware.verification,CheckRole("SuperAdmin"),imageUpload.upload.single('image'),userserviceController.createUserService)
+router.post("/create",verifyMiddleware.verification,CheckRole("superadmin"),imageUpload.upload.single('image'),userserviceController.createUserService)
 
 /**
  * @swagger
@@ -89,65 +89,12 @@ router.post("/create",verifyMiddleware.verification,CheckRole("SuperAdmin"),imag
  *          description: Some Server Error
  */
 
-router.get("/",verifyMiddleware.verification,CheckRole("SuperAdmin"),userserviceController.getUserSerivce)
-//router.get("/find",userserviceController.findAll)
+router.get("/",verifyMiddleware.verification,CheckRole("superadmin"),userserviceController.getUserSerivce)
+router.get("/user/:id",verifyMiddleware.verification,CheckRole("superadmin"),userserviceController.getUserSerivceByUserId)
 
-/**
- * @swagger
- * /userservice/delete/{id}:
- *   delete:
- *     summary: Delete userservice
- *     security:
- *       - jwt: []
- *     tags: [userservice]
- *     parameters:
- *      - in: path
- *        name: id
- *        schema:
- *          type: integer
- *          required: true
- *          description: userservice's id
- *     responses:
- *      200:
- *          description: userservice deleted successfully
- *      500:
- *          description: Some Server Error
- */
+router.patch("/update/:id",verifyMiddleware.verification,CheckRole("superadmin"),imageUpload.upload.single('image'),userserviceController.update)
 
-router.delete("/delete/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),userserviceController.delet)
-
-//router.put("/update",verifyMiddleware.verification,userserviceController.update)
-
-/**
- * @swagger
- * /userservice/update/{id}:
- *   put:
- *     summary: Update userservice
- *     security:
- *       - jwt: []
- *     tags: [userservice]
- *     parameters:
- *      - in: path
- *        name: id
- *        schema:
- *          type: integer
- *          required: true
- *          description: userservice's id
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/userservice'
- *     responses:
- *      200:
- *          description: userservice updated successfully
- *      500:
- *          description: Some Server Error
- */
-
-router.patch("/update/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),imageUpload.upload.single('image'),userserviceController.update)
-
-router.post("/multiple",verifyMiddleware.verification,CheckRole("SuperAdmin"),imageUpload.upload.array('image',10), userserviceController.bulkServiceSubmit)
+router.post("/multiple",verifyMiddleware.verification,CheckRole("superadmin"),imageUpload.upload.array('image',10), userserviceController.bulkServiceSubmit)
 
 
 
