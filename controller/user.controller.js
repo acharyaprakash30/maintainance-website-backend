@@ -53,7 +53,6 @@ const login = catchError((req, res) => {
     if (user) {
       bcrypt.compare(req.body.password, user.password, (err, result) => {
         if (result) {
-          // console.log("__________")
           const verify = jwt.sign(
             {
               name: user.name,
@@ -71,6 +70,11 @@ const login = catchError((req, res) => {
               });
             }
           );
+        }
+        else{
+          res.status(401).json({
+            message: "Invalid Credintals!",
+          });
         }
       });
     } else {

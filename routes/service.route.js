@@ -139,7 +139,7 @@ router.get("/serviceFeatures",verifyMiddleware.verification,CheckRole("superadmi
  *          description: Some Server Error
  */
 
-router.get("/category/:categoryId",verifyMiddleware.verification,CheckRole("superadmin"),serviceController.getserviceByCategory)
+router.get("/category/:categoryId",verifyMiddleware.verification,serviceController.getserviceByCategory)
 /**
  * @swagger
  * /service/{id}:

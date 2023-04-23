@@ -35,6 +35,12 @@ module.exports = (sequelize, DataTypes) => {
       as : "Servicestore",
       foreignKey : "storeId"
     })
+    Store.hasMany(models.userService, {
+      as : "userServices",
+      foreignKey : "storeId"
+    })
+
+
     // Store.belongsTo(models.ServiceStore, {
     //   as : "storeservices",
     //   foreignKey: "storeId"

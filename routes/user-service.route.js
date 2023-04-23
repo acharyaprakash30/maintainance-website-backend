@@ -91,6 +91,7 @@ router.post("/create",verifyMiddleware.verification,CheckRole("superadmin"),imag
 
 router.get("/",verifyMiddleware.verification,CheckRole("superadmin"),userserviceController.getUserSerivce)
 router.get("/user/:id",verifyMiddleware.verification,CheckRole("superadmin"),userserviceController.getUserSerivceByUserId)
+router.get("/vendor/:id",verifyMiddleware.verification,CheckRole("superadmin"),userserviceController.getUserSerivceByVendorId)
 
 router.patch("/update/:id",verifyMiddleware.verification,CheckRole("superadmin"),imageUpload.upload.single('image'),userserviceController.update)
 

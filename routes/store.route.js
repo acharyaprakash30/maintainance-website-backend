@@ -166,6 +166,6 @@ router.delete("/delete/:id", verifyMiddleware.verification,CheckRole("superadmin
  *          description: Some Server Error
  */
 
-router.get("/:latitude/:longitude/:serviceId", verifyMiddleware.verification,CheckRole("superadmin"),StoreController.getPlaceByCoordinates);
+router.get("/:latitude/:longitude/:serviceId", verifyMiddleware.verification,StoreController.getPlaceByCoordinates);
 
 module.exports = router;

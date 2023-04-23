@@ -6,6 +6,7 @@ const router = express.Router();
 const verifyMiddleware = require("../middleware/verify")
 const { CheckRole } = require("../middleware/CheckRole");
 
+router.get("/only", verifyMiddleware.verification,CheckRole("superadmin"),categoryController.AllCategoriesOnly);
 
 /**
      * @swagger
@@ -69,7 +70,7 @@ const { CheckRole } = require("../middleware/CheckRole");
  *          description: Some Server Error
  */
 
-router.get("/",verifyMiddleware.verification,CheckRole("superadmin"), categoryController.showAll);
+router.get("/",verifyMiddleware.verification, categoryController.showAll);
 
 
 /**
@@ -167,6 +168,8 @@ router.get("/all",verifyMiddleware.verification,CheckRole("superadmin"), categor
  */
 
 router.get("/:id", verifyMiddleware.verification,CheckRole("superadmin"),categoryController.showCategoryById);
+
+
 
 
 module.exports = router;

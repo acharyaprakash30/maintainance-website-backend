@@ -67,7 +67,7 @@ const { CheckRole } = require("../middleware/CheckRole");
  *         description: Some Server Error
  */
 
- router.post("/create",imageUpload.upload.single('image'),validateUser,userController.create)
+ router.post("/create",imageUpload.upload.single('image'),validateUser,CheckRole("superadmin"),userController.create)
 
 /**
  * @swagger
@@ -114,7 +114,7 @@ router.post("/login",userController.login)
  *          description: Some Server Error
  */
 
-router.get("/me",verifyMiddleware.verification,CheckRole("superadmin"),userController.editProfile)
+router.get("/me",verifyMiddleware.verification,userController.editProfile)
 
 /**
  * @swagger

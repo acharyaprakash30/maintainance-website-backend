@@ -9,7 +9,7 @@ const createUserService = catchError(async (req, res) => {
     var img = req.file.filename;
   }
   const userService = {
-    userId: req.body.userId,
+    userId: req.userData.userId,
     image: img,
     description: req.body.description,
     status: req.body.status,
@@ -107,6 +107,43 @@ const getUserSerivce = catchError((req, res) => {
       });
     });
 });
+
+//show order by vendor
+const getUserSerivceByVendorId = catchError(async(req, res) => {
+  const id = req.params.id;
+await models.Store.findByPk(id,{
+  include: [
+    {
+      model: models.userService,
+      as: "userServices",
+      include:[
+        {
+          model: models.Service,
+          as: "service"
+        },
+        {
+          model: models.Store,
+          as: "store"
+        },
+        {
+          model: models.UserServiceFeature,
+          as: "servicefeatures"
+        },
+      ]
+    }
+  ]
+}).then((result) => {
+    if (result) {
+      res.status(200).json(result);
+    } else {
+      res.status(404).json({
+        message: "Id not found",
+      });
+    }
+  });
+});
+
+
 //get user by id
 const getUserSerivceByUserId = catchError(async(req, res) => {
   const id = req.params.id;
@@ -240,5 +277,6 @@ module.exports = {
   getUserSerivce,
   update,
   bulkServiceSubmit,
-  getUserSerivceByUserId
+  getUserSerivceByUserId,
+  getUserSerivceByVendorId
 };
