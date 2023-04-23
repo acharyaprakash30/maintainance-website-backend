@@ -6,7 +6,7 @@ const router = express.Router();
 const verifyMiddleware = require("../middleware/verify")
 const { CheckRole } = require("../middleware/CheckRole");
 
-router.get("/only", verifyMiddleware.verification,CheckRole("superadmin"),categoryController.AllCategoriesOnly);
+router.get("/only", verifyMiddleware.verification,CheckRole("superadmin","admin"),categoryController.AllCategoriesOnly);
 
 /**
      * @swagger
@@ -30,9 +30,6 @@ router.get("/only", verifyMiddleware.verification,CheckRole("superadmin"),catego
      *           description: Category's parentId
      */
 
-
-    
-
  /**
  * @swagger
  * /category/create:
@@ -53,7 +50,7 @@ router.get("/only", verifyMiddleware.verification,CheckRole("superadmin"),catego
  *         description: Some Server Error
  */
 
-    router.post("/create", imageUpload.upload.single('image'),verifyMiddleware.verification,CheckRole("superadmin"),validateCategory,categoryController.save);
+router.post("/create", imageUpload.upload.single('image'),verifyMiddleware.verification,CheckRole("superadmin","admin"),validateCategory,categoryController.save);
 
 /**
  * @swagger
@@ -100,7 +97,7 @@ router.get("/",verifyMiddleware.verification, categoryController.showAll);
  *          description: Some Server Error
  */
 
-router.put("/:id",imageUpload.upload.single('image'),verifyMiddleware.verification,CheckRole("superadmin"),validateCategory,categoryController.updateCategoryById);
+router.put("/:id",imageUpload.upload.single('image'),verifyMiddleware.verification,CheckRole("superadmin","admin"),validateCategory,categoryController.updateCategoryById);
 
 /**
  * @swagger
@@ -124,7 +121,7 @@ router.put("/:id",imageUpload.upload.single('image'),verifyMiddleware.verificati
  *          description: Some Server Error
  */
 
-router.delete("/delete/:id",verifyMiddleware.verification,CheckRole("superadmin"),categoryController.deleteCategory);
+router.delete("/delete/:id",verifyMiddleware.verification,CheckRole("superadmin","admin"),categoryController.deleteCategory);
 
 
 /**
@@ -142,7 +139,7 @@ router.delete("/delete/:id",verifyMiddleware.verification,CheckRole("superadmin"
  *          description: Some Server Error
  */
 
-router.get("/all",verifyMiddleware.verification,CheckRole("superadmin"), categoryController.showCategories);
+router.get("/all",verifyMiddleware.verification,CheckRole("superadmin","admin"), categoryController.showCategories);
 
 
 /**
@@ -167,7 +164,7 @@ router.get("/all",verifyMiddleware.verification,CheckRole("superadmin"), categor
  *          description: Some Server Error
  */
 
-router.get("/:id", verifyMiddleware.verification,CheckRole("superadmin"),categoryController.showCategoryById);
+router.get("/:id", verifyMiddleware.verification,CheckRole("superadmin","admin"),categoryController.showCategoryById);
 
 
 

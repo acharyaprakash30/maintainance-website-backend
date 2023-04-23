@@ -68,7 +68,7 @@ const router = express.Router();
  */
 
 
-router.post("/create",verifyMiddleware.verification,CheckRole("superadmin"),imageUploader.upload.single('image'),validateStore,StoreController.userInput);
+router.post("/create",verifyMiddleware.verification,CheckRole("superadmin","admin","vendor"),imageUploader.upload.single('image'),validateStore,StoreController.userInput);
 
 /**
  * @swagger
@@ -85,8 +85,7 @@ router.post("/create",verifyMiddleware.verification,CheckRole("superadmin"),imag
  *          description: Some Server Error
  */
 
-router.get("/",verifyMiddleware.verification,CheckRole("superadmin"), StoreController.showdata);
-
+router.get("/",verifyMiddleware.verification,CheckRole("superadmin","admin"), StoreController.showdata);
 
 
 /**
@@ -116,7 +115,7 @@ router.get("/",verifyMiddleware.verification,CheckRole("superadmin"), StoreContr
  *          description: Some Server Error
  */
 
-router.patch("/:id",verifyMiddleware.verification,CheckRole("superadmin"),imageUploader.upload.single('image'), StoreController.editStoreData);
+router.patch("/:id",verifyMiddleware.verification,CheckRole("superadmin","admin","vendor"),imageUploader.upload.single('image'), StoreController.editStoreData);
 
 
 /**
@@ -141,7 +140,7 @@ router.patch("/:id",verifyMiddleware.verification,CheckRole("superadmin"),imageU
  *          description: Some Server Error
  */
 
-router.delete("/delete/:id", verifyMiddleware.verification,CheckRole("superadmin"),StoreController.destroyStoreData);
+router.delete("/delete/:id", verifyMiddleware.verification,CheckRole("superadmin","admin"),StoreController.destroyStoreData);
 
 
 /**

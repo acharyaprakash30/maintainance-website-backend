@@ -24,29 +24,6 @@ const addService = catchError(async (req, res) => {
   });
 });
 
-//get all sercvices
-// const index = (req, res) => {
-//     model.Service.findAndCountAll({attributes:{
-
-//         include : [
-//           {
-//             as: "SubServicelist",
-//             model : model.ServiceType,
-//           }
-//         ]
-
-//     }})
-//       .then((result) => {
-//         res.status(200).json(result);
-//       })
-//       .catch((error) => {
-//         res.status(500).json({
-//           messege: "Something went wrong!!",error
-//         });
-//       });
-//   };
-
-
 
 const index = catchError((req, res) => {
   const { page = 0, size = 10 } = req.query;
