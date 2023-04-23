@@ -90,7 +90,10 @@ const index = catchError((req, res) => {
       },
     ],
   }).then((result) => {
-    res.status(200).json({ data: result.rows });
+    res.status(200).json({ 
+      data: result.rows,      
+      totaldata: result.count
+    });
   });
 });
 

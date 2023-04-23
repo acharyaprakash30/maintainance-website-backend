@@ -9,7 +9,6 @@ const imageUpload = require("../helpers/image-uploader");
 
 
 
-router.post("/multiple",verifyMiddleware.verification,imageUpload.upload.array('image',10), userserviceController.bulkServiceSubmit)
 
 /**
      * @swagger
@@ -48,10 +47,10 @@ router.post("/multiple",verifyMiddleware.verification,imageUpload.upload.array('
      *           type: integer
      *           description: userService's payment_id
      *    
-     */
+*/
 
-              
-    /**
+
+ /**
  * @swagger
  * /userservice/create:
  *   post:
@@ -87,15 +86,18 @@ router.post("/create",verifyMiddleware.verification,CheckRole("superadmin"),imag
  *          description: userservice List retrieved successfully
  *      500:
  *          description: Some Server Error
- */
+*/
 
 router.get("/",verifyMiddleware.verification,CheckRole("superadmin"),userserviceController.getUserSerivce)
+
+
 router.get("/user/:id",verifyMiddleware.verification,CheckRole("superadmin"),userserviceController.getUserSerivceByUserId)
 router.get("/vendor/:id",verifyMiddleware.verification,CheckRole("superadmin"),userserviceController.getUserSerivceByVendorId)
 
 router.patch("/update/:id",verifyMiddleware.verification,CheckRole("superadmin"),imageUpload.upload.single('image'),userserviceController.update)
 
 router.post("/multiple",verifyMiddleware.verification,CheckRole("superadmin"),imageUpload.upload.array('image',10), userserviceController.bulkServiceSubmit)
+// router.post("/multiple",verifyMiddleware.verification,imageUpload.upload.array('image',10), userserviceController.bulkServiceSubmit)
 
 
 

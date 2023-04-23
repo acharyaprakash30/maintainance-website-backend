@@ -182,7 +182,8 @@ const showdata = catchError((req, res) => {
   })
     .then((result) => {
       res.status(201).json({
-        data: result.rows
+        data: result.rows,
+        totaldata: result.count
       });
     })
 

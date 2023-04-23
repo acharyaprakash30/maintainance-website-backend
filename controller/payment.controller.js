@@ -10,8 +10,8 @@ const { catchError } = require("../middleware/catchError");
 const PaymentInput = catchError((req, res) => {
   const Payment = {
     userId: req.userData.id,
-    payment_type: req.body.payment_type,
-    payment_method: req.body.payment_method,
+    // payment_type: req.body.payment_type,
+    paymentMethod: req.body.paymentMethod,
   };
   model.Payment.create(Payment)
     .then((Result) => {
@@ -104,6 +104,7 @@ const index = catchError((req, res) => {
     .then((result) => {
       res.status(200).json({
         data: result.rows,
+        totaldata: result.count
       });
     })
 

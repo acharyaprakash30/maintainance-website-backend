@@ -44,7 +44,11 @@ app.use('/fiscalyear', fiscal_yearRoute);
 app.use('/role', roleRoute);
 
  
-
+// sequelize.sync({force:true}).then((result)=>{
+//   console.log("migration successful")
+// }).catch(err=>{
+//   console.log(err );
+// })
 
 
 

@@ -20,6 +20,7 @@ const { CheckRole } = require("../middleware/CheckRole");
      *          - password
      *          - gender
      *          - image
+     *          - role
      *        properties:
      *          email:
      *           type: string
@@ -42,6 +43,9 @@ const { CheckRole } = require("../middleware/CheckRole");
      *          image:
      *           type: file
      *           description: User's image
+     *          role:
+    *           type: string
+     *           description: User's role
      *         
      */
 
@@ -67,7 +71,7 @@ const { CheckRole } = require("../middleware/CheckRole");
  *         description: Some Server Error
  */
 
- router.post("/create",imageUpload.upload.single('image'),validateUser,CheckRole("superadmin"),userController.create)
+ router.post("/create",imageUpload.upload.single('image'),validateUser,userController.create)
 
 /**
  * @swagger
@@ -188,7 +192,7 @@ router.get("/",verifyMiddleware.verification,CheckRole("superadmin"),userControl
 
 /**
  * @swagger
- * /userById/{id}:
+ * /user/userbyid/{id}:
  *   get:
  *     summary: Retrieve user
  *     security:
@@ -208,7 +212,7 @@ router.get("/",verifyMiddleware.verification,CheckRole("superadmin"),userControl
  *          description: Some Server Error
  */
 
-router.get("/userById/:id",verifyMiddleware.verification,CheckRole("superadmin"),userController.show)
+router.get("/userbyid/:id",verifyMiddleware.verification,CheckRole("superadmin"),userController.show)
 /**
  * @swagger
  * /updaterole/{id}:
@@ -233,8 +237,12 @@ router.get("/userById/:id",verifyMiddleware.verification,CheckRole("superadmin")
 
 router.put("/updaterole/:id",verifyMiddleware.verification,CheckRole("superadmin"),userController.updateRole)
 
+
+
 router.post("/forgetpassword",userController.forgetPassword)
 router.post("/resetpassword",userController.resetPassword)
+
+
 router.put("/changepassword/:id",verifyMiddleware.verification,CheckRole("superadmin"),validateChangePassword,userController.changePassword)
 
 

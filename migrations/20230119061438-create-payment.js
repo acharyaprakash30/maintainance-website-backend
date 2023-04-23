@@ -9,10 +9,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      payment_type: {
-        type: Sequelize.STRING
-      },
-      payment_method: {
+      // payment_type: {
+      //   type: Sequelize.STRING
+      // },
+      paymentMethod: {
         type: Sequelize.STRING
       },
       createdAt: {
