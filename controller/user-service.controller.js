@@ -142,8 +142,6 @@ await models.Store.findByPk(id,{
     }
   });
 });
-
-
 //get user by id
 const getUserSerivceByUserId = catchError(async(req, res) => {
   const id = req.params.id;
