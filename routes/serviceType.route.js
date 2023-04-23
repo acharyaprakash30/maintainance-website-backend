@@ -47,7 +47,7 @@ const { CheckRole } = require("../middleware/CheckRole");
  *         description: Some Server Error
  */
 
-router.post("/create",verifyMiddleware.verification,CheckRole("SuperAdmin"),validateServiceType, ServiceTypeController.userInput);
+router.post("/create",verifyMiddleware.verification,CheckRole("superadmin"),validateServiceType, ServiceTypeController.userInput);
 
 /**
  * @swagger
@@ -64,7 +64,7 @@ router.post("/create",verifyMiddleware.verification,CheckRole("SuperAdmin"),vali
  *          description: Some Server Error
  */
 
-router.get("/", verifyMiddleware.verification,CheckRole("SuperAdmin"),ServiceTypeController.showdata);
+router.get("/", verifyMiddleware.verification,CheckRole("superadmin"),ServiceTypeController.showdata);
 
 /**
  * @swagger
@@ -88,7 +88,7 @@ router.get("/", verifyMiddleware.verification,CheckRole("SuperAdmin"),ServiceTyp
  *          description: Some Server Error
  */
 
-router.get("/:id", verifyMiddleware.verification,CheckRole("SuperAdmin"),ServiceTypeController.showdataById);
+router.get("/:id", verifyMiddleware.verification,CheckRole("superadmin"),ServiceTypeController.showdataById);
 
 /**
  * @swagger
@@ -117,7 +117,7 @@ router.get("/:id", verifyMiddleware.verification,CheckRole("SuperAdmin"),Service
  *          description: Some Server Error
  */
 
-router.patch("/:id", verifyMiddleware.verification,CheckRole("SuperAdmin"),ServiceTypeController.editServiceType);
+router.patch("/:id", verifyMiddleware.verification,CheckRole("superadmin"),ServiceTypeController.editServiceType);
 
 /**
  * @swagger
@@ -146,6 +146,6 @@ router.patch("/:id", verifyMiddleware.verification,CheckRole("SuperAdmin"),Servi
  *          description: Some Server Error
  */
 
-router.delete("/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"), ServiceTypeController.destroyServiceType);
+router.delete("/:id",verifyMiddleware.verification,CheckRole("superadmin"), ServiceTypeController.destroyServiceType);
 
 module.exports = router;

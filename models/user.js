@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.hasOne(models.userService,{foreignKey:"user_id",as:"user"})
+      this.hasOne(models.userService,{foreignKey:"userId",as:"user"})
       this.hasMany(models.Service,{foreignKey:"userId",as:"Service"})
       this.hasOne(models.Location,{foreignKey:"userId",as:"Location"})
       this.hasOne(models.Payment,{foreignKey:"userId",as:"Payment"})
@@ -33,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = function(models){
     User.hasMany(models.Store, {
       as : "UserStores",
+      foreignKey: "userId"
+    })
+    User.hasMany(models.userService, {
+      as : "userServices",
       foreignKey: "userId"
     })
   }

@@ -6,6 +6,7 @@ const router = express.Router();
 const verifyMiddleware = require("../middleware/verify")
 const { CheckRole } = require("../middleware/CheckRole");
 
+router.get("/only", verifyMiddleware.verification,CheckRole("superadmin"),categoryController.AllCategoriesOnly);
 
 /**
      * @swagger
@@ -52,7 +53,7 @@ const { CheckRole } = require("../middleware/CheckRole");
  *         description: Some Server Error
  */
 
-    router.post("/create", imageUpload.upload.single('image'),verifyMiddleware.verification,CheckRole("SuperAdmin"),validateCategory,categoryController.save);
+    router.post("/create", imageUpload.upload.single('image'),verifyMiddleware.verification,CheckRole("superadmin"),validateCategory,categoryController.save);
 
 /**
  * @swagger
@@ -69,7 +70,7 @@ const { CheckRole } = require("../middleware/CheckRole");
  *          description: Some Server Error
  */
 
-router.get("/",verifyMiddleware.verification,CheckRole("SuperAdmin"), categoryController.showAll);
+router.get("/",verifyMiddleware.verification, categoryController.showAll);
 
 
 /**
@@ -99,7 +100,7 @@ router.get("/",verifyMiddleware.verification,CheckRole("SuperAdmin"), categoryCo
  *          description: Some Server Error
  */
 
-router.put("/:id",imageUpload.upload.single('image'),verifyMiddleware.verification,CheckRole("SuperAdmin"),validateCategory,categoryController.updateCategoryById);
+router.put("/:id",imageUpload.upload.single('image'),verifyMiddleware.verification,CheckRole("superadmin"),validateCategory,categoryController.updateCategoryById);
 
 /**
  * @swagger
@@ -123,7 +124,7 @@ router.put("/:id",imageUpload.upload.single('image'),verifyMiddleware.verificati
  *          description: Some Server Error
  */
 
-router.delete("/delete/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),categoryController.deleteCategory);
+router.delete("/delete/:id",verifyMiddleware.verification,CheckRole("superadmin"),categoryController.deleteCategory);
 
 
 /**
@@ -141,7 +142,7 @@ router.delete("/delete/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"
  *          description: Some Server Error
  */
 
-router.get("/all",verifyMiddleware.verification,CheckRole("SuperAdmin"), categoryController.showCategories);
+router.get("/all",verifyMiddleware.verification,CheckRole("superadmin"), categoryController.showCategories);
 
 
 /**
@@ -166,7 +167,9 @@ router.get("/all",verifyMiddleware.verification,CheckRole("SuperAdmin"), categor
  *          description: Some Server Error
  */
 
-router.get("/:id", verifyMiddleware.verification,CheckRole("SuperAdmin"),categoryController.showCategoryById);
+router.get("/:id", verifyMiddleware.verification,CheckRole("superadmin"),categoryController.showCategoryById);
+
+
 
 
 module.exports = router;

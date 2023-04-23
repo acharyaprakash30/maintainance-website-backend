@@ -23,11 +23,16 @@ const save = catchError((req, res) => {
     })
 })
 
+const AllCategoriesOnly = catchError(async (req,res) => {
+  const AllCategory = await models.Category.findAll().then((data)=>{
+    return res.status(200).json(data)
+  }).catch((er)=> res.status(500).json({message:er.message}))
+})
+
 
 const showAll = catchError(async (req, res) => {
 
   const AllCategory = await models.Category.findAll({
-
   });
   if (AllCategory) {
     let categories = await AllCategories(AllCategory);
@@ -187,6 +192,7 @@ const updateCategoryById = catchError((req, res) => {
 
 //delete user
 const deleteCategory = catchError((req, res) => {
+  console.log("======================category deleted sucessfully")
   models.Category.destroy({ where: { id: req.params.id } })
     .then((result) => {
       if (result) {
@@ -210,5 +216,6 @@ module.exports = {
   showCategoryById: showCategoryById,
   showCategories: showCategories,
   updateCategoryById: updateCategoryById,
-  deleteCategory: deleteCategory
+  deleteCategory: deleteCategory,
+  AllCategoriesOnly:AllCategoriesOnly
 }

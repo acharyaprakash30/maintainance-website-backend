@@ -53,13 +53,12 @@ const login = catchError((req, res) => {
     if (user) {
       bcrypt.compare(req.body.password, user.password, (err, result) => {
         if (result) {
-          // console.log("__________")
           const verify = jwt.sign(
             {
               name: user.name,
               id: user.id,
               email: user.email,
-              role: user.role,
+              role: user.role
             },
             process.env.VERIFY_SEC,
             { expiresIn: "7d" },
@@ -71,6 +70,11 @@ const login = catchError((req, res) => {
               });
             }
           );
+        }
+        else{
+          res.status(401).json({
+            message: "Invalid Credintals!",
+          });
         }
       });
     } else {

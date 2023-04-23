@@ -67,7 +67,7 @@ const { CheckRole } = require("../middleware/CheckRole");
  *         description: Some Server Error
  */
 
- router.post("/create",imageUpload.upload.single('image'),validateUser,userController.create)
+ router.post("/create",imageUpload.upload.single('image'),validateUser,CheckRole("superadmin"),userController.create)
 
 /**
  * @swagger
@@ -114,7 +114,7 @@ router.post("/login",userController.login)
  *          description: Some Server Error
  */
 
-router.get("/me",verifyMiddleware.verification,CheckRole("SuperAdmin"),userController.editProfile)
+router.get("/me",verifyMiddleware.verification,userController.editProfile)
 
 /**
  * @swagger
@@ -143,7 +143,7 @@ router.get("/me",verifyMiddleware.verification,CheckRole("SuperAdmin"),userContr
  *          description: Some Server Error
  */
 
-router.put("/:id",imageUpload.upload.single('image'),verifyMiddleware.verification,CheckRole("SuperAdmin"),validateUserUpdate,userController.editUser)
+router.put("/:id",imageUpload.upload.single('image'),verifyMiddleware.verification,CheckRole("superadmin"),validateUserUpdate,userController.editUser)
 
 /**
  * @swagger
@@ -167,7 +167,7 @@ router.put("/:id",imageUpload.upload.single('image'),verifyMiddleware.verificati
  *          description: Some Server Error
  */
 
-router.delete("/delete",verifyMiddleware.verification,CheckRole("SuperAdmin"),userController.deleteUser)
+router.delete("/delete",verifyMiddleware.verification,CheckRole("superadmin"),userController.deleteUser)
 
 /**
  * @swagger
@@ -184,7 +184,7 @@ router.delete("/delete",verifyMiddleware.verification,CheckRole("SuperAdmin"),us
  *          description: Some Server Error
  */
 
-router.get("/",verifyMiddleware.verification,CheckRole("SuperAdmin"),userController.index)
+router.get("/",verifyMiddleware.verification,CheckRole("superadmin"),userController.index)
 
 /**
  * @swagger
@@ -208,7 +208,7 @@ router.get("/",verifyMiddleware.verification,CheckRole("SuperAdmin"),userControl
  *          description: Some Server Error
  */
 
-router.get("/userById/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),userController.show)
+router.get("/userById/:id",verifyMiddleware.verification,CheckRole("superadmin"),userController.show)
 /**
  * @swagger
  * /updaterole/{id}:
@@ -231,11 +231,11 @@ router.get("/userById/:id",verifyMiddleware.verification,CheckRole("SuperAdmin")
  *          description: Some Server Error
  */
 
-router.put("/updaterole/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),userController.updateRole)
+router.put("/updaterole/:id",verifyMiddleware.verification,CheckRole("superadmin"),userController.updateRole)
 
 router.post("/forgetpassword",userController.forgetPassword)
 router.post("/resetpassword",userController.resetPassword)
-router.put("/changepassword/:id",verifyMiddleware.verification,CheckRole("SuperAdmin"),validateChangePassword,userController.changePassword)
+router.put("/changepassword/:id",verifyMiddleware.verification,CheckRole("superadmin"),validateChangePassword,userController.changePassword)
 
 
 module.exports=router;

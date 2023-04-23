@@ -279,11 +279,7 @@ exports.validateFiscalYear = [
 exports.validateStore = [
   check("name")
     .notEmpty()
-    .withMessage("store name is required!!")
-    .matches("^[A-Za-z ]+$")
-    .withMessage("Please enter valid full name!!")
-    .isLength({ min: 3 })
-    .withMessage("Minimum 3 characters required!!"),
+    .withMessage("store name is required!!"),
   check("latitude")
     .notEmpty()
     .withMessage("latitude is required!!"),
