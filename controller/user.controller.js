@@ -269,7 +269,7 @@ const forgetPassword =catchError(async (req, res, next) => {
   const from = SMTP_MAIL;
   // const link = http://localhost:8000/resetpassword/${token};
   const html = `<p>Hi ${user.name},</p>
-                  <p>Please click on the following <a href=http://localhost:8000/resetpassword/${token}>link</a> to reset your password.</p> 
+                  <p>Please click on the following <a href=http://localhost:5000/resetpassword/${token}>link</a> to reset your password.</p> 
                   <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>`;
 
   const info = await  

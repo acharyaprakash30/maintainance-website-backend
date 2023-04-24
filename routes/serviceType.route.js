@@ -47,7 +47,7 @@ const { CheckRole } = require("../middleware/CheckRole");
  *         description: Some Server Error
  */
 
-router.post("/create",verifyMiddleware.verification,CheckRole("superadmin"),validateServiceType, ServiceTypeController.userInput);
+router.post("/create",verifyMiddleware.verification,CheckRole("superadmin","admin"),validateServiceType, ServiceTypeController.userInput);
 
 /**
  * @swagger
@@ -64,7 +64,7 @@ router.post("/create",verifyMiddleware.verification,CheckRole("superadmin"),vali
  *          description: Some Server Error
  */
 
-router.get("/", verifyMiddleware.verification,CheckRole("superadmin"),ServiceTypeController.showdata);
+router.get("/", verifyMiddleware.verification,CheckRole("superadmin","admin","vendor"),ServiceTypeController.showdata);
 
 /**
  * @swagger
@@ -88,7 +88,7 @@ router.get("/", verifyMiddleware.verification,CheckRole("superadmin"),ServiceTyp
  *          description: Some Server Error
  */
 
-router.get("/:id", verifyMiddleware.verification,CheckRole("superadmin"),ServiceTypeController.showdataById);
+router.get("/:id", verifyMiddleware.verification,CheckRole("superadmin","admin","vendor"),ServiceTypeController.showdataById);
 
 /**
  * @swagger
@@ -117,7 +117,7 @@ router.get("/:id", verifyMiddleware.verification,CheckRole("superadmin"),Service
  *          description: Some Server Error
  */
 
-router.patch("/:id", verifyMiddleware.verification,CheckRole("superadmin"),ServiceTypeController.editServiceType);
+router.patch("/:id", verifyMiddleware.verification,CheckRole("superadmin","admin"),ServiceTypeController.editServiceType);
 
 /**
  * @swagger
@@ -146,6 +146,6 @@ router.patch("/:id", verifyMiddleware.verification,CheckRole("superadmin"),Servi
  *          description: Some Server Error
  */
 
-router.delete("/:id",verifyMiddleware.verification,CheckRole("superadmin"), ServiceTypeController.destroyServiceType);
+router.delete("/:id",verifyMiddleware.verification,CheckRole("superadmin","admin"), ServiceTypeController.destroyServiceType);
 
 module.exports = router;

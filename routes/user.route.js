@@ -147,7 +147,7 @@ router.get("/me",verifyMiddleware.verification,userController.editProfile)
  *          description: Some Server Error
  */
 
-router.put("/:id",imageUpload.upload.single('image'),verifyMiddleware.verification,CheckRole("superadmin"),validateUserUpdate,userController.editUser)
+router.put("/:id",imageUpload.upload.single('image'),verifyMiddleware.verification,CheckRole("superadmin","admin"),validateUserUpdate,userController.editUser)
 
 /**
  * @swagger
@@ -171,7 +171,7 @@ router.put("/:id",imageUpload.upload.single('image'),verifyMiddleware.verificati
  *          description: Some Server Error
  */
 
-router.delete("/delete",verifyMiddleware.verification,CheckRole("superadmin"),userController.deleteUser)
+router.delete("/delete",verifyMiddleware.verification,CheckRole("superadmin","admin"),userController.deleteUser)
 
 /**
  * @swagger
@@ -188,7 +188,7 @@ router.delete("/delete",verifyMiddleware.verification,CheckRole("superadmin"),us
  *          description: Some Server Error
  */
 
-router.get("/",verifyMiddleware.verification,CheckRole("superadmin"),userController.index)
+router.get("/",verifyMiddleware.verification,CheckRole("superadmin","admin"),userController.index)
 
 /**
  * @swagger
@@ -212,7 +212,7 @@ router.get("/",verifyMiddleware.verification,CheckRole("superadmin"),userControl
  *          description: Some Server Error
  */
 
-router.get("/userbyid/:id",verifyMiddleware.verification,CheckRole("superadmin"),userController.show)
+router.get("/userById/:id",verifyMiddleware.verification,CheckRole("superadmin","admin"),userController.show)
 /**
  * @swagger
  * /updaterole/{id}:
@@ -235,7 +235,7 @@ router.get("/userbyid/:id",verifyMiddleware.verification,CheckRole("superadmin")
  *          description: Some Server Error
  */
 
-router.put("/updaterole/:id",verifyMiddleware.verification,CheckRole("superadmin"),userController.updateRole)
+router.put("/updaterole/:id",verifyMiddleware.verification,CheckRole("superadmin","admin"),userController.updateRole)
 
 
 
