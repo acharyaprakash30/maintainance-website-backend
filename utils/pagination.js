@@ -4,7 +4,7 @@ const getPagination = (page, size) => {
     return { limit, offset };
   };
   const getPagingData = (data, page, limit) => {
-    const { count: totalItems, rows: results } = data;
+    const { count: totalItems,  result:results } = data;
     const currentPage = page ? +page : 0;
     const totalPages = Math.ceil(totalItems / limit);
   

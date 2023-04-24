@@ -5,6 +5,7 @@ const verifyMiddleware = require("../middleware/verify");
 const { CheckRole } = require("../middleware/CheckRole");
 const imageUpload = require("../helpers/image-uploader");
 
+
 router.post("/multiple",verifyMiddleware.verification,imageUpload.upload.array('image',10), userserviceController.bulkServiceSubmit)
 
 /**
@@ -44,10 +45,10 @@ router.post("/multiple",verifyMiddleware.verification,imageUpload.upload.array('
      *           type: integer
      *           description: userService's payment_id
      *    
-     */
+*/
 
-              
-    /**
+
+ /**
  * @swagger
  * /userservice/create:
  *   post:
@@ -91,6 +92,7 @@ router.get("/vendor/:id",verifyMiddleware.verification,CheckRole("superadmin","a
 router.patch("/update/:id",verifyMiddleware.verification,CheckRole("superadmin","admin","vendor"),imageUpload.upload.single('image'),userserviceController.update)
 
 router.post("/multiple",verifyMiddleware.verification,CheckRole("superadmin","admin","vendor","user"),imageUpload.upload.array('image',10), userserviceController.bulkServiceSubmit)
+
 
 
 

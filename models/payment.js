@@ -16,8 +16,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Payment.init({
-    payment_type: DataTypes.STRING,
-    payment_method: DataTypes.STRING,
+    // payment_type: DataTypes.STRING,
+    paymentMethod: DataTypes.STRING,
     userId:DataTypes.INTEGER
   }, {
     sequelize,

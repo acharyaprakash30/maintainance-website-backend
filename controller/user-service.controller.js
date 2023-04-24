@@ -104,6 +104,7 @@ const getUserSerivce = catchError((req, res) => {
     .then((result) => {
       res.status(200).json({
         data: result.rows,
+        totaldata: result.count
       });
     });
 });
@@ -199,8 +200,9 @@ const update = catchError((req, res) => {
     }
   });
 });
-const bulkServiceSubmit= (async(req,res)=>{
-  try{
+
+
+const bulkServiceSubmit= catchError((async(req,res)=>{
     let t;
     await sequelize.transaction(async (t) => {
       let images = [];
@@ -262,13 +264,7 @@ const bulkServiceSubmit= (async(req,res)=>{
         message: "user order have been placed",
       });
     });
-  }catch(e){
-    res.status(500).json({
-      message:"internal server error",
-      error:e.message
-    })
-  }
-})
+}))
 
 module.exports = {
   createUserService,
