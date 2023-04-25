@@ -21,7 +21,6 @@ module.exports = (sequelize, DataTypes) => {
     slug: DataTypes.STRING,
     userId: DataTypes.INTEGER,
     categoryId : DataTypes.INTEGER
-
   }, {
     sequelize,
     modelName: 'Service',

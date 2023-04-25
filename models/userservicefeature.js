@@ -21,5 +21,14 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'UserServiceFeature',
   });
+
+
+  UserServiceFeature.associate = function(models){
+    UserServiceFeature.belongsTo(models.ServiceType, {
+      as : "serviceType",
+      foreignKey: "featureId"
+    });
+  }
+
   return UserServiceFeature;
 };

@@ -17,6 +17,11 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Category',
   });
   Category.associate = function (models){
+    Category.hasOne(models.Category, {
+      as : "parentCategory",
+      foreignKey : "parentId",
+    })
+
     Category.hasMany(models.Service, {
       as : "CategoryServices",
       foreignKey : "id",

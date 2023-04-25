@@ -26,7 +26,8 @@ module.exports = (sequelize, DataTypes) => {
     image:DataTypes.STRING,
     serviceLatitude:DataTypes.STRING,
     serviceLongitude:DataTypes.STRING,
-    serviceLocation:DataTypes.STRING
+    serviceLocation:DataTypes.STRING,
+    serviceDate:DataTypes.DATEONLY
   }, {
     sequelize,
     modelName: 'userService',
@@ -43,6 +44,10 @@ module.exports = (sequelize, DataTypes) => {
     userService.belongsTo(models.Store, {
       as : "store",
       foreignKey: "storeId"
+    });
+    userService.belongsTo(models.Payment, {
+      as : "payment",
+      foreignKey: "paymentId"
     });
     userService.hasMany(models.UserServiceFeature, {
       as : "servicefeatures",

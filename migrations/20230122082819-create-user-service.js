@@ -40,7 +40,10 @@ module.exports = {
       serviceLocation : {
         type: Sequelize.STRING
       },
-
+      serviceDate: {
+        type: Sequelize.DATEONLY,
+        defaultValue: Sequelize.NOW
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
