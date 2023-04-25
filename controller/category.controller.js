@@ -109,7 +109,7 @@ const showCategoryById = catchError(async (req, res) => {
 })
 
 
-const showCategories = catchError(async (req, res) => {
+const  showCategories = catchError(async (req, res) => {
 
   await models.Category.findAll({
   }).then(async (result) => {

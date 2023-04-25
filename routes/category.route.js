@@ -9,46 +9,46 @@ const { CheckRole } = require("../middleware/CheckRole");
 router.get("/only", verifyMiddleware.verification,CheckRole("superadmin","admin"),categoryController.AllCategoriesOnly);
 
 /**
-     * @swagger
-     *  components:
-     *    schemas:
-     *      category:
-     *        type: object
-     *        required:
-     *          - CategoryName
-     *          - CategoryImage
-     *          - parentId
-     *        properties:
-     *          CategoryName:
-     *           type: string
-     *           description: Category's CategoryName
-     *          image:
-     *           type: file
-     *           description: Category's CategoryImage
-     *          parentId:
-     *           type: integer
-     *           description: Category's parentId
-     */
+ * @swagger
+ *  components:
+ *    schemas:
+ *      category:
+ *        type: object
+ *        required:
+ *          - CategoryName
+ *          - CategoryImage
+ *          - parentId
+ *        properties:
+ *          CategoryName:
+ *           type: string
+ *           description: Category's CategoryName
+ *          image:
+ *           type: file
+ *           description: Category's CategoryImage
+ *          parentId:
+ *           type: string
+ *           description: Category's parentId
+ */
 
  /**
- * @swagger
- * /category/create:
- *   post:
- *     summary: Create new category
- *     security:
- *       - jwt: []
- *     tags: [category]
- *     requestBody:
- *       content:
- *         multipart/form-data:
- *           schema:
- *             $ref: '#/components/schemas/category'  
- *     responses:
- *       200:
- *         description: Created category successfully
- *       500:
- *         description: Some Server Error
- */
+  * @swagger
+  * /category/create:
+  *   post:
+  *     summary: Create new category
+  *     security:
+  *       - jwt: []
+  *     tags: [category]
+  *     requestBody:
+  *       content:
+  *         multipart/form-data:
+  *           schema:
+  *             $ref: '#/components/schemas/category'  
+  *     responses:
+  *       200:
+  *         description: Created category successfully
+  *       500:
+  *         description: Some Server Error
+  */
 
 router.post("/create", imageUpload.upload.single('image'),verifyMiddleware.verification,CheckRole("superadmin","admin"),validateCategory,categoryController.save);
 
