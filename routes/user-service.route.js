@@ -86,7 +86,7 @@ router.post("/create",verifyMiddleware.verification,CheckRole("superadmin","admi
  *          description: Some Server Error
  */
 router.get("/",verifyMiddleware.verification,CheckRole("superadmin","admin"),userserviceController.getUserSerivce)
-router.get("/:id",verifyMiddleware.verification,CheckRole("superadmin","admin"),userserviceController.getUserServiceByIdOnly)
+router.get("/:id",verifyMiddleware.verification,CheckRole("superadmin","admin","vendor"),userserviceController.getUserServiceByIdOnly)
 router.get("/user/:id",verifyMiddleware.verification,CheckRole("superadmin","admin","vendor","user"),userserviceController.getUserSerivceByUserId)
 router.get("/vendor/:id",verifyMiddleware.verification,CheckRole("superadmin","admin","vendor"),userserviceController.getUserSerivceByVendorId)
 router.patch("/update/:id",verifyMiddleware.verification,CheckRole("superadmin","admin","vendor"),imageUpload.upload.single('image'),userserviceController.update)

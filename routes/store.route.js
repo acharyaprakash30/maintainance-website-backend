@@ -85,7 +85,7 @@ router.post("/create",verifyMiddleware.verification,CheckRole("superadmin","admi
  *          description: Some Server Error
  */
 
-router.get("/",verifyMiddleware.verification,CheckRole("superadmin","admin"), StoreController.showdata);
+router.get("/",verifyMiddleware.verification,CheckRole("superadmin","admin","vendor"), StoreController.showdata);
 
 
 /**
@@ -166,5 +166,8 @@ router.delete("/delete/:id", verifyMiddleware.verification,CheckRole("superadmin
  */
 
 router.get("/:latitude/:longitude/:serviceId", verifyMiddleware.verification,StoreController.getPlaceByCoordinates);
+
+router.get("/vendor/:id",verifyMiddleware.verification,CheckRole("superadmin","admin","vendor"), StoreController.showdataByVendor);
+
 
 module.exports = router;

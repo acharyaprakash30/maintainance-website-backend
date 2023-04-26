@@ -189,6 +189,76 @@ const showdata = catchError((req, res) => {
 
 }
 )
+const showdataByVendor = catchError((req, res) => {
+  const { page = 0, size = 10 } = req.query;
+  const { limit, offset } = PaginationData.getPagination(page, size);
+  const { filter = "" } = req.query;
+  const id = req.params.id;
+  models.Store.findAndCountAll({
+    limit,
+    offset, where: {
+      userId:id,
+      [Op.or]: [
+        {
+          name: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          address: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          userId: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          contactNumber: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+      ],
+    },
+    include: [
+      {
+        model: models.User,
+        as: "user",
+        attributes: ["id", "name", "email", "contact", "gender"],
+      },
+      {
+        model: models.ServiceStore,
+        as: "Servicestore",
+        include: [
+          {
+            model: models.Service,
+            as: "service",
+
+          },
+          {
+            model: models.StoreServiceFeature,
+            as: "serviceStoreFeatures",
+            include: [
+              {
+                model: models.ServiceType,
+                as: "serviceType",
+              },
+            ]
+          },
+        ],
+      },
+    ],
+  })
+    .then((result) => {
+      res.status(201).json({
+        data: result.rows,
+        totaldata: result.count
+      });
+    })
+
+}
+)
 
 const editStoreData = catchError((req, res) => {
   const id = req.params.id;
@@ -382,6 +452,7 @@ const getPlaceByCoordinates = catchError(async (req, res) => {
 module.exports = {
   userInput: userInput,
   showdata: showdata,
+  showdataByVendor: showdataByVendor,
   editStoreData: editStoreData,
   destroyStoreData: destroyStoreData,
   getPlaceByCoordinates: getPlaceByCoordinates,
