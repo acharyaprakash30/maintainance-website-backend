@@ -3,7 +3,7 @@ const { sequelize } = require("../models");
 const PaginationData = require("../utils/pagination");
 const { Op } = require("sequelize");
 const { catchError } = require("../middleware/catchError");
-
+ 
 const createUserService = catchError(async (req, res) => {
   if (req.file) {
     var img = req.file.filename;
@@ -118,7 +118,6 @@ const getUserSerivce = catchError((req, res) => {
       });
     });
 });
-
 //show order by vendor
 const getUserServiceByIdOnly = catchError(async(req, res) => {
   models.userService
@@ -165,7 +164,6 @@ const getUserServiceByIdOnly = catchError(async(req, res) => {
     }
   });
 });
-
 //show order by vendor
 const getUserSerivceByVendorId = catchError(async(req, res) => {
   const id = req.params.id;
@@ -336,7 +334,6 @@ const getUserSerivceByUserId = catchError(async(req, res) => {
 });
 const update = catchError((req, res) => {
   const id = req.params.id;
-
   models.userService.findOne({ where: { id: id } }).then((exists) => {
     if (exists) {
       const updatedUserService = {
@@ -377,6 +374,7 @@ const bulkServiceSubmit= catchError((async(req,res)=>{
         serviceLatitude: req.body.serviceLatitude,
         serviceLongitude: req.body.serviceLongitude,
         serviceLocation: req.body.serviceLocation,
+        serviceDate:req.body.serviceDate,
         image:JSON.stringify(images)
       };
       const UserServiceFeatureArray = JSON.parse(req.body.serviceFeatures);
