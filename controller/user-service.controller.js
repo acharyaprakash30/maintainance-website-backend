@@ -92,12 +92,22 @@ const getUserSerivce = catchError((req, res) => {
           as: "service"
         },
         {
+          model: models.Payment,
+          as: "payment"
+        },
+        {
           model: models.Store,
           as: "store"
         },
         {
           model: models.UserServiceFeature,
-          as: "servicefeatures"
+          as: "servicefeatures",
+          include:[
+            {
+              model:models.ServiceType,
+              as:"serviceType"
+            }
+          ]
         },
       ],
     })
@@ -110,30 +120,127 @@ const getUserSerivce = catchError((req, res) => {
 });
 
 //show order by vendor
+const getUserServiceByIdOnly = catchError(async(req, res) => {
+  models.userService
+  .findOne({
+    where: {
+      id:req.params.id,
+    },
+    include: [
+      {
+        model: models.User,
+        as: "user",
+        attributes: ["id", "name", "email", "contact", "gender"],
+      },
+      {
+        model: models.Service,
+        as: "service"
+      },
+      {
+        model: models.Payment,
+        as: "payment"
+      },
+      {
+        model: models.Store,
+        as: "store"
+      },
+      {
+        model: models.UserServiceFeature,
+        as: "servicefeatures",
+        include:[
+          {
+            model:models.ServiceType,
+            as:"serviceType"
+          }
+        ]
+      },
+    ],
+  }).then((result) => {
+    if (result) {
+      res.status(200).json(result);
+    } else {
+      res.status(404).json({
+        message: "Id not found",
+      });
+    }
+  });
+});
+
+//show order by vendor
 const getUserSerivceByVendorId = catchError(async(req, res) => {
   const id = req.params.id;
-await models.Store.findByPk(id,{
-  include: [
-    {
-      model: models.userService,
-      as: "userServices",
-      include:[
+  const { page = 0, size = 10 } = req.query;
+  const { limit, offset } = PaginationData.getPagination(page, size);
+  const { filter = "" } = req.query;
+  models.userService
+  .findAndCountAll({
+    limit,
+    offset,
+    where: {
+      storeId:req.params.id,
+      [Op.or]: [
         {
-          model: models.Service,
-          as: "service"
+          userId: {
+            [Op.like]: "%" + filter + "%",
+          },
         },
         {
-          model: models.Store,
-          as: "store"
+          description: {
+            [Op.like]: "%" + filter + "%",
+          },
         },
         {
-          model: models.UserServiceFeature,
-          as: "servicefeatures"
+          status: {
+            [Op.like]: "%" + filter + "%",
+          },
         },
-      ]
-    }
-  ]
-}).then((result) => {
+        {
+          serviceId: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          paymentId: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          storeId: {
+            [Op.like]: "%" + filter + "%",
+          },
+        }
+      ],
+    },
+    include: [
+      {
+        model: models.User,
+        as: "user",
+        attributes: ["id", "name", "email", "contact", "gender"],
+      },
+      {
+        model: models.Service,
+        as: "service"
+      },
+      {
+        model: models.Payment,
+        as: "payment"
+      },
+      {
+        model: models.Store,
+        as: "store"
+      },
+      {
+        model: models.UserServiceFeature,
+        as: "servicefeatures",
+        include:[
+          {
+            model:models.ServiceType,
+            as:"serviceType"
+          }
+        ]
+      },
+    ],
+  }).then((result) => {
     if (result) {
       res.status(200).json(result);
     } else {
@@ -146,28 +253,78 @@ await models.Store.findByPk(id,{
 //get user by id
 const getUserSerivceByUserId = catchError(async(req, res) => {
   const id = req.params.id;
-await models.User.findByPk(id,{
-  include: [
-    {
-      model: models.userService,
-      as: "userServices",
-      include:[
+  const { page = 0, size = 10 } = req.query;
+  const { limit, offset } = PaginationData.getPagination(page, size);
+  const { filter = "" } = req.query;
+  models.userService
+  .findAndCountAll({
+    limit,
+    offset,
+    where: {
+      userId:req.params.id,
+      [Op.or]: [
         {
-          model: models.Service,
-          as: "service"
+          userId: {
+            [Op.like]: "%" + filter + "%",
+          },
         },
         {
-          model: models.Store,
-          as: "store"
+          description: {
+            [Op.like]: "%" + filter + "%",
+          },
         },
         {
-          model: models.UserServiceFeature,
-          as: "servicefeatures"
+          status: {
+            [Op.like]: "%" + filter + "%",
+          },
         },
-      ]
-    }
-  ]
-}).then((result) => {
+        {
+          serviceId: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          paymentId: {
+            [Op.like]: "%" + filter + "%",
+          },
+        },
+        {
+          storeId: {
+            [Op.like]: "%" + filter + "%",
+          },
+        }
+      ],
+    },
+    include: [
+      {
+        model: models.User,
+        as: "user",
+        attributes: ["id", "name", "email", "contact", "gender"],
+      },
+      {
+        model: models.Service,
+        as: "service"
+      },
+      {
+        model: models.Store,
+        as: "store"
+      },
+      {
+        model: models.Payment,
+        as: "payment"
+      },
+      {
+        model: models.UserServiceFeature,
+        as: "servicefeatures",
+        include:[
+          {
+            model:models.ServiceType,
+            as:"serviceType"
+          }
+        ]
+      },
+    ],
+  }).then((result) => {
     if (result) {
       res.status(200).json(result);
     } else {
@@ -200,8 +357,6 @@ const update = catchError((req, res) => {
     }
   });
 });
-
-
 const bulkServiceSubmit= catchError((async(req,res)=>{
     let t;
     await sequelize.transaction(async (t) => {
@@ -272,5 +427,6 @@ module.exports = {
   update,
   bulkServiceSubmit,
   getUserSerivceByUserId,
-  getUserSerivceByVendorId
+  getUserSerivceByVendorId,
+  getUserServiceByIdOnly
 };

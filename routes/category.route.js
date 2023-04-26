@@ -6,8 +6,6 @@ const router = express.Router();
 const verifyMiddleware = require("../middleware/verify")
 const { CheckRole } = require("../middleware/CheckRole");
 
-router.get("/only", verifyMiddleware.verification,CheckRole("superadmin","admin"),categoryController.AllCategoriesOnly);
-
 /**
  * @swagger
  *  components:

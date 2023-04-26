@@ -1,8 +1,7 @@
 'use strict';
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Fiscal_years', {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('FiscalYears', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -10,11 +9,14 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       year: {
-        type: Sequelize.STRING
+        allowNull: false,
+        type: Sequelize.STRING,
+        unique: true,
       },
       status: {
+        allowNull: false,
         type: Sequelize.BOOLEAN,
-        defaultValue: false
+        defaultValue: 0
       },
       createdAt: {
         allowNull: false,
@@ -26,7 +28,7 @@ module.exports = {
       }
     });
   },
-  async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Fiscal_years');
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.dropTable('FiscalYears');
   }
 };
