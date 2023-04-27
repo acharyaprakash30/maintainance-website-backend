@@ -378,6 +378,7 @@ const bulkServiceSubmit= catchError((async(req,res)=>{
         image:JSON.stringify(images)
       };
       const UserServiceFeatureArray = JSON.parse(req.body.serviceFeatures);
+      console.log(UserServiceFeatureArray,"============================================")
 
       let userService = await models.userService.create(serviceData, {
         transaction: t,
