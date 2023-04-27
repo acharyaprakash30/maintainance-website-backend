@@ -44,7 +44,7 @@ const { CheckRole } = require("../middleware/CheckRole");
      *           type: file
      *           description: User's image
      *          role:
-    *           type: string
+     *           type: string
      *           description: User's role
      *         
      */

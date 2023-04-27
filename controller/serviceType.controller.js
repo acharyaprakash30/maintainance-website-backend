@@ -28,7 +28,20 @@ const showdata =catchError((req, res)=> {
     const { filter = "" } = req.query;
     models.ServiceType.findAndCountAll({
         limit,
-        offset,
+        offset,where:{
+            [Op.or]: [
+                {
+                  name: {
+                    [Op.like]: "%" + filter + "%",
+                  },
+                },
+                {
+                  serviceId: {
+                    [Op.like]: "%" + filter + "%",
+                  },
+                },
+              ],
+        },
         include: [
             {
                 as: "SubService",
