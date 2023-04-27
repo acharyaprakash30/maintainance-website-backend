@@ -1,4 +1,6 @@
 const model = require('../models');
+const { Op } = require("sequelize");
+
 
 exports.savefiscalyear = async (req,res) =>{
     try{
@@ -26,19 +28,30 @@ exports.savefiscalyear = async (req,res) =>{
 }
 
 exports.getfiscalyear = async (req,res) =>{
+    const { filter = "" } = req.query;
+
     try{
      let newFiscalyear = await model.FiscalYear.findAndCountAll(
         {
-            include: [
-                {
-                  model: model.Order,
-                  as: 'Fiscalyearorders',
-                },
-            ]
+            where: { 
+                [Op.or]: [
+               {
+                 year: {
+                   [Op.like]: "%" + filter + "%",
+                 },
+               },
+               {
+                 status: {
+                   [Op.like]: "%" + filter + "%",
+                 },
+               },
+             ],},
+
         }
      );
        return  res.status(200).json({
-            data:newFiscalyear
+            data:newFiscalyear.rows,
+            totalcount:newFiscalyear.count
         })
     }catch(err){
         res.status(500).json({
@@ -54,9 +67,15 @@ exports.showfiscalyearById = async (req,res) =>{
     try{
         let fiscalYearStatus = req.body.status;
         let newFiscalYear  = await model.FiscalYear.findByPk(fiscalyearId)
-        res.status(200).json({
-            data:newFiscalYear
-        })
+        if(newFiscalYear){
+            res.status(200).json({
+                data:newFiscalYear 
+            })
+        }else{
+            res.status(404).json({
+                message: "Id not found",
+              });
+        }
 
     }catch(err){
         res.status(500).json({
@@ -76,7 +95,8 @@ exports.updatefiscalyear = async (req,res) =>{
         let newfiscalyear = await model.FiscalYear.update(fiscalyearData,{where:{id:fiscalyearId}});
         res.status(201).json({
             message:"fiscal year updated sucessfully",
-            data:newfiscalyear
+            id:newfiscalyear,
+            updateddata:fiscalyearData
         })
 
     }catch(err){
@@ -142,48 +162,6 @@ exports.deletefiscalyear = async (req,res) =>{
             message:"fiscalyear deleted sucessfully",
         })
        
-
-    }catch(err){
-        res.status(500).json({
-            error:err.message,
-            message:"Internal Server Error"
-        })
-    }
-}
-
-exports.FilterByFiscalYear = async(req,res) =>{
-    const fiscalId = req.body.fiscalYearId;
-    try{
-
-        let orders = model.Order.findAndCountAll({
-            where: { fiscalYearId: fiscalId},
-            include: [
-                {
-                    model: model.Customer,
-                    as: "customer"
-                },
-                {
-                    model: model.FiscalYear,
-                    as: "fiscalYear"
-                },
-                {
-                    model: model.OrderedItem,
-                    required: true,
-                    attributes: ["orderId", "itemId", "quantity", "itemPrice"],
-                    include: {
-                        model: model.Item,
-                        as: "itemLists",
-                        attributes: ["name", "price"],
-                    },
-                }
-            ]
-        }).then((result) => {
-            if (result) {
-                return res.status(200).json({
-                    result
-                })
-            }
-        });
 
     }catch(err){
         res.status(500).json({
