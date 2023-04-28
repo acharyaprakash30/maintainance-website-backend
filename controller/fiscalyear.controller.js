@@ -28,6 +28,8 @@ exports.savefiscalyear = async (req,res) =>{
 }
 
 exports.getfiscalyear = async (req,res) =>{
+    const { page = 0, size = 10 } = req.query;
+    const { limit, offset } = PaginationData.getPagination(page, size);
     const { filter = "" } = req.query;
 
     try{
@@ -120,7 +122,7 @@ try{
                    if(fiscalResult){
                        model.FiscalYear.update({status: true}, {where: {id: fiscalYearId}}).then((result)=>{
                            if(result){
-                               res.status(200).json({message: "Fiscal year activated successfully"});
+                               res.status(200).json({message: "Fiscal year activated successfully!"});
                            }else {
                             res.status(400).json({ message: "Error Occured!!" });
                         }
@@ -131,7 +133,7 @@ try{
        }else {
         model.FiscalYear.update({ status: true }, { where: { id: fiscalYearId } }).then((result) => {
             if (result) {
-                res.status(200).json({ message: "Fiscal year activated sucessfully" });
+                res.status(200).json({ message: "Fiscal year activated sucessfully!!" });
             } else {
                 res.status(400).json({ message: "Error Occured!!" });
             }
