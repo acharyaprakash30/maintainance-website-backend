@@ -3,8 +3,9 @@ const fiscalyearController = require('../controller/fiscalyear.controller');
 const router = express.Router();
 const verifyMiddleware = require("../middleware/verify")
 const { CheckRole } = require("../middleware/CheckRole");
+const {validateFiscalYear} =require("../middleware/FormValidator")
 
-router.post('/create',verifyMiddleware.verification,fiscalyearController.savefiscalyear);
+router.post('/create',verifyMiddleware.verification,validateFiscalYear,fiscalyearController.savefiscalyear);
 router.patch('/:id',verifyMiddleware.verification,fiscalyearController.updatefiscalyear);
 router.patch('/updateFiscalYearState/:id',verifyMiddleware.verification,fiscalyearController.updateFiscalYearState);
 router.get('/',verifyMiddleware.verification,fiscalyearController.getfiscalyear);

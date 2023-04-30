@@ -382,6 +382,21 @@ const changePassword = catchError(async (req, res, next) => {
 });
 
 
+const allcount =catchError(async(req,res)=>{
+
+  const userCount = await model.User.findAndCountAll()
+  const userServiceCount = await model.userService.findAndCountAll()
+  const storeCount = await model.Store.findAndCountAll()
+  const serviceCount = await model.Service.findAndCountAll()
+  res.status(200).json({
+    totaluser: userCount.count,
+    totaluserservice: userServiceCount.count,
+    totalstore:storeCount.count,
+    totalservice: serviceCount.count
+  })
+  
+})
+
 
 module.exports = {
   create,
@@ -394,5 +409,6 @@ module.exports = {
   updateRole,
   forgetPassword,
   resetPassword,
-  changePassword
+  changePassword,
+  allcount
 };
