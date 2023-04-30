@@ -35,7 +35,8 @@ exports.getfiscalyear = async (req,res) =>{
     try{
      let newFiscalyear = await model.FiscalYear.findAndCountAll(
         {
-            where: { 
+            limit,
+            offset,  where: { 
                 [Op.or]: [
                {
                  year: {
