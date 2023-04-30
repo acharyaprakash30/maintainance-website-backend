@@ -394,7 +394,6 @@ const allcount =catchError(async(req,res)=>{
     totalstore:storeCount.count,
     totalservice: serviceCount.count
   })
-  
 })
 
 

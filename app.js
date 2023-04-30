@@ -43,7 +43,7 @@ app.use('/servicetype', serviceTypeRoute);
 app.use('/store', storeRoute);
 app.use('/fiscalyear', fiscalyearRoute);
 app.use('/role', roleRoute);
-app.use('/allcount',user);
+app.use('/all',user);
 
  
 // sequelize.sync({force:true}).then((result)=>{
