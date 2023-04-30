@@ -1,5 +1,7 @@
 const model = require('../models');
 const { Op } = require("sequelize");
+const PaginationData = require("../utils/pagination");
+
 
 
 exports.savefiscalyear = async (req,res) =>{
@@ -8,14 +10,23 @@ exports.savefiscalyear = async (req,res) =>{
             year: req.body.year,
             status: req.body.status == true ? true : false 
           };
-          if(req.body.status == true || req.body.status == 1){
-            model.FiscalYear.update({status:false},{where:{status:true}});
-          }
-         model.FiscalYear.create(fiscalYear);
-        return res.status(201).json({
-            message:"fiscal year created sucessfully",
-            data:fiscalYear
-        })
+          model.FiscalYear.findOne({where:{year:fiscalYear.year}}).then(exist=>{
+            if(exist){
+                return res.status(422).json({
+                    message:"Duplicate fiscal year entry!",
+                })
+            }else{
+                if(req.body.status == true || req.body.status == 1){
+                  model.FiscalYear.update({status:false},{where:{status:true}});
+                }
+               model.FiscalYear.create(fiscalYear);
+              return res.status(201).json({
+                  message:"fiscal year created sucessfully",
+                  data:fiscalYear
+              })
+
+            }
+          })
     }
     catch(e){
         return res.status(500).json({
@@ -28,12 +39,15 @@ exports.savefiscalyear = async (req,res) =>{
 }
 
 exports.getfiscalyear = async (req,res) =>{
+    const { page = 0, size = 10 } = req.query;
+    const { limit, offset } = PaginationData.getPagination(page, size);
     const { filter = "" } = req.query;
 
     try{
      let newFiscalyear = await model.FiscalYear.findAndCountAll(
         {
-            where: { 
+            limit,
+            offset,  where: { 
                 [Op.or]: [
                {
                  year: {
@@ -120,7 +134,7 @@ try{
                    if(fiscalResult){
                        model.FiscalYear.update({status: true}, {where: {id: fiscalYearId}}).then((result)=>{
                            if(result){
-                               res.status(200).json({message: "Fiscal year activated successfully"});
+                               res.status(200).json({message: "Fiscal year activated successfully!"});
                            }else {
                             res.status(400).json({ message: "Error Occured!!" });
                         }
@@ -131,7 +145,7 @@ try{
        }else {
         model.FiscalYear.update({ status: true }, { where: { id: fiscalYearId } }).then((result) => {
             if (result) {
-                res.status(200).json({ message: "Fiscal year activated sucessfully" });
+                res.status(200).json({ message: "Fiscal year activated sucessfully!!" });
             } else {
                 res.status(400).json({ message: "Error Occured!!" });
             }

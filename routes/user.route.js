@@ -239,6 +239,6 @@ router.put("/updaterole/:id",verifyMiddleware.verification,CheckRole("superadmin
 router.post("/forgetpassword",userController.forgetPassword)
 router.post("/resetpassword",userController.resetPassword)
 router.put("/changepassword/:id",verifyMiddleware.verification,CheckRole("superadmin"),validateChangePassword,userController.changePassword)
-
+router.get("/total",userController.allcount)
 
 module.exports=router;

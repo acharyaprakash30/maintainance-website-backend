@@ -98,6 +98,8 @@ const servicesByFeatues = catchError((req, res) => {
       .status(200)
       .json({
         data: result.rows,
+        totaldata: result.count
+
       });
   });
 });
