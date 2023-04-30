@@ -264,7 +264,7 @@ exports.validateService = [
 exports.validateFiscalYear = [
   check("year")
     .notEmpty()
-    .withMessage("category id is required!!"),
+    .withMessage("year is required!!"),
     
   (req, res, next) => {
     const errors = validationResult(req);
