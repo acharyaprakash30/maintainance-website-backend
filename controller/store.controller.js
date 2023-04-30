@@ -99,9 +99,7 @@ const userInput = catchError(async (req, res) => {
     });
   })
 }
-
 )
-
 //this function was called from userinput which return a array for storeservicefeature model
 const serviceOrderToFindArray = ((savedOrderItemArray, storeService) => {
   var servicesArrayTemp = [];
@@ -294,7 +292,6 @@ const editStoreData = catchError((req, res) => {
 
 })
 
-
 const destroyStoreData = catchError((req, res) => {
   const id = req.params.id;
 
@@ -311,7 +308,6 @@ const destroyStoreData = catchError((req, res) => {
       }
     })
 })
-
 const getPlaceByCoordinates = catchError(async (req, res) => {
   const givenLatitude = req.params.latitude;
   const givenLongitude = req.params.longitude;
