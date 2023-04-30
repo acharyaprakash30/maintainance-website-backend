@@ -10,14 +10,23 @@ exports.savefiscalyear = async (req,res) =>{
             year: req.body.year,
             status: req.body.status == true ? true : false 
           };
-          if(req.body.status == true || req.body.status == 1){
-            model.FiscalYear.update({status:false},{where:{status:true}});
-          }
-         model.FiscalYear.create(fiscalYear);
-        return res.status(201).json({
-            message:"fiscal year created sucessfully",
-            data:fiscalYear
-        })
+          model.FiscalYear.findOne({where:{year:fiscalYear.year}}).then(exist=>{
+            if(exist){
+                return res.status(422).json({
+                    message:"Duplicate fiscal year entry!",
+                })
+            }else{
+                if(req.body.status == true || req.body.status == 1){
+                  model.FiscalYear.update({status:false},{where:{status:true}});
+                }
+               model.FiscalYear.create(fiscalYear);
+              return res.status(201).json({
+                  message:"fiscal year created sucessfully",
+                  data:fiscalYear
+              })
+
+            }
+          })
     }
     catch(e){
         return res.status(500).json({

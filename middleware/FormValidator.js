@@ -247,7 +247,7 @@ exports.validateService = [
     .withMessage("Please enter valid slug!!")
     .isLength({ min: 3 })
     .withMessage("Minimum 3 characters required!!"),
-  check("categoryId")
+  check("categoryId") 
     .notEmpty()
     .withMessage("category id is required!!"),
     
