@@ -25,7 +25,6 @@ module.exports = (sequelize, DataTypes) => {
     Category.hasMany(models.Service, {
       as : "CategoryServices",
       foreignKey : "id",
-      onDelete: "CASCADE",
     })
   }
   return Category;

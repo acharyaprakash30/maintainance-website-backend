@@ -15,39 +15,39 @@ module.exports = {
         updatedAt:new Date()
       }
     ],{});
-    const user = await queryInterface.sequelize.query(`Select id from Users;`);
-    await queryInterface.bulkInsert('Payments',[
-      {
-        userId: user[0][0].id,
-        paymentMethod:"Khalti",
-        createdAt:new Date(),
-        updatedAt:new Date()
-      },
-      {
-        userId: user[0][0].id,
-        paymentMethod:"Esewa",
-        createdAt:new Date(),
-        updatedAt:new Date()
-      },
-      {
-        userId: user[0][0].id,
-        paymentMethod:"Paypal",
-        createdAt:new Date(),
-        updatedAt:new Date()
-      },
-      {
-        userId: user[0][0].id,
-        paymentMethod:"Moblie Banking",
-        createdAt:new Date(),
-        updatedAt:new Date()
-      }
-    ],{});
+    // const user = await queryInterface.sequelize.query(`Select id from Users;`);
+    // await queryInterface.bulkInsert('Payments',[
+    //   {
+    //     userId: user[0][0].id,
+    //     paymentMethod:"Khalti",
+    //     createdAt:new Date(),
+    //     updatedAt:new Date()
+    //   },
+    //   {
+    //     userId: user[0][0].id,
+    //     paymentMethod:"Esewa",
+    //     createdAt:new Date(),
+    //     updatedAt:new Date()
+    //   },
+    //   {
+    //     userId: user[0][0].id,
+    //     paymentMethod:"Paypal",
+    //     createdAt:new Date(),
+    //     updatedAt:new Date()
+    //   },
+    //   {
+    //     userId: user[0][0].id,
+    //     paymentMethod:"Moblie Banking",
+    //     createdAt:new Date(),
+    //     updatedAt:new Date()
+    //   }
+    // ],{});
 
 
   },
 
   down: async (queryInterface, Sequelize) => {
      await queryInterface.bulkDelete("Users", null, {});
-     await queryInterface.bulkDelete("Payments", null, {});
+    //  await queryInterface.bulkDelete("Payments", null, {});
   }
 };

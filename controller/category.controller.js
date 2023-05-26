@@ -4,6 +4,42 @@ const PaginationData = require("../utils/pagination");
 const { Op } = require("sequelize");
 const { catchError } = require("../middleware/catchError");
 
+const AllCategories = async (data, parentId = null) => {
+  let categoryList = [];
+  let parentCat;
+
+  if (parentId === null) {
+    parentCat = data.filter((element) => element.parentId == null)
+  }
+  else {
+    parentCat = data.filter((element) => element.parentId == parentId)
+  }
+  for (let dataCat of parentCat) {
+    categoryList.push({
+      id: dataCat.id,
+      CategoryName: dataCat.CategoryName,
+      CategoryImage: dataCat.CategoryImage,
+      child: await AllCategories(data, dataCat.id)
+    });
+  }
+  return categoryList;
+}
+
+function getObjectsWithEmptyChild(categories) {
+  const result = [];
+
+  categories.forEach(category => {
+    if (category.child.length === 0) {
+      result.push(category);
+    } else {
+      const objectsWithEmptyChild = getObjectsWithEmptyChild(category.child);
+      result.push(...objectsWithEmptyChild);
+    }
+  });
+
+  return result;
+}
+
 const save = catchError((req, res) => {
   if (req.file) {
     var img = req.file.path;
@@ -29,10 +65,11 @@ const showAll = catchError(async (req, res) => {
   const AllCategory = await models.Category.findAll();
   if (AllCategory) {
     let categories = await AllCategories(AllCategory);
-    const objectsWithEmptyChild = getObjectsWithEmptyChild(categories);
+    const objectsWithEmptyChild = await getObjectsWithEmptyChild(categories);
 
     res.status(200).json(
       {
+        AllCategory:AllCategory,
         data: categories,
         objectsWithEmptyChild: objectsWithEmptyChild,
       });
@@ -43,43 +80,8 @@ const showAll = catchError(async (req, res) => {
 
   }
 })
-function getObjectsWithEmptyChild(categories) {
-  const result = [];
 
-  categories.forEach(category => {
-    if (category.child.length === 0) {
-      result.push(category);
-    } else {
-      const objectsWithEmptyChild = getObjectsWithEmptyChild(category.child);
-      result.push(...objectsWithEmptyChild);
-    }
-  });
 
-  return result;
-}
-const AllCategories = async (data, parentId = null) => {
-  let categoryList = [];
-  let parentCat;
-
-  if (parentId == null) {
-    parentCat = data.filter((element) => element.parentId == null)
-  }
-  else {
-    parentCat = data.filter((element) => element.parentId == parentId)
-  }
-
-  for (let dataCat of parentCat) {
-    categoryList.push({
-      id: dataCat.id,
-      CategoryName: dataCat.CategoryName,
-      CategoryImage: dataCat.CategoryImage,
-      child: await AllCategories(data, dataCat.id)
-    });
-
-  }
-
-  return categoryList;
-}
 
 const showCategoryById = catchError(async (req, res) => {
 
@@ -114,7 +116,7 @@ const getCategoriesWithParent = (data) => {
   let categoryWithParentName = [];
 
   data.forEach((item) => {
-    if (item.parentId == null) {
+    if (item.parentId == null || item.parentId == "null") {
       let itemcategoryWithParentName = {
         id: item.id,
         CategoryName: item.CategoryName,

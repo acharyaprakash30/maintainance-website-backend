@@ -1,10 +1,11 @@
 {
   "development": {
-    "username": "root",
+    "username": "postgres",
     "password": "root",
-    "database": "maintenance_website_backend",
+    "database": "service",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "port": 5433,
+    "dialect": "postgres"
   },
   "test": {
     "username": "root",

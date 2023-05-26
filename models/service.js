@@ -26,7 +26,6 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Service',
   });
   Service.associate = function (models){
-
     Service.hasMany(models.ServiceType, {
       as : "SubServicelist",
       foreignKey : "serviceId"
@@ -34,7 +33,6 @@ module.exports = (sequelize, DataTypes) => {
     Service.belongsTo(models.Category, {
       as : "selectedcategory",
       foreignKey : "categoryId",
-      onDelete: "CASCADE",
     })
   }
 
