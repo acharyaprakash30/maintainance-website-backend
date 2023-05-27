@@ -25,11 +25,13 @@ const addService = catchError(async (req, res) => {
 });
 
 
-const index = catchError((req, res) => {
+const index = async(req, res) => {
+
   const { page = 0, size = 10 } = req.query;
   const { limit, offset } = PaginationData.getPagination(page, size);
   const { filter = "" } = req.query;
-  model.Service.findAndCountAll({
+  try{
+  await model.Service.findAndCountAll({
     limit,
     offset,
     where: {
@@ -43,17 +45,7 @@ const index = catchError((req, res) => {
           slug: {
             [Op.like]: "%" + filter + "%",
           },
-        },
-        {
-          userId: {
-            [Op.like]: "%" + filter + "%",
-          },
-        },
-        {
-          categoryId: {
-            [Op.like]: "%" + filter + "%",
-          },
-        },
+        }
       ],
     },
     include: [
@@ -71,8 +63,17 @@ const index = catchError((req, res) => {
       data: result.rows,      
       totaldata: result.count
     });
-  });
-});
+  }).catch((err)=>{
+    res.status(500).json({
+      error:err.messege
+    })
+  })
+}catch(err){
+  res.status(500).json({
+    error:err
+  })
+}
+};
 
 //get only those services which have a relation with service features
 const servicesByFeatues = catchError((req, res) => {

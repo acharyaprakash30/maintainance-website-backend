@@ -54,11 +54,6 @@ exports.getfiscalyear = async (req,res) =>{
                    [Op.like]: "%" + filter + "%",
                  },
                },
-               {
-                 status: {
-                   [Op.like]: "%" + filter + "%",
-                 },
-               },
              ],},
 
         }

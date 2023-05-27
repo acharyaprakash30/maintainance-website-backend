@@ -119,11 +119,11 @@ const serviceOrderToFindArray = ((savedOrderItemArray, storeService) => {
 
 })
 
-const showdata = catchError((req, res) => {
+const showdata = async(req, res) => {
   const { page = 0, size = 10 } = req.query;
   const { limit, offset } = PaginationData.getPagination(page, size);
   const { filter = "" } = req.query;
-  models.Store.findAndCountAll({
+  await models.Store.findAndCountAll({
     limit,
     offset, where: {
       [Op.or]: [
@@ -134,11 +134,6 @@ const showdata = catchError((req, res) => {
         },
         {
           address: {
-            [Op.like]: "%" + filter + "%",
-          },
-        },
-        {
-          userId: {
             [Op.like]: "%" + filter + "%",
           },
         },
@@ -183,16 +178,20 @@ const showdata = catchError((req, res) => {
         data: result.rows,
         totaldata: result.count
       });
+    }).catch((err)=>{
+      res.status(500).json({
+        error:err.message
+      })
     })
-
 }
-)
-const showdataByVendor = catchError((req, res) => {
+
+const showdataByVendor = async(req, res) => {
   const { page = 0, size = 10 } = req.query;
   const { limit, offset } = PaginationData.getPagination(page, size);
   const { filter = "" } = req.query;
   const id = req.params.id;
-  models.Store.findAndCountAll({
+  try{
+await  models.Store.findAndCountAll({
     limit,
     offset, where: {
       userId:id,
@@ -208,11 +207,6 @@ const showdataByVendor = catchError((req, res) => {
           },
         },
         {
-          userId: {
-            [Op.like]: "%" + filter + "%",
-          },
-        },
-        {
           contactNumber: {
             [Op.like]: "%" + filter + "%",
           },
@@ -253,10 +247,21 @@ const showdataByVendor = catchError((req, res) => {
         data: result.rows,
         totaldata: result.count
       });
-    })
+    }).catch((err) => {
+      res.status(500).json({
+        error: err.message,
+      });
+    });
+  }
+
+    catch(err){
+      res.status(500).json({
+          error:err.message,
+          message:"Internal Server Error"
+      })
+  }
 
 }
-)
 
 const editStoreData = catchError((req, res) => {
   const id = req.params.id;
